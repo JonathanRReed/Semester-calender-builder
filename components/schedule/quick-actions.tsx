@@ -11,8 +11,8 @@ interface QuickActionsProps {
 
 export function QuickActions({ onAddEvent, onExport, onImport }: QuickActionsProps) {
   return (
-    <div className="flex items-center gap-2 p-3 bg-slate-800/30 border border-slate-700/50 rounded-lg backdrop-blur-sm">
-      <span className="text-sm text-slate-300 font-medium">Quick Actions:</span>
+    <div className="flex items-center gap-2 p-3 bg-card/30 border border-border/50 rounded-lg backdrop-blur-sm">
+      <span className="text-sm text-muted-foreground font-medium">Quick Actions:</span>
       <Button onClick={onAddEvent} size="sm" variant="outline" className="text-xs bg-transparent">
         <Plus className="w-3 h-3 mr-1" />
         Add

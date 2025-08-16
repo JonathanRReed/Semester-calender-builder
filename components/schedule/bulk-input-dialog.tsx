@@ -18,12 +18,25 @@ interface BulkInputDialogProps {
 
 export function BulkInputDialog({ open, onOpenChange, onImport }: BulkInputDialogProps) {
   const [textInput, setTextInput] = useState("")
-  const [quickCourse, setQuickCourse] = useState({
+
+  type QuickCourse = {
+    title: string
+    courseCode: string
+    section: string
+    type: "inperson" | "online" | "exam"
+    days: string[]
+    startTime: string
+    endTime: string
+    location: string
+    instructor: string
+  }
+
+  const [quickCourse, setQuickCourse] = useState<QuickCourse>({
     title: "",
     courseCode: "",
     section: "",
-    type: "inperson" as const,
-    days: [] as string[],
+    type: "inperson",
+    days: [],
     startTime: "",
     endTime: "",
     location: "",
@@ -54,7 +67,7 @@ export function BulkInputDialog({ open, onOpenChange, onImport }: BulkInputDialo
               courseCode,
               section: "",
               type: location.toLowerCase().includes("online") ? "online" : "inperson",
-              day: day.trim() as any,
+              day: day.trim(),
               startCT: startTime || "09:00",
               endCT: endTime || "10:00",
               location,
@@ -105,7 +118,7 @@ export function BulkInputDialog({ open, onOpenChange, onImport }: BulkInputDialo
         courseCode: quickCourse.courseCode,
         section: quickCourse.section,
         type: quickCourse.type,
-        day: day as any,
+        day: day,
         startCT: quickCourse.startTime,
         endCT: quickCourse.endTime,
         location: quickCourse.location,
@@ -145,7 +158,7 @@ export function BulkInputDialog({ open, onOpenChange, onImport }: BulkInputDialo
             <div>
               <Label htmlFor="bulk-text">Paste your course information</Label>
               <p className="text-sm text-muted-foreground mb-2">
-                Supports formats like: "MATH 2413 | Calculus I | Mon,Wed,Fri | 10:00-10:50 | SCI 3.230"
+                Supports formats like: &ldquo;MATH 2413 | Calculus I | Mon,Wed,Fri | 10:00-10:50 | SCI 3.230&rdquo;
               </p>
               <Textarea
                 id="bulk-text"
@@ -241,7 +254,9 @@ EPPS 4337 | Internship | Tue,Thu | 19:00-20:30 | Online"
               <Label htmlFor="type">Type</Label>
               <Select
                 value={quickCourse.type}
-                onValueChange={(value: any) => setQuickCourse((prev) => ({ ...prev, type: value }))}
+                onValueChange={(value: "inperson" | "online" | "exam") =>
+                  setQuickCourse((prev) => ({ ...prev, type: value }))
+                }
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -249,7 +264,7 @@ EPPS 4337 | Internship | Tue,Thu | 19:00-20:30 | Online"
                 <SelectContent>
                   <SelectItem value="inperson">In Person</SelectItem>
                   <SelectItem value="online">Online</SelectItem>
-                  <SelectItem value="hybrid">Hybrid</SelectItem>
+                  <SelectItem value="exam">Exam</SelectItem>
                 </SelectContent>
               </Select>
             </div>

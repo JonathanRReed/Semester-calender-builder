@@ -33,7 +33,7 @@ export function WeekGrid({ events, activeFilter, timeZone, onEventClick }: WeekG
         <div className="overflow-x-auto">
           <div className="grid grid-cols-8 min-h-[600px] min-w-[800px]">
             {/* Time axis */}
-            <div className="border-r border-slate-700/30 bg-gradient-to-b from-slate-800/50 to-slate-900/50 min-w-[80px]">
+            <div className="border-r border-border/50 bg-secondary/40 min-w-[80px]">
               <TimeAxis timeZone={timeZone} />
             </div>
 
@@ -43,7 +43,7 @@ export function WeekGrid({ events, activeFilter, timeZone, onEventClick }: WeekG
               return (
                 <div
                   key={day}
-                  className="border-r border-slate-700/30 last:border-r-0 min-w-[100px] hover:bg-slate-800/20 transition-colors duration-300"
+                  className="border-r border-border/50 last:border-r-0 min-w-[100px] hover:bg-secondary/20 transition-colors duration-300"
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
                   <DayColumn

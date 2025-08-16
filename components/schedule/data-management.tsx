@@ -1,8 +1,6 @@
 "use client"
 
-import type React from "react"
-
-import { useState } from "react"
+import * as React from "react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -21,8 +19,11 @@ interface DataManagementProps {
   onDataUpdate: (data: { courses: CourseEvent[]; studyBlocks: StudyBlock[]; importantDates: ImportantDate[] }) => void
 }
 
-export function DataManagement({ onDataUpdate }: DataManagementProps) {
-  const [bulkInputOpen, setBulkInputOpen] = useState(false)
+export const DataManagement = React.forwardRef<HTMLButtonElement, DataManagementProps>(function DataManagement(
+  { onDataUpdate }: DataManagementProps,
+  ref,
+) {
+  const [bulkInputOpen, setBulkInputOpen] = React.useState(false)
 
   const handleFileImport = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -74,7 +75,7 @@ export function DataManagement({ onDataUpdate }: DataManagementProps) {
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="sm">
+          <Button ref={ref} variant="outline" size="sm">
             <Database className="w-4 h-4 mr-2" />
             Manage Data
           </Button>
@@ -99,7 +100,7 @@ export function DataManagement({ onDataUpdate }: DataManagementProps) {
             Reset to Example
           </DropdownMenuItem>
 
-          <DropdownMenuItem onClick={handleClearAll} className="text-red-600">
+          <DropdownMenuItem onClick={handleClearAll} className="text-destructive">
             Clear All Data
           </DropdownMenuItem>
         </DropdownMenuContent>
@@ -110,4 +111,4 @@ export function DataManagement({ onDataUpdate }: DataManagementProps) {
       <BulkInputDialog open={bulkInputOpen} onOpenChange={setBulkInputOpen} onImport={onDataUpdate} />
     </>
   )
-}
+})

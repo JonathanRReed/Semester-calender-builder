@@ -59,11 +59,7 @@ export default function SchedulePage() {
     }
   }, [courses, studyBlocks, isLoaded])
 
-  const resetToSeedData = () => {
-    setCourses(SEED_COURSES)
-    setStudyBlocks(SEED_STUDY_BLOCKS)
-    saveScheduleData(SEED_COURSES, SEED_STUDY_BLOCKS)
-  }
+  // resetToSeedData removed (unused)
 
   const handleDataUpdate = (data: {
     courses: CourseEvent[]
@@ -128,24 +124,24 @@ export default function SchedulePage() {
 
   if (!isLoaded) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <div className="text-slate-400">Loading your schedule...</div>
+          <div className="w-8 h-8 border-2 border-ring border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="text-muted-foreground">Loading your schedule...</div>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+    <div className="min-h-screen bg-background">
       <header className="glass-header p-3 sm:p-4 sticky top-0 z-30 slide-up">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col gap-4">
             <div className="flex items-center justify-between">
-              <div className="floating-animation">
-                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold gradient-text">Semester Calendar Builder</h1>
-                <p className="text-xs sm:text-sm text-slate-400 mt-1">
+              <div>
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground">Semester Calendar Builder</h1>
+                <p className="text-xs sm:text-sm text-muted-foreground mt-1">
                   {hasEvents ? `${allEvents.length} events scheduled` : "Build your perfect semester schedule"}
                 </p>
               </div>
@@ -171,10 +167,10 @@ export default function SchedulePage() {
                   <button
                     key={tz}
                     onClick={() => setTimeZone(tz)}
-                    className={`px-3 py-1.5 rounded text-xs sm:text-sm font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500/50 ${
+                    className={`px-3 py-1.5 rounded text-xs sm:text-sm font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-ring/50 ${
                       timeZone === tz
-                        ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg pulse-glow"
-                        : "text-slate-400 hover:text-slate-200 hover:bg-slate-700/50"
+                        ? "bg-primary text-primary-foreground shadow-lg"
+                        : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
                     }`}
                     aria-pressed={timeZone === tz}
                   >
@@ -188,10 +184,10 @@ export default function SchedulePage() {
                   <button
                     key={filter}
                     onClick={() => setActiveFilter(filter)}
-                    className={`px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 capitalize focus:outline-none focus:ring-2 focus:ring-blue-500/50 transform hover:scale-105 ${
+                    className={`px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 capitalize focus:outline-none focus:ring-2 focus:ring-ring/50 transform hover:scale-105 ${
                       activeFilter === filter
                         ? "btn-primary text-white shadow-lg"
-                        : "btn-secondary text-slate-300 hover:text-slate-100"
+                        : "btn-secondary text-muted-foreground hover:text-foreground"
                     }`}
                     aria-pressed={activeFilter === filter}
                   >
@@ -234,29 +230,41 @@ export default function SchedulePage() {
           </div>
 
           <div className="mt-4 sm:mt-6 glass-card p-4 sm:p-6 rounded-lg scale-in">
-            <h3 className="font-semibold mb-3 sm:mb-4 text-sm sm:text-base text-slate-100">Event Types</h3>
+            <h3 className="font-semibold mb-3 sm:mb-4 text-sm sm:text-base text-foreground">Event Types</h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 text-xs sm:text-sm">
               <div className="flex items-center gap-2 group">
-                <div className="w-4 h-4 bg-gradient-to-br from-green-500/30 to-green-400/20 border border-green-400/40 rounded flex-shrink-0 group-hover:scale-110 transition-transform"></div>
-                <span className="truncate text-slate-300 group-hover:text-slate-100 transition-colors">
+                <div
+                  className="w-4 h-4 rounded flex-shrink-0 group-hover:scale-110 transition-transform border"
+                  style={{ backgroundColor: "var(--mint-green)", borderColor: "var(--mint-green)", opacity: 0.25 }}
+                ></div>
+                <span className="truncate text-muted-foreground group-hover:text-foreground transition-colors">
                   In-person Classes
                 </span>
               </div>
               <div className="flex items-center gap-2 group">
-                <div className="w-4 h-4 bg-gradient-to-br from-purple-500/30 to-purple-400/20 border border-purple-400/40 rounded flex-shrink-0 group-hover:scale-110 transition-transform"></div>
-                <span className="truncate text-slate-300 group-hover:text-slate-100 transition-colors">
+                <div
+                  className="w-4 h-4 rounded flex-shrink-0 group-hover:scale-110 transition-transform border"
+                  style={{ backgroundColor: "var(--ice-blue)", borderColor: "var(--ice-blue)", opacity: 0.25 }}
+                ></div>
+                <span className="truncate text-muted-foreground group-hover:text-foreground transition-colors">
                   Online Classes
                 </span>
               </div>
               <div className="flex items-center gap-2 group">
-                <div className="w-4 h-4 bg-gradient-to-br from-blue-500/30 to-blue-400/20 border border-blue-400/40 rounded flex-shrink-0 group-hover:scale-110 transition-transform"></div>
-                <span className="truncate text-slate-300 group-hover:text-slate-100 transition-colors">
+                <div
+                  className="w-4 h-4 rounded flex-shrink-0 group-hover:scale-110 transition-transform border"
+                  style={{ backgroundColor: "var(--steel-blue)", borderColor: "var(--steel-blue)", opacity: 0.25 }}
+                ></div>
+                <span className="truncate text-muted-foreground group-hover:text-foreground transition-colors">
                   Study Blocks
                 </span>
               </div>
               <div className="flex items-center gap-2 group">
-                <div className="w-4 h-4 bg-gradient-to-br from-red-500/30 to-red-400/20 border border-red-400/40 rounded flex-shrink-0 group-hover:scale-110 transition-transform"></div>
-                <span className="truncate text-slate-300 group-hover:text-slate-100 transition-colors">Exams</span>
+                <div
+                  className="w-4 h-4 rounded flex-shrink-0 group-hover:scale-110 transition-transform border"
+                  style={{ backgroundColor: "var(--outer-space)", borderColor: "var(--outer-space)", opacity: 0.25 }}
+                ></div>
+                <span className="truncate text-muted-foreground group-hover:text-foreground transition-colors">Exams</span>
               </div>
             </div>
           </div>

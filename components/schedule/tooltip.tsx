@@ -3,6 +3,7 @@
 import type React from "react"
 
 import { useState, useRef } from "react"
+import { createPortal } from "react-dom"
 import type { ScheduleEvent } from "@/types/schedule"
 
 interface TooltipProps {
@@ -79,12 +80,12 @@ export function Tooltip({ event, children }: TooltipProps) {
               {"☆".repeat(5 - event.difficulty)}
             </div>
           )}
-          {event.sentiment && <div className="text-sm italic">"{event.sentiment}"</div>}
+          {event.sentiment && <div className="text-sm italic">&ldquo;{event.sentiment}&rdquo;</div>}
         </div>
       )
     }
 
-    return <div>{event.title}</div>
+    return null
   }
 
   return (
@@ -99,18 +100,20 @@ export function Tooltip({ event, children }: TooltipProps) {
         {children}
       </div>
 
-      {isVisible && (
-        <div
-          ref={tooltipRef}
-          className="fixed z-tooltip bg-popover text-popover-foreground p-3 rounded-lg border border-border shadow-lg max-w-xs"
-          style={{
-            left: `${position.x}px`,
-            top: `${position.y}px`,
-          }}
-        >
-          {renderTooltipContent()}
-        </div>
-      )}
+      {isVisible &&
+        createPortal(
+          <div
+            ref={tooltipRef}
+            className="fixed z-tooltip pointer-events-none bg-popover text-popover-foreground p-3 rounded-lg border border-border shadow-lg max-w-xs"
+            style={{
+              left: `${position.x}px`,
+              top: `${position.y}px`,
+            }}
+          >
+            {renderTooltipContent()}
+          </div>,
+          document.body,
+        )}
     </>
   )
 }

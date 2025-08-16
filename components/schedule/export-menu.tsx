@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import * as React from "react"
 import { Download, FileText, ImageIcon, Calendar, Table } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -17,8 +17,11 @@ interface ExportMenuProps {
   events: ScheduleEvent[]
 }
 
-export function ExportMenu({ events }: ExportMenuProps) {
-  const [isExporting, setIsExporting] = useState(false)
+export const ExportMenu = React.forwardRef<HTMLButtonElement, ExportMenuProps>(function ExportMenu(
+  { events }: ExportMenuProps,
+  ref,
+) {
+  const [isExporting, setIsExporting] = React.useState(false)
 
   const handleExportPNG = async () => {
     setIsExporting(true)
@@ -44,7 +47,7 @@ export function ExportMenu({ events }: ExportMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" disabled={isExporting}>
+        <Button ref={ref} variant="outline" size="sm" disabled={isExporting}>
           <Download className="w-4 h-4 mr-2" />
           {isExporting ? "Exporting..." : "Export"}
         </Button>
@@ -70,4 +73,4 @@ export function ExportMenu({ events }: ExportMenuProps) {
       </DropdownMenuContent>
     </DropdownMenu>
   )
-}
+})

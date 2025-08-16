@@ -14,74 +14,82 @@
   --off-white: #f0f0f0;
   --pure-white: #ffffff;
 
-  --background: var(--charcoal);
+  /* Custom palette */
+  --steel-blue: #4f7cacff;
+  --mint-green: #c0e0deff;
+  --gunmetal: #162521ff;
+  --outer-space: #3c474bff;
+  --ice-blue: #9eefe5ff;
+
+  /* Semantic tokens mapped to palette */
+  --background: var(--gunmetal);
   --foreground: var(--off-white);
-  --card: var(--dark-gray);
-  --card-foreground: var(--light-silver);
-  --popover: var(--dark-gray);
-  --popover-foreground: var(--light-silver);
-  --primary: var(--silver);
-  --primary-foreground: var(--charcoal);
-  --secondary: var(--medium-gray);
+  --card: var(--outer-space);
+  --card-foreground: var(--off-white);
+  --popover: var(--outer-space);
+  --popover-foreground: var(--off-white);
+  --primary: var(--steel-blue);
+  --primary-foreground: var(--pure-white);
+  --secondary: var(--outer-space);
   --secondary-foreground: var(--light-silver);
   --muted: var(--medium-gray);
   --muted-foreground: var(--silver);
-  --accent: var(--light-gray);
-  --accent-foreground: var(--off-white);
+  --accent: var(--ice-blue);
+  --accent-foreground: var(--gunmetal);
   --destructive: #666666;
   --destructive-foreground: var(--off-white);
-  --border: var(--medium-gray);
-  --input: var(--dark-gray);
-  --ring: var(--silver);
-  --chart-1: var(--light-gray);
-  --chart-2: var(--silver);
-  --chart-3: var(--medium-gray);
-  --chart-4: var(--dark-gray);
-  --chart-5: var(--charcoal);
+  --border: color-mix(in srgb, var(--outer-space), var(--pure-black) 30%);
+  --input: var(--outer-space);
+  --ring: var(--steel-blue);
+  --chart-1: var(--steel-blue);
+  --chart-2: var(--mint-green);
+  --chart-3: var(--ice-blue);
+  --chart-4: var(--outer-space);
+  --chart-5: var(--dark-gray);
   --radius: 0.625rem;
-  --sidebar: var(--dark-gray);
-  --sidebar-foreground: var(--light-silver);
-  --sidebar-primary: var(--silver);
-  --sidebar-primary-foreground: var(--charcoal);
-  --sidebar-accent: var(--medium-gray);
-  --sidebar-accent-foreground: var(--light-silver);
-  --sidebar-border: var(--medium-gray);
-  --sidebar-ring: var(--silver);
+  --sidebar: var(--outer-space);
+  --sidebar-foreground: var(--off-white);
+  --sidebar-primary: var(--steel-blue);
+  --sidebar-primary-foreground: var(--pure-white);
+  --sidebar-accent: var(--mint-green);
+  --sidebar-accent-foreground: var(--gunmetal);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--steel-blue);
 }
 
 .dark {
-  --background: var(--charcoal);
+  --background: var(--gunmetal);
   --foreground: var(--off-white);
-  --card: var(--dark-gray);
-  --card-foreground: var(--light-silver);
-  --popover: var(--dark-gray);
+  --card: var(--outer-space);
+  --card-foreground: var(--off-white);
+  --popover: var(--outer-space);
   --popover-foreground: var(--off-white);
-  --primary: var(--silver);
-  --primary-foreground: var(--charcoal);
-  --secondary: var(--medium-gray);
+  --primary: var(--steel-blue);
+  --primary-foreground: var(--pure-white);
+  --secondary: var(--outer-space);
   --secondary-foreground: var(--light-silver);
   --muted: var(--medium-gray);
   --muted-foreground: var(--silver);
-  --accent: var(--light-gray);
-  --accent-foreground: var(--off-white);
+  --accent: var(--ice-blue);
+  --accent-foreground: var(--gunmetal);
   --destructive: #666666;
   --destructive-foreground: var(--off-white);
-  --border: var(--medium-gray);
-  --input: var(--dark-gray);
-  --ring: var(--silver);
-  --chart-1: var(--light-gray);
-  --chart-2: var(--silver);
-  --chart-3: var(--medium-gray);
-  --chart-4: var(--dark-gray);
-  --chart-5: var(--charcoal);
-  --sidebar: var(--charcoal);
+  --border: color-mix(in srgb, var(--outer-space), var(--pure-black) 30%);
+  --input: var(--outer-space);
+  --ring: var(--steel-blue);
+  --chart-1: var(--steel-blue);
+  --chart-2: var(--mint-green);
+  --chart-3: var(--ice-blue);
+  --chart-4: var(--outer-space);
+  --chart-5: var(--dark-gray);
+  --sidebar: var(--gunmetal);
   --sidebar-foreground: var(--off-white);
-  --sidebar-primary: var(--silver);
-  --sidebar-primary-foreground: var(--charcoal);
-  --sidebar-accent: var(--dark-gray);
+  --sidebar-primary: var(--steel-blue);
+  --sidebar-primary-foreground: var(--pure-white);
+  --sidebar-accent: var(--outer-space);
   --sidebar-accent-foreground: var(--light-silver);
-  --sidebar-border: var(--medium-gray);
-  --sidebar-ring: var(--silver);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--steel-blue);
 }
 
 @theme inline {
@@ -133,6 +141,13 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
+  /* Expose palette as Tailwind tokens */
+  --color-steel-blue: var(--steel-blue);
+  --color-mint-green: var(--mint-green);
+  --color-gunmetal: var(--gunmetal);
+  --color-outer-space: var(--outer-space);
+  --color-ice-blue: var(--ice-blue);
+
   --z-tooltip: 10000;
   --z-modal: 9999;
   --z-dropdown: 9998;
@@ -181,28 +196,17 @@
   }
 
   .gradient-text {
-    background: linear-gradient(135deg, #ffffff 0%, #c0c0c0 50%, #9a9a9a 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--ice-blue);
   }
 
   .gradient-border {
     position: relative;
-    background: linear-gradient(135deg, rgba(154, 154, 154, 0.1), rgba(192, 192, 192, 0.1));
-    border: 1px solid transparent;
+    background: transparent;
+    border: 1px solid var(--border);
   }
 
   .gradient-border::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    padding: 1px;
-    background: linear-gradient(135deg, rgba(154, 154, 154, 0.3), rgba(192, 192, 192, 0.3));
-    border-radius: inherit;
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask-composite: xor;
-    -webkit-mask-composite: xor;
+    content: none;
   }
 
   .floating-animation {
@@ -264,7 +268,7 @@
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #9a9a9a, #c0c0c0);
+  background: var(--primary);
   border: none;
   box-shadow: 0 4px 14px rgba(154, 154, 154, 0.3), inset 0 1px 0 rgba(240, 240, 240, 0.2);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);

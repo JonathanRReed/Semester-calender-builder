@@ -1,13 +1,13 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import type { ScheduleEvent } from "@/types/schedule"
+import type { ScheduleEvent, CourseEvent, StudyBlock } from "@/types/schedule"
 import { DAYS } from "@/lib/schedule-data"
 
 interface EditEventDialogProps {
@@ -22,7 +22,7 @@ export function EditEventDialog({ event, isOpen, onClose, onSave, onDelete }: Ed
   const [formData, setFormData] = useState<Partial<ScheduleEvent>>({})
 
   // Initialize form data when event changes
-  useState(() => {
+  useEffect(() => {
     if (event) {
       setFormData({ ...event })
     }
@@ -85,7 +85,7 @@ export function EditEventDialog({ event, isOpen, onClose, onSave, onDelete }: Ed
               <Label htmlFor="type">Type</Label>
               <Select
                 value={formData.type || ""}
-                onValueChange={(value) => setFormData({ ...formData, type: value as any })}
+                onValueChange={(value: ScheduleEvent["type"]) => setFormData({ ...formData, type: value })}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select type" />
@@ -128,7 +128,7 @@ export function EditEventDialog({ event, isOpen, onClose, onSave, onDelete }: Ed
                 <Label htmlFor="location">Location</Label>
                 <Input
                   id="location"
-                  value={(formData as any).location || ""}
+                  value={(formData as Partial<CourseEvent>).location || ""}
                   onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                   placeholder="Room/building"
                 />
@@ -138,7 +138,7 @@ export function EditEventDialog({ event, isOpen, onClose, onSave, onDelete }: Ed
                 <Label htmlFor="instructor">Instructor</Label>
                 <Input
                   id="instructor"
-                  value={(formData as any).instructor || ""}
+                  value={(formData as Partial<CourseEvent>).instructor || ""}
                   onChange={(e) => setFormData({ ...formData, instructor: e.target.value })}
                   placeholder="Instructor name"
                 />
@@ -151,7 +151,7 @@ export function EditEventDialog({ event, isOpen, onClose, onSave, onDelete }: Ed
               <Label htmlFor="notes">Notes</Label>
               <Textarea
                 id="notes"
-                value={(formData as any).notes || ""}
+                value={(formData as Partial<StudyBlock>).notes || ""}
                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                 placeholder="Study notes or description"
                 rows={3}

@@ -17,19 +17,19 @@ export function OnboardingBanner({ hasEvents, onAddEvent, onManageData }: Onboar
   if (dismissed || hasEvents) return null
 
   return (
-    <Card className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 border-blue-500/20 backdrop-blur-sm">
+    <Card className="bg-card border border-border backdrop-blur-sm">
       <CardContent className="p-4 sm:p-6">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
-              <Calendar className="w-5 h-5 text-blue-400" />
-              <h3 className="font-semibold text-slate-100">Welcome to Semester Calendar Builder</h3>
+              <Calendar className="w-5 h-5 text-primary" />
+              <h3 className="font-semibold text-foreground">Welcome to Semester Calendar Builder</h3>
             </div>
-            <p className="text-slate-300 text-sm mb-4">
+            <p className="text-muted-foreground text-sm mb-4">
               Get started by adding your courses and study blocks, or import your existing schedule data.
             </p>
             <div className="flex flex-wrap gap-2">
-              <Button onClick={onAddEvent} size="sm" className="bg-blue-600 hover:bg-blue-700">
+              <Button onClick={onAddEvent} size="sm" className="bg-primary text-primary-foreground hover:brightness-110">
                 <Plus className="w-4 h-4 mr-1" />
                 Add First Event
               </Button>
@@ -43,7 +43,7 @@ export function OnboardingBanner({ hasEvents, onAddEvent, onManageData }: Onboar
             variant="ghost"
             size="sm"
             onClick={() => setDismissed(true)}
-            className="text-slate-400 hover:text-slate-200 p-1"
+            className="text-muted-foreground hover:text-foreground p-1"
           >
             <X className="w-4 h-4" />
           </Button>

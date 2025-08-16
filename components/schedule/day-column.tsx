@@ -67,34 +67,27 @@ export function DayColumn({ day, events, allEvents, timeZone, onEventClick }: Da
   // Async courses
   const asyncEvents = events.filter((event) => event.startCT === "00:00" && event.endCT === "00:00")
 
-  const getCampusStatusColor = (status: string) => {
-    switch (status) {
-      case "ON CAMPUS":
-        return "bg-green-500/20 text-green-300 border-green-500/30"
-      case "campus optional":
-        return "bg-yellow-500/20 text-yellow-300 border-yellow-500/30"
-      default:
-        return "bg-slate-500/20 text-slate-400 border-slate-500/30"
-    }
+  const getCampusStatusColor = () => {
+    return "bg-secondary/30 text-muted-foreground border-border/40"
   }
 
   return (
     <div className="flex flex-col min-w-0">
       {/* Day header */}
-      <div className="h-16 border-b border-slate-700/50 p-1 flex flex-col items-center justify-center bg-slate-800/30">
-        <div className="font-semibold text-xs sm:text-sm text-slate-100">{day}</div>
+      <div className="h-16 border-b border-border/50 p-1 flex flex-col items-center justify-center bg-card/30">
+        <div className="font-semibold text-xs sm:text-sm text-foreground">{day}</div>
         <div
-          className={`text-[10px] sm:text-xs px-1.5 py-0.5 rounded border text-center mt-1 leading-tight ${getCampusStatusColor(campusStatus)}`}
+          className={`text-[10px] sm:text-xs px-1.5 py-0.5 rounded border text-center mt-1 leading-tight ${getCampusStatusColor()}`}
         >
           {campusStatus === "ON CAMPUS" ? "ON CAMPUS" : campusStatus === "campus optional" ? "optional" : "off campus"}
         </div>
       </div>
 
       {/* Events container */}
-      <div className="relative flex-1 min-h-0 bg-slate-900/20">
+      <div className="relative flex-1 min-h-0 bg-secondary/20">
         {/* Time grid background */}
         {Array.from({ length: 29 }, (_, i) => (
-          <div key={i} className="h-8 border-b border-slate-700/30" />
+          <div key={i} className="h-8 border-b border-border/30" />
         ))}
 
         {/* Positioned events */}

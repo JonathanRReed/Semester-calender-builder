@@ -11,28 +11,29 @@ interface EventCardProps {
 }
 
 export function EventCard({ event, timeZone, onClick }: EventCardProps) {
-  const getEventColorDark = (event: ScheduleEvent) => {
-    if (event.type === "study") {
-      return "bg-gradient-to-br from-blue-500/20 to-blue-600/10 border-blue-400/40 text-blue-100 hover:from-blue-500/30 hover:to-blue-600/20 hover:border-blue-400/60"
-    }
-
+  const getEventColorVar = (event: ScheduleEvent) => {
+    if (event.type === "study") return "--steel-blue"
     if ("type" in event) {
       switch (event.type) {
         case "inperson":
-          return "bg-gradient-to-br from-green-500/20 to-green-600/10 border-green-400/40 text-green-100 hover:from-green-500/30 hover:to-green-600/20 hover:border-green-400/60"
+          return "--mint-green"
         case "online":
-          return "bg-gradient-to-br from-purple-500/20 to-purple-600/10 border-purple-400/40 text-purple-100 hover:from-purple-500/30 hover:to-purple-600/20 hover:border-purple-400/60"
+          return "--ice-blue"
         case "exam":
-          return "bg-gradient-to-br from-red-500/20 to-red-600/10 border-red-400/40 text-red-100 hover:from-red-500/30 hover:to-red-600/20 hover:border-red-400/60"
+          return "--outer-space"
         default:
-          return "bg-gradient-to-br from-slate-500/20 to-slate-600/10 border-slate-400/40 text-slate-100 hover:from-slate-500/30 hover:to-slate-600/20 hover:border-slate-400/60"
+          return "--outer-space"
       }
     }
-
-    return "bg-gradient-to-br from-slate-500/20 to-slate-600/10 border-slate-400/40 text-slate-100 hover:from-slate-500/30 hover:to-slate-600/20 hover:border-slate-400/60"
+    return "--outer-space"
   }
 
-  const colorClasses = getEventColorDark(event)
+  const getEventColorDark = () => {
+    return "text-foreground"
+  }
+
+  const colorClasses = getEventColorDark()
+  const colorVar = getEventColorVar(event)
   const startTime = parseTime(event.startCT)
   const endTime = parseTime(event.endCT)
 
@@ -42,6 +43,7 @@ export function EventCard({ event, timeZone, onClick }: EventCardProps) {
       <Tooltip event={event}>
         <div
           className={`p-2 rounded-lg border-2 ${colorClasses} opacity-70 cursor-pointer hover:opacity-90 transition-all duration-300 text-xs backdrop-blur-sm hover:scale-105 hover:shadow-lg`}
+          style={{ background: `color-mix(in srgb, transparent, var(${colorVar}) 20%)`, borderColor: `color-mix(in srgb, transparent, var(${colorVar}) 40%)` }}
           onClick={onClick}
         >
           <div className="font-medium truncate leading-tight" title={event.title}>
@@ -57,6 +59,7 @@ export function EventCard({ event, timeZone, onClick }: EventCardProps) {
     <Tooltip event={event}>
       <div
         className={`p-2 rounded-lg border-2 ${colorClasses} shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105 text-xs backdrop-blur-sm transform hover:-translate-y-1`}
+        style={{ background: `color-mix(in srgb, transparent, var(${colorVar}) 20%)`, borderColor: `color-mix(in srgb, transparent, var(${colorVar}) 40%)` }}
         onClick={onClick}
       >
         <div className="font-semibold truncate leading-tight mb-1" title={event.title}>

@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import type { ScheduleEvent } from "@/types/schedule"
+import type { ScheduleEvent, CourseEvent, StudyBlock } from "@/types/schedule"
 import { DAYS } from "@/lib/schedule-data"
 
 interface AddEventDialogProps {
@@ -18,12 +18,27 @@ interface AddEventDialogProps {
 
 export function AddEventDialog({ isOpen, onClose, onAdd }: AddEventDialogProps) {
   const [eventType, setEventType] = useState<"study" | "course">("study")
-  const [formData, setFormData] = useState({
+
+  type FormData = {
+    title: string
+    day: string
+    startCT: string
+    endCT: string
+    // union across study & course variants
+    type: "study" | "inperson" | "online" | "exam"
+    location: string
+    instructor: string
+    courseCode: string
+    section: string
+    notes: string
+  }
+
+  const [formData, setFormData] = useState<FormData>({
     title: "",
     day: "",
     startCT: "",
     endCT: "",
-    type: "study" as const,
+    type: "study",
     location: "",
     instructor: "",
     courseCode: "",
@@ -53,26 +68,28 @@ export function AddEventDialog({ isOpen, onClose, onAdd }: AddEventDialogProps) 
     }
 
     if (eventType === "study") {
-      onAdd({
+      const payload: Omit<StudyBlock, "id"> = {
         title: formData.title,
         type: "study",
         day: formData.day,
         startCT: formData.startCT,
         endCT: formData.endCT,
         notes: formData.notes,
-      })
+      }
+      onAdd(payload)
     } else {
-      onAdd({
+      const payload: Omit<CourseEvent, "id"> = {
         title: formData.title,
         courseCode: formData.courseCode,
         section: formData.section,
-        type: formData.type as "inperson" | "online" | "exam",
+        type: (formData.type as "inperson" | "online" | "exam"),
         day: formData.day,
         startCT: formData.startCT,
         endCT: formData.endCT,
         location: formData.location,
         instructor: formData.instructor,
-      })
+      }
+      onAdd(payload)
     }
 
     resetForm()
@@ -143,7 +160,9 @@ export function AddEventDialog({ isOpen, onClose, onAdd }: AddEventDialogProps) 
                 <Label htmlFor="courseType">Course Type</Label>
                 <Select
                   value={formData.type}
-                  onValueChange={(value) => setFormData({ ...formData, type: value as any })}
+                  onValueChange={(value: "inperson" | "online" | "exam") =>
+                    setFormData({ ...formData, type: value })
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue />

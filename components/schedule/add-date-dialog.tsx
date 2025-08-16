@@ -47,26 +47,26 @@ export function AddDateDialog({ isOpen, onClose, onAdd }: AddDateDialogProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="bg-slate-900 border-slate-700 text-slate-100">
+      <DialogContent className="bg-popover border-border text-popover-foreground">
         <DialogHeader>
           <DialogTitle>Add Important Date</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="title" className="text-slate-200">
+            <Label htmlFor="title" className="text-foreground">
               Title
             </Label>
             <Input
               id="title"
               value={formData.title}
               onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
-              className="bg-slate-800 border-slate-600 text-slate-100"
+              className="bg-background border-input text-foreground"
               required
             />
           </div>
 
           <div>
-            <Label htmlFor="date" className="text-slate-200">
+            <Label htmlFor="date" className="text-foreground">
               Date
             </Label>
             <Input
@@ -74,23 +74,23 @@ export function AddDateDialog({ isOpen, onClose, onAdd }: AddDateDialogProps) {
               type="date"
               value={formData.date}
               onChange={(e) => setFormData((prev) => ({ ...prev, date: e.target.value }))}
-              className="bg-slate-800 border-slate-600 text-slate-100"
+              className="bg-background border-input text-foreground"
               required
             />
           </div>
 
           <div>
-            <Label htmlFor="type" className="text-slate-200">
+            <Label htmlFor="type" className="text-foreground">
               Type
             </Label>
             <Select
               value={formData.type}
               onValueChange={(value: ImportantDate["type"]) => setFormData((prev) => ({ ...prev, type: value }))}
             >
-              <SelectTrigger className="bg-slate-800 border-slate-600 text-slate-100">
+              <SelectTrigger className="bg-background border-input text-foreground">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-slate-800 border-slate-600">
+              <SelectContent className="bg-popover border-border">
                 <SelectItem value="event">Event</SelectItem>
                 <SelectItem value="deadline">Deadline</SelectItem>
                 <SelectItem value="break">Break</SelectItem>
@@ -100,14 +100,14 @@ export function AddDateDialog({ isOpen, onClose, onAdd }: AddDateDialogProps) {
           </div>
 
           <div>
-            <Label htmlFor="description" className="text-slate-200">
+            <Label htmlFor="description" className="text-foreground">
               Description (optional)
             </Label>
             <Textarea
               id="description"
               value={formData.description}
               onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
-              className="bg-slate-800 border-slate-600 text-slate-100"
+              className="bg-background border-input text-foreground"
               rows={2}
             />
           </div>
@@ -117,11 +117,11 @@ export function AddDateDialog({ isOpen, onClose, onAdd }: AddDateDialogProps) {
               type="button"
               variant="outline"
               onClick={handleClose}
-              className="border-slate-600 text-slate-300 bg-transparent"
+              className="text-muted-foreground bg-transparent"
             >
               Cancel
             </Button>
-            <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+            <Button type="submit" className="bg-primary text-primary-foreground hover:brightness-110">
               Add Date
             </Button>
           </div>

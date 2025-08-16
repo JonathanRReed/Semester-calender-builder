@@ -1,5 +1,5 @@
 import type { CourseEvent, StudyBlock, ScheduleEvent, TimeZone } from "@/types/schedule"
-import { TIMEZONES, EVENT_COLORS } from "./constants"
+import { TIMEZONES } from "./constants"
 
 export function parseTime(timeStr: string): { hour: number; minute: number } {
   const [hour, minute] = timeStr.split(":").map(Number)
@@ -36,13 +36,7 @@ export function getCampusStatus(events: ScheduleEvent[], day: string): "ON CAMPU
   return "off campus"
 }
 
-export function getEventColor(event: ScheduleEvent): string {
-  if (event.type === "study") return EVENT_COLORS.study
-  if ("type" in event) {
-    return EVENT_COLORS[event.type] || EVENT_COLORS.default
-  }
-  return EVENT_COLORS.default
-}
+// getEventColor removed in favor of semantic tokens and per-component styling
 
 export function saveScheduleData(courses: CourseEvent[], studyBlocks: StudyBlock[]) {
   if (typeof window !== "undefined") {

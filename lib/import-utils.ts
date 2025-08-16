@@ -1,5 +1,21 @@
 import type { CourseEvent, StudyBlock, ImportantDate } from "@/types/schedule"
 
+function normalizeImportantType(input: string): ImportantDate["type"] {
+  const v = (input || "").toLowerCase()
+  if (v === "deadline") return "deadline"
+  if (v === "break") return "break"
+  if (v === "exam") return "exam"
+  // treat unknown types and "date" as generic event
+  return "event"
+}
+
+function normalizeCourseType(input: string): CourseEvent["type"] {
+  const v = (input || "").toLowerCase()
+  if (v.includes("online")) return "online"
+  if (v === "exam") return "exam"
+  return "inperson"
+}
+
 export function parseCSVToSchedule(csvContent: string): {
   courses: CourseEvent[]
   studyBlocks: StudyBlock[]
@@ -26,7 +42,7 @@ export function parseCSVToSchedule(csvContent: string): {
         id: `imported-${i}`,
         title: row.title || "Study Block",
         type: "study",
-        day: row.day as any,
+        day: row.day,
         startCT: row.startCT || row.startTime || "09:00",
         endCT: row.endCT || row.endTime || "10:00",
         notes: row.notes || row.description || "",
@@ -42,7 +58,7 @@ export function parseCSVToSchedule(csvContent: string): {
         id: `imported-date-${i}`,
         title: row.title || "Important Date",
         date: row.date || new Date().toISOString().split("T")[0],
-        type: row.type as any,
+        type: normalizeImportantType(row.type),
         description: row.description || row.notes,
       })
     } else {
@@ -52,8 +68,8 @@ export function parseCSVToSchedule(csvContent: string): {
         title: row.title || "Course",
         courseCode: row.courseCode || row.code || "",
         section: row.section || "",
-        type: (row.type as any) || "inperson",
-        day: row.day as any,
+        type: normalizeCourseType(row.type),
+        day: row.day,
         startCT: row.startCT || row.startTime || "09:00",
         endCT: row.endCT || row.endTime || "10:00",
         location: row.location || "",
@@ -104,7 +120,7 @@ export function parseICSToSchedule(icsContent: string): {
           id: `imported-ics-${i}`,
           title: summary,
           type: "study",
-          day: day as any,
+          day: day,
           startCT: startTime,
           endCT: endTime,
           notes: description,
@@ -116,7 +132,7 @@ export function parseICSToSchedule(icsContent: string): {
           courseCode: summary.split(" ")[0] || "",
           section: "",
           type: location.toLowerCase().includes("online") ? "online" : "inperson",
-          day: day as any,
+          day: day,
           startCT: startTime,
           endCT: endTime,
           location: location,

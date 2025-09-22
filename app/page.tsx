@@ -15,6 +15,31 @@ import { DataManagement } from "@/components/schedule/data-management"
 import { OnboardingBanner } from "@/components/schedule/onboarding-banner"
 import { QuickActions } from "@/components/schedule/quick-actions"
 
+
+const uniqueById = <T extends { id: string }>(items: T[]) => {
+  const seen = new Set<string>()
+  const result: T[] = []
+  for (const item of items) {
+    if (!seen.has(item.id)) {
+      seen.add(item.id)
+      result.push(item)
+    }
+  }
+  return result
+}
+
+const mergeById = <T extends { id: string }>(existing: T[], incoming: T[]) => {
+  if (incoming.length === 0) return existing
+  const map = new Map<string, T>()
+  for (const item of existing) {
+    map.set(item.id, item)
+  }
+  for (const item of incoming) {
+    map.set(item.id, item)
+  }
+  return Array.from(map.values())
+}
+
 export default function SchedulePage() {
   const [courses, setCourses] = useState<CourseEvent[]>([])
   const [studyBlocks, setStudyBlocks] = useState<StudyBlock[]>([])
@@ -42,8 +67,8 @@ export default function SchedulePage() {
       setStudyBlocks(SEED_STUDY_BLOCKS)
       saveScheduleData(SEED_COURSES, SEED_STUDY_BLOCKS)
     } else {
-      setCourses(savedCourses)
-      setStudyBlocks(savedStudyBlocks)
+      setCourses(uniqueById(savedCourses))
+      setStudyBlocks(uniqueById(savedStudyBlocks))
     }
 
     setIsLoaded(true)
@@ -65,15 +90,30 @@ export default function SchedulePage() {
     courses: CourseEvent[]
     studyBlocks: StudyBlock[]
     importantDates: ImportantDate[]
+    mode?: "append" | "replace"
   }) => {
-    if (data.courses.length > 0) {
-      setCourses((prev) => [...prev, ...data.courses])
+    const {
+      courses: incomingCourses,
+      studyBlocks: incomingStudyBlocks,
+      importantDates: incomingDates,
+      mode = "append",
+    } = data
+
+    if (mode === "replace") {
+      setCourses(uniqueById(incomingCourses))
+      setStudyBlocks(uniqueById(incomingStudyBlocks))
+      setImportantDates(uniqueById(incomingDates))
+      return
     }
-    if (data.studyBlocks.length > 0) {
-      setStudyBlocks((prev) => [...prev, ...data.studyBlocks])
+
+    if (incomingCourses.length > 0) {
+      setCourses((prev) => mergeById(prev, incomingCourses))
     }
-    if (data.importantDates.length > 0) {
-      setImportantDates((prev) => [...prev, ...data.importantDates])
+    if (incomingStudyBlocks.length > 0) {
+      setStudyBlocks((prev) => mergeById(prev, incomingStudyBlocks))
+    }
+    if (incomingDates.length > 0) {
+      setImportantDates((prev) => mergeById(prev, incomingDates))
     }
   }
 

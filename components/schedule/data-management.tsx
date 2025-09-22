@@ -16,7 +16,7 @@ import { SEED_COURSES, SEED_STUDY_BLOCKS, IMPORTANT_DATES } from "@/lib/schedule
 import type { CourseEvent, StudyBlock, ImportantDate } from "@/types/schedule"
 
 interface DataManagementProps {
-  onDataUpdate: (data: { courses: CourseEvent[]; studyBlocks: StudyBlock[]; importantDates: ImportantDate[] }) => void
+  onDataUpdate: (data: { courses: CourseEvent[]; studyBlocks: StudyBlock[]; importantDates: ImportantDate[]; mode?: "append" | "replace" }) => void
 }
 
 export const DataManagement = React.forwardRef<HTMLButtonElement, DataManagementProps>(function DataManagement(
@@ -57,6 +57,7 @@ export const DataManagement = React.forwardRef<HTMLButtonElement, DataManagement
         courses: SEED_COURSES,
         studyBlocks: SEED_STUDY_BLOCKS,
         importantDates: IMPORTANT_DATES,
+        mode: "replace",
       })
     }
   }
@@ -67,6 +68,7 @@ export const DataManagement = React.forwardRef<HTMLButtonElement, DataManagement
         courses: [],
         studyBlocks: [],
         importantDates: [],
+        mode: "replace",
       })
     }
   }

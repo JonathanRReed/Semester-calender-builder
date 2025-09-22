@@ -108,7 +108,12 @@ export const DayColumn = React.memo(function DayColumn({ day, events, allEvents,
         {asyncEvents.length > 0 && (
           <div className="absolute bottom-0 left-0.5 right-0.5 space-y-1">
             {asyncEvents.map((event) => (
-              <EventCard key={event.id} event={event} timeZone={timeZone} onClick={() => onEventClick?.(event)} />
+              <EventCard
+                key={`async-${event.id}`}
+                event={event}
+                timeZone={timeZone}
+                onClick={() => onEventClick?.(event)}
+              />
             ))}
           </div>
         )}

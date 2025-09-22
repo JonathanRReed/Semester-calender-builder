@@ -1,9 +1,7 @@
 "use client"
 
-import { Calendar } from "@/components/ui/calendar"
-
 import { useState } from "react"
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { ChevronLeft, ChevronRight, Calendar } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import type { ScheduleEvent, TimeZone } from "@/types/schedule"
 import { EventCard } from "./event-card"
@@ -83,7 +81,12 @@ export function MobileDayView({ events, timeZone, onEventClick }: MobileDayViewP
           dayEvents
             .sort((a, b) => a.startCT.localeCompare(b.startCT))
             .map((event) => (
-              <EventCard key={event.id} event={event} timeZone={timeZone} onClick={() => onEventClick?.(event)} />
+              <EventCard
+                key={event.id}
+                event={event}
+                timeZone={timeZone}
+                onClick={() => onEventClick?.(event)}
+              />
             ))
         )}
       </div>

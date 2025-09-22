@@ -4,51 +4,15 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: #faf4ed;
-  --foreground: #575279;
-  --card: #fffaf3;
-  --card-foreground: #575279;
-  --popover: #f2e9e1;
-  --popover-foreground: #575279;
-  --primary: #286983;
-  --primary-foreground: #faf4ed;
-  --secondary: #f4ede8;
-  --secondary-foreground: #575279;
-  --muted: #dfdad9;
-  --muted-foreground: #797593;
-  --accent: #d7827e;
-  --accent-foreground: #faf4ed;
-  --destructive: #b4637a;
-  --destructive-foreground: #faf4ed;
-  --border: #cecacd;
-  --input: #cecacd;
-  --ring: #286983;
-  --chart-1: #907aa9;
-  --chart-2: #56949f;
-  --chart-3: #286983;
-  --chart-4: #d7827e;
-  --chart-5: #ea9d34;
-  --radius: 0.625rem;
-  --sidebar: #fffaf3;
-  --sidebar-foreground: #575279;
-  --sidebar-primary: #286983;
-  --sidebar-primary-foreground: #faf4ed;
-  --sidebar-accent: #f4ede8;
-  --sidebar-accent-foreground: #575279;
-  --sidebar-border: #cecacd;
-  --sidebar-ring: #286983;
-}
-
-.dark {
   --background: #191724;
   --foreground: #e0def4;
   --card: #1f1d2e;
   --card-foreground: #e0def4;
   --popover: #26233a;
   --popover-foreground: #e0def4;
-  --primary: #31748f;
-  --primary-foreground: #e0def4;
-  --secondary: #21202e;
+  --primary: #eb6f92;
+  --primary-foreground: #191724;
+  --secondary: #1f1d2e;
   --secondary-foreground: #e0def4;
   --muted: #403d52;
   --muted-foreground: #908caa;
@@ -58,20 +22,21 @@
   --destructive-foreground: #191724;
   --border: #524f67;
   --input: #524f67;
-  --ring: #9ccfd8;
+  --ring: #c4a7e7;
   --chart-1: #c4a7e7;
-  --chart-2: #9ccfd8;
-  --chart-3: #31748f;
+  --chart-2: #c4a7e7;
+  --chart-3: #ebbcba;
   --chart-4: #eb6f92;
   --chart-5: #f6c177;
+  --radius: 0.625rem;
   --sidebar: #1f1d2e;
   --sidebar-foreground: #e0def4;
-  --sidebar-primary: #31748f;
-  --sidebar-primary-foreground: #e0def4;
-  --sidebar-accent: #21202e;
+  --sidebar-primary: #eb6f92;
+  --sidebar-primary-foreground: #191724;
+  --sidebar-accent: rgba(82, 79, 103, 0.35);
   --sidebar-accent-foreground: #e0def4;
-  --sidebar-border: #524f67;
-  --sidebar-ring: #9ccfd8;
+  --sidebar-border: rgba(116, 114, 142, 0.35);
+  --sidebar-ring: #c4a7e7;
 }
 
 @theme inline {
@@ -115,7 +80,7 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border outline-ring/40;
   }
   body {
     @apply bg-background text-foreground;

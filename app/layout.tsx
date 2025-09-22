@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import { FONT_ASSETS, LOGO_ASSETS, SOCIAL_LINKS } from '@/lib/assets'
+import { ThemeProvider } from '@/components/theme-provider'
 
 const FONT_SANS = "'Nebula Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
 const FONT_MONO = "'ui-monospace', 'SFMono-Regular', 'SFMono', 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', monospace"
@@ -49,7 +50,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className="dark">
       <head>
         <link rel="preconnect" href="https://fonts.helloworldfirm.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://img.helloworldfirm.com" crossOrigin="anonymous" />
@@ -73,7 +74,16 @@ html {
 }
         `}</style>
       </head>
-      <body>{children}</body>
+      <body>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem={false}
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   )
 }

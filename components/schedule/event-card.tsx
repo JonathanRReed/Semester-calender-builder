@@ -76,12 +76,12 @@ export const EventCard = React.memo(function EventCard({ event, timeZone, onClic
         </div>
         {"location" in event && event.location && (
           <div className="opacity-70 truncate text-[10px] leading-tight mt-1" title={event.location}>
-            📍 {event.location}
+            Location: {event.location}
           </div>
         )}
         {event.type === "study" && "notes" in event && event.notes && (
           <div className="opacity-70 truncate text-[10px] leading-tight mt-1" title={event.notes}>
-            📝 {event.notes}
+            Notes: {event.notes}
           </div>
         )}
       </div>

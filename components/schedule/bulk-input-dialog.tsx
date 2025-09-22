@@ -13,7 +13,7 @@ import type { CourseEvent, StudyBlock, ImportantDate } from "@/types/schedule"
 interface BulkInputDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onImport: (data: { courses: CourseEvent[]; studyBlocks: StudyBlock[]; importantDates: ImportantDate[] }) => void
+  onImport: (data: { courses: CourseEvent[]; studyBlocks: StudyBlock[]; importantDates: ImportantDate[]; mode?: "append" | "replace" }) => void
 }
 
 export function BulkInputDialog({ open, onOpenChange, onImport }: BulkInputDialogProps) {
@@ -62,7 +62,7 @@ export function BulkInputDialog({ open, onOpenChange, onImport }: BulkInputDialo
 
           days.split(",").forEach((day) => {
             courses.push({
-              id: `bulk-${index}-${day.trim()}`,
+              id: `bulk-${Date.now()}-${index}-${day.trim().replace(/\//g, '-')}-${Math.random().toString(36).substr(2, 5)}`,
               title: `${courseCode} ${title}`,
               courseCode,
               section: "",
@@ -78,7 +78,7 @@ export function BulkInputDialog({ open, onOpenChange, onImport }: BulkInputDialo
       } else if (trimmed.toLowerCase().includes("study") || trimmed.toLowerCase().includes("work")) {
         // Study block
         studyBlocks.push({
-          id: `bulk-study-${index}`,
+          id: `bulk-study-${Date.now()}-${index}-${Math.random().toString(36).substr(2, 5)}`,
           title: trimmed,
           type: "study",
           day: "Mon",
@@ -89,7 +89,7 @@ export function BulkInputDialog({ open, onOpenChange, onImport }: BulkInputDialo
       } else {
         // Simple course format
         courses.push({
-          id: `bulk-simple-${index}`,
+          id: `bulk-simple-${Date.now()}-${index}-${Math.random().toString(36).substr(2, 5)}`,
           title: trimmed,
           courseCode: trimmed.split(" ")[0] || "",
           section: "",
@@ -113,7 +113,7 @@ export function BulkInputDialog({ open, onOpenChange, onImport }: BulkInputDialo
 
     quickCourse.days.forEach((day) => {
       courses.push({
-        id: `quick-${Date.now()}-${day}`,
+        id: `quick-${Date.now()}-${day}-${Math.random().toString(36).substr(2, 9)}`,
         title: quickCourse.title || `${quickCourse.courseCode}`,
         courseCode: quickCourse.courseCode,
         section: quickCourse.section,

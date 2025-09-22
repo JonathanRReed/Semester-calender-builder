@@ -70,8 +70,8 @@ export const Tooltip = React.memo(function Tooltip({ event, children }: TooltipP
           <div className="text-sm opacity-75">
             {event.courseCode} - {event.section}
           </div>
-          {event.location && <div className="text-sm">📍 {event.location}</div>}
-          {event.instructor && <div className="text-sm">👨‍🏫 {event.instructor}</div>}
+          {event.location && <div className="text-sm">Location: {event.location}</div>}
+          {event.instructor && <div className="text-sm">Instructor: {event.instructor}</div>}
           {event.difficulty && (
             <div className="text-sm">
               Difficulty: {event.difficulty}/5 {"★".repeat(event.difficulty)}

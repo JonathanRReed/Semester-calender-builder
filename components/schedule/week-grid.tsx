@@ -1,3 +1,4 @@
+import React from "react"
 import type { ScheduleEvent, FilterType, TimeZone } from "@/types/schedule"
 import { TimeAxis } from "./time-axis"
 import { DayColumn } from "./day-column"
@@ -11,16 +12,19 @@ interface WeekGridProps {
   onEventClick?: (event: ScheduleEvent) => void
 }
 
-export function WeekGrid({ events, activeFilter, timeZone, onEventClick }: WeekGridProps) {
+export const WeekGrid = React.memo(function WeekGrid({ events, activeFilter, timeZone, onEventClick }: WeekGridProps) {
   // Filter events based on active filter
-  const filteredEvents = events.filter((event) => {
-    if (activeFilter === "all") return true
-    if (activeFilter === "study") return event.type === "study"
-    if ("type" in event) {
-      return event.type === activeFilter
-    }
-    return false
-  })
+  const filteredEvents = React.useMemo(() =>
+    events.filter((event) => {
+      if (activeFilter === "all") return true
+      if (activeFilter === "study") return event.type === "study"
+      if ("type" in event) {
+        return event.type === activeFilter
+      }
+      return false
+    }),
+    [events, activeFilter]
+  )
 
   return (
     <>
@@ -61,4 +65,4 @@ export function WeekGrid({ events, activeFilter, timeZone, onEventClick }: WeekG
       </div>
     </>
   )
-}
+})

@@ -13,7 +13,7 @@ const nextConfig = {
     return [
       {
         source: '/',
-        destination: '/calander-builder',
+        destination: '/calendar-builder',
         permanent: false,
       },
     ]

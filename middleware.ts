@@ -7,7 +7,7 @@ export function middleware(request: NextRequest) {
   // Redirect only the site root to the basePath
   if (pathname === '/') {
     const url = request.nextUrl.clone()
-    url.pathname = '/calander-builder'
+    url.pathname = '/calendar-builder'
     return NextResponse.redirect(url)
   }
 

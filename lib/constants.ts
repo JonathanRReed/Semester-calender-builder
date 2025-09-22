@@ -1,9 +1,12 @@
 export const COLORS = {
-  steelBlue: "#4f7cac",
-  mintGreen: "#c0e0de",
-  gunmetal: "#162521",
-  outerSpace: "#3c474b",
-  iceBlue: "#9eefe5",
+  pine: "#31748f",
+  foam: "#9ccfd8",
+  iris: "#c4a7e7",
+  love: "#eb6f92",
+  gold: "#f6c177",
+  rose: "#ebbcba",
+  base: "#191724",
+  dawnBase: "#faf4ed",
 } as const
 
 export const TIMEZONES = {

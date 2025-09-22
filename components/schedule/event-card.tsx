@@ -1,5 +1,4 @@
-"use client"
-
+import React from "react"
 import type { ScheduleEvent, TimeZone } from "@/types/schedule"
 import { formatTime, parseTime } from "@/lib/schedule-utils"
 import { Tooltip } from "./tooltip"
@@ -10,22 +9,22 @@ interface EventCardProps {
   onClick?: () => void
 }
 
-export function EventCard({ event, timeZone, onClick }: EventCardProps) {
+export const EventCard = React.memo(function EventCard({ event, timeZone, onClick }: EventCardProps) {
   const getEventColorVar = (event: ScheduleEvent) => {
-    if (event.type === "study") return "--steel-blue"
+    if (event.type === "study") return "--event-study"
     if ("type" in event) {
       switch (event.type) {
         case "inperson":
-          return "--mint-green"
+          return "--event-inperson"
         case "online":
-          return "--ice-blue"
+          return "--event-online"
         case "exam":
-          return "--outer-space"
+          return "--event-exam"
         default:
-          return "--outer-space"
+          return "--event-inperson"
       }
     }
-    return "--outer-space"
+    return "--event-inperson"
   }
 
   const getEventColorDark = () => {
@@ -43,7 +42,10 @@ export function EventCard({ event, timeZone, onClick }: EventCardProps) {
       <Tooltip event={event}>
         <div
           className={`p-2 rounded-lg border-2 ${colorClasses} opacity-70 cursor-pointer hover:opacity-90 transition-all duration-300 text-xs backdrop-blur-sm hover:scale-105 hover:shadow-lg`}
-          style={{ background: `color-mix(in srgb, transparent, var(${colorVar}) 20%)`, borderColor: `color-mix(in srgb, transparent, var(${colorVar}) 40%)` }}
+          style={{
+            background: `color-mix(in srgb, transparent, var(${colorVar}) 20%)`,
+            borderColor: `color-mix(in srgb, transparent, var(${colorVar}) 40%)`,
+          }}
           onClick={onClick}
         >
           <div className="font-medium truncate leading-tight" title={event.title}>
@@ -59,7 +61,10 @@ export function EventCard({ event, timeZone, onClick }: EventCardProps) {
     <Tooltip event={event}>
       <div
         className={`p-2 rounded-lg border-2 ${colorClasses} shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105 text-xs backdrop-blur-sm transform hover:-translate-y-1`}
-        style={{ background: `color-mix(in srgb, transparent, var(${colorVar}) 20%)`, borderColor: `color-mix(in srgb, transparent, var(${colorVar}) 40%)` }}
+        style={{
+          background: `color-mix(in srgb, transparent, var(${colorVar}) 20%)`,
+          borderColor: `color-mix(in srgb, transparent, var(${colorVar}) 40%)`,
+        }}
         onClick={onClick}
       >
         <div className="font-semibold truncate leading-tight mb-1" title={event.title}>
@@ -82,4 +87,4 @@ export function EventCard({ event, timeZone, onClick }: EventCardProps) {
       </div>
     </Tooltip>
   )
-}
+})

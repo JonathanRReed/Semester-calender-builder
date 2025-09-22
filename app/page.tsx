@@ -235,7 +235,7 @@ export default function SchedulePage() {
               <div className="flex items-center gap-2 group">
                 <div
                   className="w-4 h-4 rounded flex-shrink-0 group-hover:scale-110 transition-transform border"
-                  style={{ backgroundColor: "var(--mint-green)", borderColor: "var(--mint-green)", opacity: 0.25 }}
+                  style={{ backgroundColor: "var(--event-inperson)", borderColor: "var(--event-inperson)", opacity: 0.25 }}
                 ></div>
                 <span className="truncate text-muted-foreground group-hover:text-foreground transition-colors">
                   In-person Classes
@@ -244,7 +244,7 @@ export default function SchedulePage() {
               <div className="flex items-center gap-2 group">
                 <div
                   className="w-4 h-4 rounded flex-shrink-0 group-hover:scale-110 transition-transform border"
-                  style={{ backgroundColor: "var(--ice-blue)", borderColor: "var(--ice-blue)", opacity: 0.25 }}
+                  style={{ backgroundColor: "var(--event-online)", borderColor: "var(--event-online)", opacity: 0.25 }}
                 ></div>
                 <span className="truncate text-muted-foreground group-hover:text-foreground transition-colors">
                   Online Classes
@@ -253,7 +253,7 @@ export default function SchedulePage() {
               <div className="flex items-center gap-2 group">
                 <div
                   className="w-4 h-4 rounded flex-shrink-0 group-hover:scale-110 transition-transform border"
-                  style={{ backgroundColor: "var(--steel-blue)", borderColor: "var(--steel-blue)", opacity: 0.25 }}
+                  style={{ backgroundColor: "var(--event-study)", borderColor: "var(--event-study)", opacity: 0.25 }}
                 ></div>
                 <span className="truncate text-muted-foreground group-hover:text-foreground transition-colors">
                   Study Blocks
@@ -262,7 +262,7 @@ export default function SchedulePage() {
               <div className="flex items-center gap-2 group">
                 <div
                   className="w-4 h-4 rounded flex-shrink-0 group-hover:scale-110 transition-transform border"
-                  style={{ backgroundColor: "var(--outer-space)", borderColor: "var(--outer-space)", opacity: 0.25 }}
+                  style={{ backgroundColor: "var(--event-exam)", borderColor: "var(--event-exam)", opacity: 0.25 }}
                 ></div>
                 <span className="truncate text-muted-foreground group-hover:text-foreground transition-colors">Exams</span>
               </div>

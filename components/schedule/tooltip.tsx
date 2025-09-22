@@ -1,8 +1,6 @@
 "use client"
 
-import type React from "react"
-
-import { useState, useRef } from "react"
+import React, { useState, useRef } from "react"
 import { createPortal } from "react-dom"
 import type { ScheduleEvent } from "@/types/schedule"
 
@@ -11,7 +9,7 @@ interface TooltipProps {
   children: React.ReactNode
 }
 
-export function Tooltip({ event, children }: TooltipProps) {
+export const Tooltip = React.memo(function Tooltip({ event, children }: TooltipProps) {
   const [isVisible, setIsVisible] = useState(false)
   const [position, setPosition] = useState({ x: 0, y: 0 })
   const tooltipRef = useRef<HTMLDivElement>(null)
@@ -116,4 +114,4 @@ export function Tooltip({ event, children }: TooltipProps) {
         )}
     </>
   )
-}
+})

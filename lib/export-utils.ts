@@ -141,7 +141,9 @@ export async function exportToPNG(elementId: string) {
       1.0,
     )
   } catch (error) {
-    console.error("Failed to export PNG:", error)
+    if (process.env.NODE_ENV === "development") {
+      console.error("Failed to export PNG:", error)
+    }
     toast.error("Failed to export PNG. Please try again.")
   }
 }
@@ -237,7 +239,9 @@ function fallbackCopyTextToClipboard(text: string) {
     document.execCommand("copy")
     toast.success("Schedule summary copied to clipboard!")
   } catch (err) {
-    console.error("Failed to copy text: ", err)
+    if (process.env.NODE_ENV === "development") {
+      console.error("Failed to copy text: ", err)
+    }
     toast.error("Failed to copy to clipboard. Please copy manually.")
   }
 

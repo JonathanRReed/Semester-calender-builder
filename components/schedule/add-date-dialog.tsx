@@ -29,12 +29,17 @@ export function AddDateDialog({ isOpen, onClose, onAdd }: AddDateDialogProps) {
     e.preventDefault()
     if (!formData.title || !formData.date) return
 
-    onAdd({
+    const newDate: Omit<ImportantDate, "id"> = {
       title: formData.title,
       date: formData.date,
-      description: formData.description || undefined,
       type: formData.type,
-    })
+    }
+
+    if (formData.description) {
+      newDate.description = formData.description
+    }
+
+    onAdd(newDate)
 
     setFormData({ title: "", date: "", description: "", type: "event" })
     onClose()

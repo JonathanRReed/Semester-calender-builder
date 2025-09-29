@@ -1,8 +1,12 @@
 import type { CourseEvent, StudyBlock, ScheduleEvent, TimeZone } from "@/types/schedule"
 import { TIMEZONES } from "./constants"
 
+const MINUTES_PER_HOUR = 60
+
 export function parseTime(timeStr: string): { hour: number; minute: number } {
-  const [hour, minute] = timeStr.split(":").map(Number)
+  const parts = timeStr.split(":").map(Number)
+  const hour = parts[0] ?? 0
+  const minute = parts[1] ?? 0
   return { hour, minute }
 }
 
@@ -16,7 +20,7 @@ export function formatTime(hour: number, minute: number, timeZone: TimeZone = "C
 
 export function convertTimeToMinutes(timeStr: string): number {
   const { hour, minute } = parseTime(timeStr)
-  return hour * 60 + minute
+  return hour * MINUTES_PER_HOUR + minute
 }
 
 export function getEventDuration(event: ScheduleEvent): number {
@@ -40,8 +44,12 @@ export function getCampusStatus(events: ScheduleEvent[], day: string): "ON CAMPU
 
 export function saveScheduleData(courses: CourseEvent[], studyBlocks: StudyBlock[]) {
   if (typeof window !== "undefined") {
-    localStorage.setItem("schedule-courses", JSON.stringify(courses))
-    localStorage.setItem("schedule-study-blocks", JSON.stringify(studyBlocks))
+    try {
+      localStorage.setItem("schedule-courses", JSON.stringify(courses))
+      localStorage.setItem("schedule-study-blocks", JSON.stringify(studyBlocks))
+    } catch (error) {
+      console.warn("Failed to save schedule data to localStorage:", error)
+    }
   }
 }
 

@@ -49,7 +49,7 @@ export const DayColumn = React.memo(function DayColumn({ day, events, allEvents,
       // Check for overlaps with previous events
       for (let i = 0; i < index; i++) {
         const prevItem = positionedEvents[i]
-        if (item.startMinutes < prevItem.endMinutes && item.endMinutes > prevItem.startMinutes) {
+        if (prevItem && item.startMinutes < prevItem.endMinutes && item.endMinutes > prevItem.startMinutes) {
           // Overlap detected
           column = Math.max(column, 1)
           width = 48 // Half width when overlapping

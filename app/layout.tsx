@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import { FONT_ASSETS, LOGO_ASSETS, SOCIAL_LINKS } from '@/lib/assets'
+
+const FAVICON_PATH = '/Icon.webp'
 import { ThemeProvider } from '@/components/theme-provider'
 import { Toaster } from '@/components/ui/toaster'
 import { ErrorBoundary } from '@/components/error-boundary'
@@ -20,15 +22,9 @@ export const metadata: Metadata = {
   description: 'Created with v0',
   generator: 'v0.app',
   icons: {
-    icon: [
-      { url: LOGO_ASSETS.favicon192, sizes: '192x192', type: 'image/avif' },
-      { url: LOGO_ASSETS.favicon512, sizes: '512x512', type: 'image/avif' },
-    ],
-    shortcut: [{ url: LOGO_ASSETS.favicon192, sizes: '192x192', type: 'image/avif' }],
-    apple: [
-      { url: LOGO_ASSETS.favicon192, sizes: '192x192', type: 'image/avif' },
-      { url: LOGO_ASSETS.favicon512, sizes: '512x512', type: 'image/avif' },
-    ],
+    icon: FAVICON_PATH,
+    shortcut: FAVICON_PATH,
+    apple: FAVICON_PATH,
   },
   openGraph: {
     images: [
@@ -59,9 +55,8 @@ export default function RootLayout({
         {FONT_PRELOADS.map((href) => (
           <link key={href} rel="preload" href={href} as="font" type="font/woff2" crossOrigin="anonymous" />
         ))}
-        <link rel="icon" href={LOGO_ASSETS.favicon192} sizes="192x192" type="image/avif" />
-        <link rel="icon" href={LOGO_ASSETS.favicon512} sizes="512x512" type="image/avif" />
-        <link rel="apple-touch-icon" href={LOGO_ASSETS.favicon512} sizes="512x512" />
+        <link rel="icon" href={FAVICON_PATH} type="image/webp" />
+        <link rel="apple-touch-icon" href={FAVICON_PATH} />
         <link rel="me" href={SOCIAL_LINKS.bluesky} />
         <link rel="me" href={SOCIAL_LINKS.linkedin} />
         <link rel="me" href={SOCIAL_LINKS.github} />

@@ -58,8 +58,14 @@ export function BulkInputDialog({ open, onOpenChange, onImport }: BulkInputDialo
         // Format: Course Code | Title | Days | Time | Location
         const parts = trimmed.split("|").map((p) => p.trim())
         if (parts.length >= 4) {
-          const [courseCode, title, days, time, location = ""] = parts
-          const [startTime, endTime] = time.split("-").map((t) => t.trim())
+          const courseCode = parts[0] ?? ""
+          const title = parts[1] ?? ""
+          const days = parts[2] ?? ""
+          const time = parts[3] ?? ""
+          const location = parts[4] ?? ""
+          const timeParts = time.split("-").map((t) => t.trim())
+          const startTime = timeParts[0] ?? "09:00"
+          const endTime = timeParts[1] ?? "10:00"
 
           days.split(",").forEach((day) => {
             courses.push({
@@ -69,8 +75,8 @@ export function BulkInputDialog({ open, onOpenChange, onImport }: BulkInputDialo
               section: "",
               type: location.toLowerCase().includes("online") ? "online" : "inperson",
               day: day.trim(),
-              startCT: startTime || "09:00",
-              endCT: endTime || "10:00",
+              startCT: startTime,
+              endCT: endTime,
               location,
               instructor: "",
             })

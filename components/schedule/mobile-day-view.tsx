@@ -16,7 +16,7 @@ interface MobileDayViewProps {
 
 export function MobileDayView({ events, timeZone, onEventClick }: MobileDayViewProps) {
   const [currentDayIndex, setCurrentDayIndex] = useState(0)
-  const currentDay = DAYS[currentDayIndex]
+  const currentDay = DAYS[currentDayIndex] ?? "Mon"
   const dayEvents = events.filter((event) => event.day === currentDay)
   const campusStatus = getCampusStatus(events, currentDay)
 

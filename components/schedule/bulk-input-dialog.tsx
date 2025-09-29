@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { toast } from "sonner"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
@@ -49,7 +50,7 @@ export function BulkInputDialog({ open, onOpenChange, onImport }: BulkInputDialo
     const studyBlocks: StudyBlock[] = []
     const importantDates: ImportantDate[] = []
 
-    lines.forEach((line, index) => {
+    lines.forEach((line) => {
       const trimmed = line.trim()
 
       // Parse different formats
@@ -62,7 +63,7 @@ export function BulkInputDialog({ open, onOpenChange, onImport }: BulkInputDialo
 
           days.split(",").forEach((day) => {
             courses.push({
-              id: `bulk-${Date.now()}-${index}-${day.trim().replace(/\//g, '-')}-${Math.random().toString(36).substr(2, 5)}`,
+              id: crypto.randomUUID(),
               title: `${courseCode} ${title}`,
               courseCode,
               section: "",
@@ -78,7 +79,7 @@ export function BulkInputDialog({ open, onOpenChange, onImport }: BulkInputDialo
       } else if (trimmed.toLowerCase().includes("study") || trimmed.toLowerCase().includes("work")) {
         // Study block
         studyBlocks.push({
-          id: `bulk-study-${Date.now()}-${index}-${Math.random().toString(36).substr(2, 5)}`,
+          id: crypto.randomUUID(),
           title: trimmed,
           type: "study",
           day: "Mon",
@@ -89,7 +90,7 @@ export function BulkInputDialog({ open, onOpenChange, onImport }: BulkInputDialo
       } else {
         // Simple course format
         courses.push({
-          id: `bulk-simple-${Date.now()}-${index}-${Math.random().toString(36).substr(2, 5)}`,
+          id: crypto.randomUUID(),
           title: trimmed,
           courseCode: trimmed.split(" ")[0] || "",
           section: "",
@@ -104,6 +105,7 @@ export function BulkInputDialog({ open, onOpenChange, onImport }: BulkInputDialo
     })
 
     onImport({ courses, studyBlocks, importantDates })
+    toast.success(`Added ${courses.length} courses and ${studyBlocks.length} study blocks`)
     setTextInput("")
     onOpenChange(false)
   }
@@ -113,7 +115,7 @@ export function BulkInputDialog({ open, onOpenChange, onImport }: BulkInputDialo
 
     quickCourse.days.forEach((day) => {
       courses.push({
-        id: `quick-${Date.now()}-${day}-${Math.random().toString(36).substr(2, 9)}`,
+        id: crypto.randomUUID(),
         title: quickCourse.title || `${quickCourse.courseCode}`,
         courseCode: quickCourse.courseCode,
         section: quickCourse.section,
@@ -127,6 +129,7 @@ export function BulkInputDialog({ open, onOpenChange, onImport }: BulkInputDialo
     })
 
     onImport({ courses, studyBlocks: [], importantDates: [] })
+    toast.success(`Added ${courses.length} course events`)
     setQuickCourse({
       title: "",
       courseCode: "",

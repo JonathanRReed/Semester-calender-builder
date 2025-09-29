@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -39,11 +40,12 @@ export const DataManagement = React.forwardRef<HTMLButtonElement, DataManagement
       } else if (file.name.endsWith(".ics")) {
         parsedData = parseICSToSchedule(content)
       } else {
-        alert("Please upload a CSV or ICS file")
+        toast.error("Please upload a CSV or ICS file")
         return
       }
 
       onDataUpdate(parsedData)
+      toast.success(`Successfully imported ${parsedData.courses.length + parsedData.studyBlocks.length} events from ${file.name}`)
     }
     reader.readAsText(file)
 
@@ -52,25 +54,45 @@ export const DataManagement = React.forwardRef<HTMLButtonElement, DataManagement
   }
 
   const handleResetToExample = () => {
-    if (confirm("This will replace all current data with the example semester. Continue?")) {
-      onDataUpdate({
-        courses: SEED_COURSES,
-        studyBlocks: SEED_STUDY_BLOCKS,
-        importantDates: IMPORTANT_DATES,
-        mode: "replace",
-      })
-    }
+    toast.warning("This will replace all current data with the example semester.", {
+      action: {
+        label: "Continue",
+        onClick: () => {
+          onDataUpdate({
+            courses: SEED_COURSES,
+            studyBlocks: SEED_STUDY_BLOCKS,
+            importantDates: IMPORTANT_DATES,
+            mode: "replace",
+          })
+          toast.success("Data reset to example semester")
+        },
+      },
+      cancel: {
+        label: "Cancel",
+        onClick: () => {},
+      },
+    })
   }
 
   const handleClearAll = () => {
-    if (confirm("This will clear all schedule data. Continue?")) {
-      onDataUpdate({
-        courses: [],
-        studyBlocks: [],
-        importantDates: [],
-        mode: "replace",
-      })
-    }
+    toast.warning("This will clear all schedule data. This action cannot be undone.", {
+      action: {
+        label: "Clear All",
+        onClick: () => {
+          onDataUpdate({
+            courses: [],
+            studyBlocks: [],
+            importantDates: [],
+            mode: "replace",
+          })
+          toast.success("All schedule data cleared")
+        },
+      },
+      cancel: {
+        label: "Cancel",
+        onClick: () => {},
+      },
+    })
   }
 
   return (

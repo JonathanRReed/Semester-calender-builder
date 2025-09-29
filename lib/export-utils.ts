@@ -1,5 +1,6 @@
 import type { ScheduleEvent } from "@/types/schedule"
 import { parseTime } from "./schedule-utils"
+import { toast } from "sonner"
 
 // ICS export functionality
 export function generateICSFile(events: ScheduleEvent[]): string {
@@ -95,6 +96,8 @@ export function downloadICSFile(events: ScheduleEvent[]) {
   link.click()
   document.body.removeChild(link)
   URL.revokeObjectURL(url)
+  
+  toast.success("Calendar exported successfully!")
 }
 
 // PNG export functionality
@@ -131,6 +134,7 @@ export async function exportToPNG(elementId: string) {
           link.click()
           document.body.removeChild(link)
           URL.revokeObjectURL(url)
+          toast.success("Schedule exported as PNG!")
         }
       },
       "image/png",
@@ -138,7 +142,7 @@ export async function exportToPNG(elementId: string) {
     )
   } catch (error) {
     console.error("Failed to export PNG:", error)
-    alert("Failed to export PNG. Please try again.")
+    toast.error("Failed to export PNG. Please try again.")
   }
 }
 
@@ -209,7 +213,7 @@ export function copyTextSummary(events: ScheduleEvent[]) {
     navigator.clipboard
       .writeText(summary)
       .then(() => {
-        alert("Schedule summary copied to clipboard!")
+        toast.success("Schedule summary copied to clipboard!")
       })
       .catch(() => {
         fallbackCopyTextToClipboard(summary)
@@ -231,10 +235,10 @@ function fallbackCopyTextToClipboard(text: string) {
 
   try {
     document.execCommand("copy")
-    alert("Schedule summary copied to clipboard!")
+    toast.success("Schedule summary copied to clipboard!")
   } catch (err) {
     console.error("Failed to copy text: ", err)
-    alert("Failed to copy to clipboard. Please copy manually.")
+    toast.error("Failed to copy to clipboard. Please copy manually.")
   }
 
   document.body.removeChild(textArea)
@@ -288,4 +292,6 @@ export function downloadCSV(events: ScheduleEvent[]) {
   link.click()
   document.body.removeChild(link)
   URL.revokeObjectURL(url)
+  
+  toast.success("Schedule exported as CSV!")
 }

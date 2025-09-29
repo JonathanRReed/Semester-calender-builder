@@ -84,8 +84,6 @@ export default function SchedulePage() {
     }
   }, [courses, studyBlocks, isLoaded])
 
-  // resetToSeedData removed (unused)
-
   const handleDataUpdate = (data: {
     courses: CourseEvent[]
     studyBlocks: StudyBlock[]
@@ -140,7 +138,7 @@ export default function SchedulePage() {
   }
 
   const handleAddEvent = (newEvent: Omit<ScheduleEvent, "id">) => {
-    const id = `${newEvent.type}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+    const id = crypto.randomUUID()
     const eventWithId = { ...newEvent, id }
 
     if (newEvent.type === "study") {
@@ -151,7 +149,7 @@ export default function SchedulePage() {
   }
 
   const handleAddDate = (newDate: Omit<ImportantDate, "id">) => {
-    const id = `date-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+    const id = crypto.randomUUID()
     setImportantDates((prev) => [...prev, { ...newDate, id }])
   }
 

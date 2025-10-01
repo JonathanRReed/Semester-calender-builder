@@ -170,25 +170,24 @@ export default function SchedulePage() {
       </div>
     )
   }
-
   return (
     <div className="min-h-screen bg-background">
       <header className="glass-header p-3 sm:p-4 sticky top-0 z-30 slide-up">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col gap-4">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div>
                 <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground">Semester Calendar Builder</h1>
                 <p className="text-xs sm:text-sm text-muted-foreground mt-1">
                   {hasEvents ? `${allEvents.length} events scheduled` : "Build your perfect semester schedule"}
                 </p>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 w-full sm:w-auto justify-start sm:justify-end">
                 <DataManagement ref={dataManagementRef} onDataUpdate={handleDataUpdate} />
                 <Button
                   onClick={() => setIsAddDialogOpen(true)}
                   size="sm"
-                  className="btn-primary flex items-center gap-1 text-xs sm:text-sm text-white scale-in"
+                  className="btn-primary flex items-center gap-1 text-xs sm:text-sm text-white scale-in w-full sm:w-auto"
                   aria-label="Add new event or study block"
                 >
                   <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
@@ -200,44 +199,47 @@ export default function SchedulePage() {
             </div>
 
             <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
-              <div className="flex items-center gap-1 glass-card rounded-lg p-1 w-fit">
-                {(["PT", "MT", "CT", "ET"] as TimeZone[]).map((tz) => (
-                  <button
-                    key={tz}
-                    onClick={() => setTimeZone(tz)}
-                    className={`px-3 py-1.5 rounded text-xs sm:text-sm font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-ring/50 ${
-                      timeZone === tz
-                        ? "bg-primary text-primary-foreground shadow-lg"
-                        : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
-                    }`}
-                    aria-pressed={timeZone === tz}
-                  >
-                    {tz}
-                  </button>
-                ))}
+              <div className="glass-card rounded-lg p-1 w-full sm:w-fit overflow-x-auto">
+                <div className="flex flex-nowrap items-center justify-center sm:justify-start gap-1 min-w-max">
+                  {(["PT", "MT", "CT", "ET"] as TimeZone[]).map((tz) => (
+                    <button
+                      key={tz}
+                      onClick={() => setTimeZone(tz)}
+                      className={`px-3 py-1.5 rounded text-xs sm:text-sm font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-ring/50 ${
+                        timeZone === tz
+                          ? "bg-primary text-primary-foreground shadow-lg"
+                          : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
+                      }`}
+                      aria-pressed={timeZone === tz}
+                    >
+                      {tz}
+                    </button>
+                  ))}
+                </div>
               </div>
 
-              <div className="flex flex-wrap gap-2">
-                {(["all", "inperson", "online", "study", "exam"] as FilterType[]).map((filter) => (
-                  <button
-                    key={filter}
-                    onClick={() => setActiveFilter(filter)}
-                    className={`px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 capitalize focus:outline-none focus:ring-2 focus:ring-ring/50 transform hover:scale-105 ${
-                      activeFilter === filter
-                        ? "btn-primary text-white shadow-lg"
-                        : "btn-secondary text-muted-foreground hover:text-foreground"
-                    }`}
-                    aria-pressed={activeFilter === filter}
-                  >
-                    {filter === "inperson" ? "In-person" : filter}
-                  </button>
-                ))}
+              <div className="w-full overflow-x-auto pb-1 -mx-1 px-1 sm:overflow-visible sm:mx-0 sm:px-0">
+                <div className="flex flex-nowrap sm:flex-wrap gap-2 sm:gap-3 min-w-max sm:min-w-0">
+                  {(["all", "inperson", "online", "study", "exam"] as FilterType[]).map((filter) => (
+                    <button
+                      key={filter}
+                      onClick={() => setActiveFilter(filter)}
+                      className={`px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 capitalize focus:outline-none focus:ring-2 focus:ring-ring/50 transform hover:scale-105 ${
+                        activeFilter === filter
+                          ? "btn-primary text-white shadow-lg"
+                          : "btn-secondary text-muted-foreground hover:text-foreground"
+                      }`}
+                      aria-pressed={activeFilter === filter}
+                    >
+                      {filter === "inperson" ? "In-person" : filter}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
         </div>
       </header>
-
       <main className="main-content p-3 sm:p-4 pb-20 sm:pb-4">
         <div className="schedule-container max-w-7xl mx-auto space-y-6">
           <OnboardingBanner

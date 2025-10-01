@@ -20,14 +20,28 @@ interface DataManagementProps {
   onDataUpdate: (data: { courses: CourseEvent[]; studyBlocks: StudyBlock[]; importantDates: ImportantDate[]; mode?: "append" | "replace" }) => void
 }
 
-export const DataManagement = React.forwardRef<HTMLButtonElement, DataManagementProps>(function DataManagement(
+export type DataManagementHandle = {
+  openMenu: () => void
+  openBulkInput: () => void
+  triggerFileImport: () => void
+  resetToExample: () => void
+  clearAll: () => void
+}
+
+export const DataManagement = React.forwardRef<DataManagementHandle, DataManagementProps>(function DataManagement(
   { onDataUpdate }: DataManagementProps,
   ref,
 ) {
   const [bulkInputOpen, setBulkInputOpen] = React.useState(false)
+  const [menuOpen, setMenuOpen] = React.useState(false)
+  const triggerRef = React.useRef<HTMLButtonElement>(null)
+  const importInputRef = React.useRef<HTMLInputElement>(null)
 
   const handleFileImport = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
+    const input = event.target
+    if (!input) return
+
+    const file = input.files?.[0]
     if (!file) return
 
     const reader = new FileReader()
@@ -50,10 +64,10 @@ export const DataManagement = React.forwardRef<HTMLButtonElement, DataManagement
     reader.readAsText(file)
 
     // Reset input
-    event.target.value = ""
+    input.value = ""
   }
 
-  const handleResetToExample = () => {
+  const handleResetToExample = React.useCallback(() => {
     toast.warning("This will replace all current data with the example semester.", {
       action: {
         label: "Continue",
@@ -72,9 +86,9 @@ export const DataManagement = React.forwardRef<HTMLButtonElement, DataManagement
         onClick: () => {},
       },
     })
-  }
+  }, [onDataUpdate])
 
-  const handleClearAll = () => {
+  const handleClearAll = React.useCallback(() => {
     toast.warning("This will clear all schedule data. This action cannot be undone.", {
       action: {
         label: "Clear All",
@@ -93,44 +107,94 @@ export const DataManagement = React.forwardRef<HTMLButtonElement, DataManagement
         onClick: () => {},
       },
     })
-  }
+  }, [onDataUpdate])
+
+  React.useImperativeHandle(
+    ref,
+    () => ({
+      openMenu: () => {
+        setMenuOpen(true)
+        requestAnimationFrame(() => {
+          triggerRef.current?.focus()
+        })
+      },
+      openBulkInput: () => {
+        setMenuOpen(false)
+        setBulkInputOpen(true)
+      },
+      triggerFileImport: () => {
+        setMenuOpen(false)
+        importInputRef.current?.click()
+      },
+      resetToExample: () => {
+        setMenuOpen(false)
+        handleResetToExample()
+      },
+      clearAll: () => {
+        setMenuOpen(false)
+        handleClearAll()
+      },
+    }),
+    [handleResetToExample, handleClearAll],
+  )
+
+  const handleOpenBulkInput = React.useCallback(() => {
+    setMenuOpen(false)
+    setBulkInputOpen(true)
+  }, [])
+
+  const handleTriggerImport = React.useCallback(() => {
+    setMenuOpen(false)
+    importInputRef.current?.click()
+  }, [])
 
   return (
     <>
-      <DropdownMenu>
+      <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
         <DropdownMenuTrigger asChild>
-          <Button ref={ref} variant="outline" size="sm">
+          <Button ref={triggerRef} variant="outline" size="sm" aria-expanded={menuOpen}>
             <Database className="w-4 h-4 mr-2" />
             Manage Data
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
-          <DropdownMenuItem onClick={() => setBulkInputOpen(true)}>
+          <DropdownMenuItem onClick={handleOpenBulkInput}>
             <Plus className="w-4 h-4 mr-2" />
             Add Semester Info
           </DropdownMenuItem>
 
           <DropdownMenuSeparator />
 
-          <DropdownMenuItem onClick={() => document.getElementById("file-import")?.click()}>
+          <DropdownMenuItem onClick={handleTriggerImport}>
             <Upload className="w-4 h-4 mr-2" />
             Import CSV/ICS File
           </DropdownMenuItem>
 
           <DropdownMenuSeparator />
 
-          <DropdownMenuItem onClick={handleResetToExample}>
+          <DropdownMenuItem
+            onClick={() => {
+              setMenuOpen(false)
+              handleResetToExample()
+            }}
+          >
             <RotateCcw className="w-4 h-4 mr-2" />
             Reset to Example
           </DropdownMenuItem>
 
-          <DropdownMenuItem onClick={handleClearAll} className="text-destructive">
+          <DropdownMenuItem
+            onClick={() => {
+              setMenuOpen(false)
+              handleClearAll()
+            }}
+            className="text-destructive"
+          >
             Clear All Data
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <input id="file-import" type="file" accept=".csv,.ics" onChange={handleFileImport} className="hidden" />
+      <input ref={importInputRef} type="file" accept=".csv,.ics" onChange={handleFileImport} className="hidden" />
 
       <BulkInputDialog open={bulkInputOpen} onOpenChange={setBulkInputOpen} onImport={onDataUpdate} />
     </>

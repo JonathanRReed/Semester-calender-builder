@@ -41,10 +41,10 @@ export const EventCard = React.memo(function EventCard({ event, timeZone, onClic
     return (
       <Tooltip event={event}>
         <div
-          className={`p-2 rounded-lg border-2 ${colorClasses} opacity-70 cursor-pointer hover:opacity-90 transition-all duration-300 text-xs backdrop-blur-sm hover:scale-105 hover:shadow-lg`}
+          className={`p-2 rounded-lg border ${colorClasses} opacity-80 cursor-pointer transition-transform duration-300 text-xs backdrop-blur-sm shadow-[var(--shadow-xs)] hover:opacity-95 hover:shadow-[var(--shadow-sm)] hover:-translate-y-0.5`}
           style={{
-            background: `color-mix(in srgb, transparent, var(${colorVar}) 20%)`,
-            borderColor: `color-mix(in srgb, transparent, var(${colorVar}) 40%)`,
+            background: `color-mix(in srgb, var(${colorVar}), transparent 82%)`,
+            borderColor: `color-mix(in srgb, var(${colorVar}), transparent 55%)`,
           }}
           onClick={onClick}
         >
@@ -60,10 +60,10 @@ export const EventCard = React.memo(function EventCard({ event, timeZone, onClic
   return (
     <Tooltip event={event}>
       <div
-        className={`p-2 rounded-lg border-2 ${colorClasses} shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105 text-xs backdrop-blur-sm transform hover:-translate-y-1`}
+        className={`p-2 rounded-lg border ${colorClasses} text-xs backdrop-blur-sm cursor-pointer transition-transform duration-300 shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-md)] hover:-translate-y-1`}
         style={{
-          background: `color-mix(in srgb, transparent, var(${colorVar}) 20%)`,
-          borderColor: `color-mix(in srgb, transparent, var(${colorVar}) 40%)`,
+          background: `color-mix(in srgb, var(${colorVar}), transparent 78%)`,
+          borderColor: `color-mix(in srgb, var(${colorVar}), transparent 50%)`,
         }}
         onClick={onClick}
       >

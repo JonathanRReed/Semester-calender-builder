@@ -1,7 +1,15 @@
-import type { CourseEvent, StudyBlock, ScheduleEvent, TimeZone } from "@/types/schedule"
+import type { CourseEvent, StudyBlock, ScheduleEvent, TimeZone, ImportantDate } from "@/types/schedule"
 import { TIMEZONES } from "./constants"
 
 const MINUTES_PER_HOUR = 60
+const STORAGE_KEYS = {
+  courses: "schedule-courses",
+  studyBlocks: "schedule-study-blocks",
+  importantDates: "schedule-important-dates",
+  snapshot: "schedule-json",
+} as const
+
+const isBrowser = () => typeof window !== "undefined"
 
 export function parseTime(timeStr: string): { hour: number; minute: number } {
   const parts = timeStr.split(":").map(Number)
@@ -42,31 +50,99 @@ export function getCampusStatus(events: ScheduleEvent[], day: string): "ON CAMPU
 
 // getEventColor removed in favor of semantic tokens and per-component styling
 
-export function saveScheduleData(courses: CourseEvent[], studyBlocks: StudyBlock[]) {
-  if (typeof window !== "undefined") {
-    try {
-      localStorage.setItem("schedule-courses", JSON.stringify(courses))
-      localStorage.setItem("schedule-study-blocks", JSON.stringify(studyBlocks))
-    } catch (error) {
-      console.warn("Failed to save schedule data to localStorage:", error)
-    }
+export function getBlankSchedule(): {
+  courses: CourseEvent[]
+  studyBlocks: StudyBlock[]
+  importantDates: ImportantDate[]
+} {
+  return {
+    courses: [],
+    studyBlocks: [],
+    importantDates: [],
   }
 }
 
-export function loadScheduleData(): { courses: CourseEvent[]; studyBlocks: StudyBlock[] } {
-  if (typeof window === "undefined") {
-    return { courses: [], studyBlocks: [] }
+export function saveScheduleData(
+  courses: CourseEvent[],
+  studyBlocks: StudyBlock[],
+  importantDates: ImportantDate[] = [],
+) {
+  if (!isBrowser()) return
+
+  try {
+    const snapshot = { courses, studyBlocks, importantDates }
+    localStorage.setItem(STORAGE_KEYS.courses, JSON.stringify(courses))
+    localStorage.setItem(STORAGE_KEYS.studyBlocks, JSON.stringify(studyBlocks))
+    localStorage.setItem(STORAGE_KEYS.importantDates, JSON.stringify(importantDates))
+    localStorage.setItem(STORAGE_KEYS.snapshot, JSON.stringify(snapshot, null, 2))
+  } catch (error) {
+    console.warn("Failed to save schedule data to localStorage:", error)
+  }
+}
+
+export function clearScheduleData() {
+  if (!isBrowser()) return
+
+  try {
+    localStorage.removeItem(STORAGE_KEYS.courses)
+    localStorage.removeItem(STORAGE_KEYS.studyBlocks)
+    localStorage.removeItem(STORAGE_KEYS.importantDates)
+    localStorage.removeItem(STORAGE_KEYS.snapshot)
+  } catch (error) {
+    console.warn("Failed to clear schedule data from localStorage:", error)
+  }
+}
+
+export function ensureScheduleInitialized() {
+  if (!isBrowser()) return
+
+  try {
+    const hasCourses = localStorage.getItem(STORAGE_KEYS.courses)
+    const hasStudyBlocks = localStorage.getItem(STORAGE_KEYS.studyBlocks)
+    const hasImportantDates = localStorage.getItem(STORAGE_KEYS.importantDates)
+
+    if (!hasCourses && !hasStudyBlocks && !hasImportantDates) {
+      const blank = getBlankSchedule()
+      saveScheduleData(blank.courses, blank.studyBlocks, blank.importantDates)
+    }
+  } catch (error) {
+    console.warn("Failed to initialize schedule storage:", error)
+  }
+}
+
+export function resetScheduleData(): {
+  courses: CourseEvent[]
+  studyBlocks: StudyBlock[]
+  importantDates: ImportantDate[]
+} {
+  const blank = getBlankSchedule()
+  clearScheduleData()
+  saveScheduleData(blank.courses, blank.studyBlocks, blank.importantDates)
+  return blank
+}
+
+export function loadScheduleData(): {
+  courses: CourseEvent[]
+  studyBlocks: StudyBlock[]
+  importantDates: ImportantDate[]
+} {
+  if (!isBrowser()) {
+    return { courses: [], studyBlocks: [], importantDates: [] }
   }
 
   try {
-    const savedCourses = localStorage.getItem("schedule-courses")
-    const savedStudyBlocks = localStorage.getItem("schedule-study-blocks")
+    ensureScheduleInitialized()
+
+    const savedCourses = localStorage.getItem(STORAGE_KEYS.courses)
+    const savedStudyBlocks = localStorage.getItem(STORAGE_KEYS.studyBlocks)
+    const savedImportantDates = localStorage.getItem(STORAGE_KEYS.importantDates)
 
     return {
       courses: savedCourses ? JSON.parse(savedCourses) : [],
       studyBlocks: savedStudyBlocks ? JSON.parse(savedStudyBlocks) : [],
+      importantDates: savedImportantDates ? JSON.parse(savedImportantDates) : [],
     }
   } catch {
-    return { courses: [], studyBlocks: [] }
+    return { courses: [], studyBlocks: [], importantDates: [] }
   }
 }

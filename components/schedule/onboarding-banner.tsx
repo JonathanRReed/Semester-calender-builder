@@ -19,7 +19,7 @@ export function OnboardingBanner({ hasEvents, onAddEvent, onManageData }: Onboar
   return (
     <Card className="bg-card border border-border backdrop-blur-sm">
       <CardContent className="p-4 sm:p-6">
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
               <Calendar className="w-5 h-5 text-primary" />
@@ -28,12 +28,16 @@ export function OnboardingBanner({ hasEvents, onAddEvent, onManageData }: Onboar
             <p className="text-muted-foreground text-sm mb-4">
               Get started by adding your courses and study blocks, or import your existing schedule data.
             </p>
-            <div className="flex flex-wrap gap-2">
-              <Button onClick={onAddEvent} size="sm" className="bg-primary text-primary-foreground hover:brightness-110">
+            <div className="flex flex-col xs:flex-row flex-wrap gap-2">
+              <Button
+                onClick={onAddEvent}
+                size="sm"
+                className="bg-primary text-primary-foreground hover:brightness-110 w-full xs:w-auto"
+              >
                 <Plus className="w-4 h-4 mr-1" />
                 Add First Event
               </Button>
-              <Button onClick={onManageData} variant="outline" size="sm">
+              <Button onClick={onManageData} variant="outline" size="sm" className="w-full xs:w-auto">
                 <Download className="w-4 h-4 mr-1" />
                 Import Data
               </Button>

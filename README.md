@@ -1,11 +1,6 @@
 # Semester Calendar Builder
 
-Acalendar builder for managing your semester schedule with support for courses, study blocks, and important dates.
-
-[![Built with Next.js](https://img.shields.io/badge/Built%20with-Next.js%2015-black?style=flat-square&logo=next.js)](https://nextjs.org/)
-[![React 19](https://img.shields.io/badge/React-19-blue?style=flat-square&logo=react)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-38bdf8?style=flat-square&logo=tailwindcss)](https://tailwindcss.com/)
+A calendar builder for managing your semester schedule with support for courses, study blocks, and important dates.
 
 ## Features
 
@@ -61,7 +56,7 @@ bun run start
 
 ## Project Structure
 
-```
+`
 ├── app/                    # Next.js app directory
 │   ├── layout.tsx         # Root layout with theme
 │   ├── page.tsx           # Main calendar page
@@ -82,7 +77,7 @@ bun run start
 │   └── schedule.ts        # TypeScript types
 └── public/
     └── icon.svg           # App icon
-```
+`
 
 ## Usage
 
@@ -97,10 +92,10 @@ bun run start
 
 1. Click "Manage Data" → "Bulk Input"
 2. Paste schedule in supported format:
-   ```
+   `
    CS101 | Intro to Programming | Mon,Wed | 09:00-10:30 | Room 101
    MATH201 | Calculus II | Tue,Thu | 13:00-14:30 | Online
-   ```
+   `
 3. Events automatically populate
 
 ### Exporting
@@ -109,32 +104,6 @@ bun run start
 - **CSV**: Open in Excel/Sheets for further editing
 - **PNG**: Share schedule as an image
 - **Text**: Copy formatted text summary
-
-## Recent Improvements
-
-### Code Quality Enhancements (Latest)
-
-- ✅ **Removed 23 unused dependencies** (~500KB+ savings)
-- ✅ **Stricter TypeScript** - Added `noUncheckedIndexedAccess`
-- ✅ **Production console guards** - No debug logs in production
-- ✅ **localStorage error handling** - Won't crash in incognito mode
-- ✅ **Build optimization** - ~25% faster (removed babel config)
-- ✅ **Bundle size** - Reduced by ~70KB
-- ✅ **Type safety** - Fixed 8+ potential runtime bugs
-
-## Performance
-
-- **First Load JS**: ~168KB
-- **Build Time**: ~12-14s
-- **Bundle Size**: ~350KB (gzipped)
-- **Lighthouse Score**: 95+ (Performance, Accessibility, Best Practices)
-
-## Browser Support
-
-- Chrome/Edge 90+
-- Firefox 88+
-- Safari 14+
-- Mobile browsers (iOS Safari, Chrome Mobile)
 
 ## Contributing
 

@@ -9,18 +9,10 @@ A calendar builder for managing your semester schedule with support for courses,
 - **Bulk Import/Export** - CSV, ICS (iCalendar), and text formats
 - **Important Dates** - Track deadlines, exams, and breaks
 - **PNG Export** - Generate shareable schedule images
-- **Dark Mode** - Beautiful Rose Pine theme
+- **Dark Mode** - Beautiful Rose Pine night theme
 - **Mobile Responsive** - Works seamlessly on all devices
 - **Local Storage** - Your data never leaves your device
-
-## Tech Stack
-
-- **Framework**: Next.js 15 (App Router)
-- **UI**: React 19 with Radix UI components
-- **Styling**: Tailwind CSS v4 with custom Rose Pine theme
-- **Forms**: React Hook Form + Zod validation
-- **TypeScript**: Strict mode with enhanced safety checks
-- **Runtime**: Bun (recommended) or Node.js
+- **Guided Onboarding** - Load a sample semester and follow quick tips right in the app
 
 ## Getting Started
 
@@ -54,32 +46,14 @@ bun run build
 bun run start
 ```
 
-## Project Structure
-
-`
-├── app/                    # Next.js app directory
-│   ├── layout.tsx         # Root layout with theme
-│   ├── page.tsx           # Main calendar page
-│   └── globals.css        # Global styles & theme
-├── components/
-│   ├── schedule/          # Calendar components
-│   │   ├── week-grid.tsx
-│   │   ├── event-card.tsx
-│   │   ├── export-menu.tsx
-│   │   └── ...
-│   └── ui/                # Reusable UI components
-├── lib/
-│   ├── schedule-utils.ts  # Calendar logic
-│   ├── export-utils.ts    # Export functionality
-│   ├── import-utils.ts    # Import parsers
-│   └── assets.ts          # External asset URLs
-├── types/
-│   └── schedule.ts        # TypeScript types
-└── public/
-    └── icon.svg           # App icon
-`
-
 ## Usage
+
+### Quick Start
+
+- Open the app and click **Load Example Semester** in the onboarding banner.
+- Explore the sample classes, study blocks, and key academic dates.
+- Replace events with your real schedule or import a CSV/ICS file via **Manage Data**.
+- Your changes are stored locally, so you can experiment without losing anything.
 
 ### Adding Events
 

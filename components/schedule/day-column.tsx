@@ -40,36 +40,108 @@ export const DayColumn = React.memo(function DayColumn({ day, events, allEvents,
     [events]
   )
 
-  // Detect overlaps and adjust positioning
-  const finalPositions = React.useMemo(() =>
-    positionedEvents.map((item, index) => {
-      let column = 0
-      let width = 100
+  // Detect overlaps and adjust positioning so cards never stack on top of each other
+  const finalPositions = React.useMemo(() => {
+    if (positionedEvents.length === 0) return []
 
-      // Check for overlaps with previous events
-      for (let i = 0; i < index; i++) {
-        const prevItem = positionedEvents[i]
-        if (prevItem && item.startMinutes < prevItem.endMinutes && item.endMinutes > prevItem.startMinutes) {
-          // Overlap detected
-          column = Math.max(column, 1)
-          width = 48 // Half width when overlapping
+    type PositionedItem = (typeof positionedEvents)[number] & { column?: number }
+
+    const groups: PositionedItem[][] = []
+    let currentGroup: PositionedItem[] = []
+    let groupEnd = -Infinity
+
+    positionedEvents.forEach((item) => {
+      const extendedItem: PositionedItem = { ...item }
+
+      if (currentGroup.length === 0) {
+        currentGroup.push(extendedItem)
+        groupEnd = extendedItem.endMinutes
+        return
+      }
+
+      if (extendedItem.startMinutes < groupEnd) {
+        currentGroup.push(extendedItem)
+        groupEnd = Math.max(groupEnd, extendedItem.endMinutes)
+      } else {
+        groups.push(currentGroup)
+        currentGroup = [extendedItem]
+        groupEnd = extendedItem.endMinutes
+      }
+    })
+
+    if (currentGroup.length > 0) {
+      groups.push(currentGroup)
+    }
+
+    const marginX = 4
+    const columnGap = 6
+
+    const laidOut: Array<{
+      event: ScheduleEvent
+      style: React.CSSProperties
+    }> = []
+
+    groups.forEach((group) => {
+      const columns: PositionedItem[][] = []
+
+      group.forEach((item) => {
+        let placed = false
+
+        for (let columnIndex = 0; columnIndex < columns.length; columnIndex++) {
+          const columnEvents = columns[columnIndex]
+          if (!columnEvents || columnEvents.length === 0) {
+            continue
+          }
+          const lastEventInColumn = columnEvents[columnEvents.length - 1]
+          if (!lastEventInColumn) {
+            continue
+          }
+
+          if (item.startMinutes >= lastEventInColumn.endMinutes) {
+            columnEvents.push(item)
+            item.column = columnIndex
+            placed = true
+            break
+          }
         }
-      }
 
-      return {
-        ...item,
-        style: {
-          position: "absolute" as const,
-          top: `${item.topPosition}px`,
-          height: `${item.height}px`,
-          left: column === 0 ? "2px" : "50%",
-          width: `${width}%`,
-          zIndex: column + 1,
-        },
-      }
-    }),
-    [positionedEvents]
-  )
+        if (!placed) {
+          columns.push([item])
+          item.column = columns.length - 1
+        }
+      })
+
+      const columnCount = Math.max(columns.length, 1)
+      const widthPercent = 100 / columnCount
+      const widthAdjustment = columnCount === 1 ? marginX * 2 : (columnGap * (columnCount - 1)) / columnCount
+
+      group.forEach((item) => {
+        const columnIndex = item.column ?? 0
+        const left =
+          columnCount === 1
+            ? `${marginX}px`
+            : `calc(${widthPercent * columnIndex}% + ${columnGap * columnIndex}px + ${marginX}px)`
+        const width =
+          columnCount === 1
+            ? `calc(100% - ${marginX * 2}px)`
+            : `calc(${widthPercent}% - ${widthAdjustment + (marginX * 2) / columnCount}px)`
+
+        laidOut.push({
+          event: item.event,
+          style: {
+            position: "absolute",
+            top: `${item.topPosition}px`,
+            height: `${item.height}px`,
+            left,
+            width,
+            zIndex: (item.column ?? 0) + 1,
+          },
+        })
+      })
+    })
+
+    return laidOut
+  }, [positionedEvents])
 
   // Async courses
   const asyncEvents = events.filter((event) => event.startCT === "00:00" && event.endCT === "00:00")

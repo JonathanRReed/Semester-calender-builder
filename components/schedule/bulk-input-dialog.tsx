@@ -167,14 +167,14 @@ export function BulkInputDialog({ open, onOpenChange, onImport }: BulkInputDialo
             <div>
               <Label htmlFor="bulk-text">Paste your course information</Label>
               <p className="text-sm text-muted-foreground mb-2">
-                Supports formats like: &ldquo;MATH 2413 | Calculus I | Mon,Wed,Fri | 10:00-10:50 | SCI 3.230&rdquo;
+                Supports formats like: &ldquo;CS 101 | Intro to Programming | Mon,Wed | 09:30-10:45 | Engineering Hall 201&rdquo;
               </p>
               <Textarea
                 id="bulk-text"
-                placeholder="MATH 2413 | Calculus I | Mon,Wed,Fri | 10:00-10:50 | SCI 3.230
-NSC 4359 | Cognitive Neuroscience | Mon,Wed | 17:30-18:45 | CRA 12.110
-Study - Math homework
-EPPS 4337 | Internship | Tue,Thu | 19:00-20:30 | Online"
+                placeholder="CS 101 | Intro to Programming | Mon,Wed | 09:30-10:45 | Engineering Hall 201
+MATH 151 | Calculus I | Mon,Wed,Fri | 11:00-11:50 | Science Center 120
+Study - Library focus session
+PSYC 2301 | Intro to Psychology | Tue,Thu | 13:30-14:45 | Social Science 110"
                 value={textInput}
                 onChange={(e) => setTextInput(e.target.value)}
                 rows={8}

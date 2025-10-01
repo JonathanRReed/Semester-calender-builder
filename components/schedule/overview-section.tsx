@@ -4,6 +4,7 @@ import { useState } from "react"
 import { Plus, Calendar, Clock, GraduationCap, Coffee } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import type { ImportantDate } from "@/types/schedule"
 import { AddDateDialog } from "./add-date-dialog"
 
@@ -11,9 +12,10 @@ interface OverviewSectionProps {
   dates: ImportantDate[]
   onAddDate: (date: Omit<ImportantDate, "id">) => void
   onDeleteDate: (id: string) => void
+  className?: string
 }
 
-export function OverviewSection({ dates, onAddDate }: OverviewSectionProps) {
+export function OverviewSection({ dates, onAddDate, className }: OverviewSectionProps) {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
 
   const getDateIcon = (type: ImportantDate["type"]) => {
@@ -47,56 +49,43 @@ export function OverviewSection({ dates, onAddDate }: OverviewSectionProps) {
 
   return (
     <>
-      <div className="glass-card rounded-lg scale-in">
-        <div className="p-4 sm:p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-primary" />
-              <h2 className="text-foreground font-semibold text-lg">Important Dates</h2>
-            </div>
-            <Button onClick={() => setIsAddDialogOpen(true)} size="sm" className="btn-primary text-white">
-              <Plus className="w-4 h-4 mr-1" />
-              Add Date
-            </Button>
+      <Card className={className} data-slot="overview">
+        <CardHeader className="pb-3 sm:pb-4 flex flex-row items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <Calendar className="w-4 h-4 text-primary" />
+            <CardTitle className="text-base sm:text-lg leading-tight">Important Dates</CardTitle>
           </div>
-          <div className="space-y-3">
-            {sortedDates.map((date, index) => (
-              <div
-                key={date.id}
-                className="flex items-start gap-3 p-3 rounded-lg bg-card/30 border border-border/30 hover:bg-card/50 transition-all duration-300 group hover:scale-[1.02] hover:shadow-lg"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <div className={`p-2 rounded-lg ${getDateColor()} group-hover:scale-110 transition-transform`}>
-                  {getDateIcon(date.type)}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between gap-2">
-                    <div>
-                      <h4 className="font-medium text-foreground text-sm leading-tight group-hover:text-foreground transition-colors">
-                        {date.title}
-                      </h4>
-                      <p className="text-muted-foreground text-xs mt-1 group-hover:text-foreground/80 transition-colors">
-                        {formatDate(date.date)}
-                      </p>
-                      {date.description && (
-                        <p className="text-muted-foreground text-xs mt-1 group-hover:text-foreground/70 transition-colors">
-                          {date.description}
-                        </p>
-                      )}
-                    </div>
-                    <Badge
-                      variant="outline"
-                      className={`text-xs capitalize ${getDateColor()} opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:scale-105`}
-                    >
-                      {date.type}
-                    </Badge>
+          <Button onClick={() => setIsAddDialogOpen(true)} size="sm">
+            <Plus className="w-4 h-4 mr-1" />
+            Add Date
+          </Button>
+        </CardHeader>
+        <CardContent className="space-y-2.5">
+          {sortedDates.map((date, index) => (
+            <div
+              key={date.id}
+              className="flex items-start gap-3 rounded-lg border border-border/40 bg-card/40 p-2.5 transition-all duration-300 group hover:bg-card/55 hover:-translate-y-0.5"
+              style={{ animationDelay: `${index * 0.1}s` }}
+            >
+              <div className={`p-1.5 rounded-lg ${getDateColor()} group-hover:scale-110 transition-transform`}>
+                {getDateIcon(date.type)}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <h4 className="font-medium text-sm text-foreground leading-tight">{date.title}</h4>
+                    <p className="text-muted-foreground text-[11px] mt-0.5">{formatDate(date.date)}</p>
+                    {date.description && <p className="text-muted-foreground text-[11px] mt-0.5">{date.description}</p>}
                   </div>
+                  <Badge variant="outline" className="text-[11px] capitalize px-2 py-0.5">
+                    {date.type}
+                  </Badge>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-      </div>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
 
       <AddDateDialog isOpen={isAddDialogOpen} onClose={() => setIsAddDialogOpen(false)} onAdd={onAddDate} />
     </>

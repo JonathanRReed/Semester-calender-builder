@@ -1,20 +1,48 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { Plus } from "lucide-react"
+import { Plus, Sparkles, Menu, X, SlidersHorizontal, RotateCcw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import type { CourseEvent, StudyBlock, FilterType, TimeZone, ScheduleEvent, ImportantDate } from "@/types/schedule"
 import { SEED_COURSES, SEED_STUDY_BLOCKS, IMPORTANT_DATES } from "@/lib/schedule-data"
-import { saveScheduleData, loadScheduleData } from "@/lib/schedule-utils"
+import {
+  saveScheduleData,
+  loadScheduleData,
+  clearScheduleData,
+  ensureScheduleInitialized,
+  resetScheduleData,
+} from "@/lib/schedule-utils"
 import { WeekGrid } from "@/components/schedule/week-grid"
 import { EditEventDialog } from "@/components/schedule/edit-event-dialog"
 import { AddEventDialog } from "@/components/schedule/add-event-dialog"
 import { ExportMenu } from "@/components/schedule/export-menu"
 import { OverviewSection } from "@/components/schedule/overview-section"
-import { DataManagement } from "@/components/schedule/data-management"
+import { DataManagement, DataManagementHandle } from "@/components/schedule/data-management"
 import { OnboardingBanner } from "@/components/schedule/onboarding-banner"
 import { QuickActions } from "@/components/schedule/quick-actions"
+import { OnboardingGuideDialog } from "@/components/schedule/onboarding-guide-dialog"
+import { toast } from "sonner"
 
+
+const canonicalizeById = <T extends { id: string }>(items: T[]) =>
+  JSON.stringify(
+    [...items]
+      .map((item) => ({ ...item }))
+      .sort((a, b) => a.id.localeCompare(b.id)),
+  )
+
+const SEED_COURSE_SIGNATURE = canonicalizeById(SEED_COURSES)
+const SEED_STUDY_SIGNATURE = canonicalizeById(SEED_STUDY_BLOCKS)
+const SEED_DATES_SIGNATURE = canonicalizeById(IMPORTANT_DATES)
+
+const matchesSeedSchedule = (
+  courses: CourseEvent[],
+  studyBlocks: StudyBlock[],
+  importantDates: ImportantDate[],
+) =>
+  canonicalizeById(courses) === SEED_COURSE_SIGNATURE &&
+  canonicalizeById(studyBlocks) === SEED_STUDY_SIGNATURE &&
+  canonicalizeById(importantDates) === SEED_DATES_SIGNATURE
 
 const uniqueById = <T extends { id: string }>(items: T[]) => {
   const seen = new Set<string>()
@@ -43,10 +71,13 @@ const mergeById = <T extends { id: string }>(existing: T[], incoming: T[]) => {
 export default function SchedulePage() {
   const [courses, setCourses] = useState<CourseEvent[]>([])
   const [studyBlocks, setStudyBlocks] = useState<StudyBlock[]>([])
-  const [importantDates, setImportantDates] = useState<ImportantDate[]>(IMPORTANT_DATES)
+  const [importantDates, setImportantDates] = useState<ImportantDate[]>([])
   const [activeFilter, setActiveFilter] = useState<FilterType>("all")
   const [timeZone, setTimeZone] = useState<TimeZone>("CT")
   const [isLoaded, setIsLoaded] = useState(false)
+  const [isGuideOpen, setIsGuideOpen] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [showHeaderPanels, setShowHeaderPanels] = useState(true)
 
   // Dialog states
   const [editingEvent, setEditingEvent] = useState<ScheduleEvent | null>(null)
@@ -54,21 +85,49 @@ export default function SchedulePage() {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
 
   // Refs for quick actions
-  const dataManagementRef = useRef<HTMLButtonElement>(null)
+  const dataManagementRef = useRef<DataManagementHandle>(null)
   const exportMenuRef = useRef<HTMLButtonElement>(null)
 
   // Load data on mount
   useEffect(() => {
-    const { courses: savedCourses, studyBlocks: savedStudyBlocks } = loadScheduleData()
+    ensureScheduleInitialized()
+    const {
+      courses: savedCourses,
+      studyBlocks: savedStudyBlocks,
+      importantDates: savedImportantDates,
+    } = loadScheduleData()
 
-    if (savedCourses.length === 0 && savedStudyBlocks.length === 0) {
-      // First time loading - use seed data
-      setCourses(SEED_COURSES)
-      setStudyBlocks(SEED_STUDY_BLOCKS)
-      saveScheduleData(SEED_COURSES, SEED_STUDY_BLOCKS)
+    if (matchesSeedSchedule(savedCourses, savedStudyBlocks, savedImportantDates)) {
+      const blank = resetScheduleData()
+      setCourses(blank.courses)
+      setStudyBlocks(blank.studyBlocks)
+      setImportantDates(blank.importantDates)
+      setIsLoaded(true)
+      return
+    }
+
+    if (savedCourses.length === 0 && savedStudyBlocks.length === 0 && savedImportantDates.length === 0) {
+      setCourses([])
+      setStudyBlocks([])
+      setImportantDates([])
+      saveScheduleData([], [], [])
     } else {
-      setCourses(uniqueById(savedCourses))
-      setStudyBlocks(uniqueById(savedStudyBlocks))
+      const normalizedCourses = uniqueById(savedCourses)
+      const normalizedStudyBlocks = uniqueById(savedStudyBlocks)
+      const hasStoredImportantDates = savedImportantDates.length > 0
+      const normalizedImportantDates = hasStoredImportantDates
+        ? uniqueById(savedImportantDates)
+        : normalizedCourses.length > 0 || normalizedStudyBlocks.length > 0
+          ? IMPORTANT_DATES
+          : []
+
+      setCourses(normalizedCourses)
+      setStudyBlocks(normalizedStudyBlocks)
+      setImportantDates(normalizedImportantDates)
+
+      if (!hasStoredImportantDates && normalizedImportantDates.length > 0) {
+        saveScheduleData(normalizedCourses, normalizedStudyBlocks, normalizedImportantDates)
+      }
     }
 
     setIsLoaded(true)
@@ -78,11 +137,11 @@ export default function SchedulePage() {
   useEffect(() => {
     if (isLoaded) {
       const timeoutId = setTimeout(() => {
-        saveScheduleData(courses, studyBlocks)
+        saveScheduleData(courses, studyBlocks, importantDates)
       }, 500)
       return () => clearTimeout(timeoutId)
     }
-  }, [courses, studyBlocks, isLoaded])
+  }, [courses, studyBlocks, importantDates, isLoaded])
 
   const handleDataUpdate = (data: {
     courses: CourseEvent[]
@@ -98,9 +157,14 @@ export default function SchedulePage() {
     } = data
 
     if (mode === "replace") {
-      setCourses(uniqueById(incomingCourses))
-      setStudyBlocks(uniqueById(incomingStudyBlocks))
-      setImportantDates(uniqueById(incomingDates))
+      const normalizedCourses = uniqueById(incomingCourses)
+      const normalizedStudyBlocks = uniqueById(incomingStudyBlocks)
+      const normalizedImportantDates = uniqueById(incomingDates)
+
+      setCourses(normalizedCourses)
+      setStudyBlocks(normalizedStudyBlocks)
+      setImportantDates(normalizedImportantDates)
+      saveScheduleData(normalizedCourses, normalizedStudyBlocks, normalizedImportantDates)
       return
     }
 
@@ -157,8 +221,47 @@ export default function SchedulePage() {
     setImportantDates((prev) => prev.filter((date) => date.id !== dateId))
   }
 
+  const handleLoadExample = () => {
+    const courseSeed = SEED_COURSES.map((course) => ({ ...course }))
+    const studySeed = SEED_STUDY_BLOCKS.map((block) => ({ ...block }))
+    const dateSeed = IMPORTANT_DATES.map((date) => ({ ...date }))
+
+    clearScheduleData()
+    setCourses(courseSeed)
+    setStudyBlocks(studySeed)
+    setImportantDates(dateSeed)
+    saveScheduleData(courseSeed, studySeed, dateSeed)
+    toast.success("Example semester loaded. Tweak anything or replace it with your own schedule.")
+  }
+
+  const handleStartNewSchedule = () => {
+    const blank = resetScheduleData()
+    setCourses(blank.courses)
+    setStudyBlocks(blank.studyBlocks)
+    setImportantDates(blank.importantDates)
+
+    const snapshot = JSON.stringify(blank, null, 2)
+    const blob = new Blob([snapshot], { type: "application/json" })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement("a")
+    link.href = url
+    link.download = "semester-schedule.json"
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+
+    toast.success("Started a new schedule. A JSON snapshot has been downloaded for safekeeping.")
+  }
+
   const allEvents = [...courses, ...studyBlocks]
   const hasEvents = allEvents.length > 0
+
+  const headerPanelClasses = [
+    isMenuOpen ? "grid" : "hidden",
+    showHeaderPanels ? "sm:grid" : "sm:hidden",
+    "gap-3 sm:gap-4 transition-all duration-300 lg:grid-cols-2",
+  ].join(" ")
 
   if (!isLoaded) {
     return (
@@ -175,65 +278,125 @@ export default function SchedulePage() {
       <header className="glass-header p-3 sm:p-4 sticky top-0 z-30 slide-up">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col gap-4">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-              <div>
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex-1">
                 <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground">Semester Calendar Builder</h1>
                 <p className="text-xs sm:text-sm text-muted-foreground mt-1">
                   {hasEvents ? `${allEvents.length} events scheduled` : "Build your perfect semester schedule"}
                 </p>
               </div>
-              <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 w-full sm:w-auto justify-start sm:justify-end">
-                <DataManagement ref={dataManagementRef} onDataUpdate={handleDataUpdate} />
+              <div className="flex items-center gap-2">
                 <Button
-                  onClick={() => setIsAddDialogOpen(true)}
-                  size="sm"
-                  className="btn-primary flex items-center gap-1 text-xs sm:text-sm text-white scale-in w-full sm:w-auto"
-                  aria-label="Add new event or study block"
+                  variant="outline"
+                  size="icon"
+                  className="sm:hidden"
+                  onClick={() => setIsMenuOpen((open) => !open)}
+                  aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+                  aria-controls="header-controls"
                 >
-                  <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
-                  <span className="hidden xs:inline">Add Event</span>
-                  <span className="xs:hidden">Add</span>
+                  {isMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
                 </Button>
-                <ExportMenu ref={exportMenuRef} events={allEvents} />
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="hidden sm:inline-flex"
+                  onClick={() => setShowHeaderPanels((visible) => !visible)}
+                  aria-label={showHeaderPanels ? "Hide quick actions and filters" : "Show quick actions and filters"}
+                  aria-pressed={showHeaderPanels}
+                  aria-expanded={showHeaderPanels}
+                  aria-controls="header-controls"
+                  title={showHeaderPanels ? "Hide quick actions" : "Show quick actions"}
+                >
+                  <SlidersHorizontal className={`w-4 h-4 transition-transform ${showHeaderPanels ? "" : "-rotate-90"}`} />
+                  <span className="sr-only">
+                    {showHeaderPanels ? "Hide quick actions and filters" : "Show quick actions and filters"}
+                  </span>
+                </Button>
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
-              <div className="glass-card rounded-lg p-1 w-full sm:w-fit overflow-x-auto">
-                <div className="flex flex-nowrap items-center justify-center sm:justify-start gap-1 min-w-max">
-                  {(["PT", "MT", "CT", "ET"] as TimeZone[]).map((tz) => (
-                    <button
-                      key={tz}
-                      onClick={() => setTimeZone(tz)}
-                      className={`px-3 py-1.5 rounded text-xs sm:text-sm font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-ring/50 ${
-                        timeZone === tz
-                          ? "bg-primary text-primary-foreground shadow-lg"
-                          : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
-                      }`}
-                      aria-pressed={timeZone === tz}
-                    >
-                      {tz}
-                    </button>
-                  ))}
+            <div id="header-controls" className={headerPanelClasses}>
+              <div className="glass-card p-2.5 sm:p-3 rounded-lg shadow-[var(--shadow-xs)]">
+                <div className="flex items-center justify-between gap-2 mb-2">
+                  <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Quick Actions</span>
+                </div>
+                <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch gap-2">
+                  <DataManagement ref={dataManagementRef} onDataUpdate={handleDataUpdate} />
+                  <Button
+                    onClick={() => setIsGuideOpen(true)}
+                    size="sm"
+                    variant="outline"
+                    className="w-full sm:w-auto"
+                    aria-label="Show onboarding guide"
+                  >
+                    <Sparkles className="w-3 h-3 sm:w-4 sm:h-4" />
+                    <span className="hidden xs:inline">Onboarding Guide</span>
+                    <span className="xs:hidden">Guide</span>
+                  </Button>
+                  <Button
+                    onClick={handleStartNewSchedule}
+                    size="sm"
+                    variant="outline"
+                    className="w-full sm:w-auto"
+                    aria-label="Start a new blank schedule"
+                  >
+                    <RotateCcw className="w-3 h-3 sm:w-4 sm:h-4" />
+                    <span className="hidden xs:inline">New Schedule</span>
+                    <span className="xs:hidden">New</span>
+                  </Button>
+                  <Button
+                    onClick={() => setIsAddDialogOpen(true)}
+                    size="sm"
+                    className="w-full sm:w-auto"
+                    aria-label="Add new event or study block"
+                  >
+                    <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
+                    <span className="hidden xs:inline">Add Event</span>
+                    <span className="xs:hidden">Add</span>
+                  </Button>
+                  <ExportMenu ref={exportMenuRef} events={allEvents} />
                 </div>
               </div>
 
-              <div className="w-full overflow-x-auto pb-1 -mx-1 px-1 sm:overflow-visible sm:mx-0 sm:px-0">
-                <div className="flex flex-nowrap sm:flex-wrap gap-2 sm:gap-3 min-w-max sm:min-w-0">
-                  {(["all", "inperson", "online", "study", "exam"] as FilterType[]).map((filter) => (
-                    <button
-                      key={filter}
-                      onClick={() => setActiveFilter(filter)}
-                      className={`px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 capitalize focus:outline-none focus:ring-2 focus:ring-ring/50 transform hover:scale-105 ${
-                        activeFilter === filter
-                          ? "btn-primary text-white shadow-lg"
-                          : "btn-secondary text-muted-foreground hover:text-foreground"
-                      }`}
-                      aria-pressed={activeFilter === filter}
-                    >
-                      {filter === "inperson" ? "In-person" : filter}
-                    </button>
-                  ))}
+              <div className="glass-card p-2.5 sm:p-3 rounded-lg shadow-[var(--shadow-xs)] space-y-3">
+                <div>
+                  <span className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                    Time Zone
+                  </span>
+                  <div className="flex flex-nowrap sm:flex-wrap items-center gap-2 overflow-x-auto sm:overflow-visible pr-1">
+                    {(["PT", "MT", "CT", "ET"] as TimeZone[]).map((tz) => (
+                      <Button
+                        key={tz}
+                        size="sm"
+                        variant={timeZone === tz ? "default" : "outline"}
+                        className="min-w-[3.5rem]"
+                        onClick={() => setTimeZone(tz)}
+                        aria-pressed={timeZone === tz}
+                      >
+                        {tz}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <span className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                    Filter Events
+                  </span>
+                  <div className="flex flex-nowrap sm:flex-wrap gap-2 sm:gap-3 min-w-max sm:min-w-0 overflow-x-auto sm:overflow-visible pr-1">
+                    {(["all", "inperson", "online", "study", "exam"] as FilterType[]).map((filter) => (
+                      <Button
+                        key={filter}
+                        size="sm"
+                        variant={activeFilter === filter ? "default" : "outline"}
+                        className="capitalize"
+                        onClick={() => setActiveFilter(filter)}
+                        aria-pressed={activeFilter === filter}
+                      >
+                        {filter === "inperson" ? "In-person" : filter}
+                      </Button>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
@@ -241,73 +404,110 @@ export default function SchedulePage() {
         </div>
       </header>
       <main className="main-content p-3 sm:p-4 pb-20 sm:pb-4">
-        <div className="schedule-container max-w-7xl mx-auto space-y-6">
-          <OnboardingBanner
-            hasEvents={hasEvents}
-            onAddEvent={() => setIsAddDialogOpen(true)}
-            onManageData={() => dataManagementRef.current?.click()}
-          />
-
-          <div className="scale-in">
-            <OverviewSection dates={importantDates} onAddDate={handleAddDate} onDeleteDate={handleDeleteDate} />
-          </div>
-
-          <div className="block sm:hidden scale-in">
-            <QuickActions
+        <div className="schedule-container max-w-7xl mx-auto grid gap-4 sm:gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(240px,0.9fr)] lg:items-start">
+          <div className="lg:col-span-2 space-y-4">
+            <OnboardingBanner
+              hasEvents={hasEvents}
               onAddEvent={() => setIsAddDialogOpen(true)}
-              onExport={() => exportMenuRef.current?.click()}
-              onImport={() => dataManagementRef.current?.click()}
+              onManageData={() => dataManagementRef.current?.openMenu()}
+              onLoadExample={handleLoadExample}
             />
           </div>
 
-          <div id="schedule-grid" role="main" aria-label="Weekly schedule grid" className="relative scale-in">
-            <WeekGrid
-              events={allEvents}
-              activeFilter={activeFilter}
-              timeZone={timeZone}
-              onEventClick={handleEventClick}
-            />
-          </div>
+          <div className="space-y-4 sm:space-y-6">
+            <div className="scale-in lg:hidden">
+              <OverviewSection
+                dates={importantDates}
+                onAddDate={handleAddDate}
+                onDeleteDate={handleDeleteDate}
+                className="shadow-[var(--shadow-xs)]"
+              />
+            </div>
 
-          <div className="mt-4 sm:mt-6 glass-card p-4 sm:p-6 rounded-lg scale-in">
-            <h3 className="font-semibold mb-3 sm:mb-4 text-sm sm:text-base text-foreground">Event Types</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 text-xs sm:text-sm">
-              <div className="flex items-center gap-2 group">
-                <div
-                  className="w-4 h-4 rounded flex-shrink-0 group-hover:scale-110 transition-transform border"
-                  style={{ backgroundColor: "var(--event-inperson)", borderColor: "var(--event-inperson)", opacity: 0.25 }}
-                ></div>
-                <span className="truncate text-muted-foreground group-hover:text-foreground transition-colors">
-                  In-person Classes
-                </span>
-              </div>
-              <div className="flex items-center gap-2 group">
-                <div
-                  className="w-4 h-4 rounded flex-shrink-0 group-hover:scale-110 transition-transform border"
-                  style={{ backgroundColor: "var(--event-online)", borderColor: "var(--event-online)", opacity: 0.25 }}
-                ></div>
-                <span className="truncate text-muted-foreground group-hover:text-foreground transition-colors">
-                  Online Classes
-                </span>
-              </div>
-              <div className="flex items-center gap-2 group">
-                <div
-                  className="w-4 h-4 rounded flex-shrink-0 group-hover:scale-110 transition-transform border"
-                  style={{ backgroundColor: "var(--event-study)", borderColor: "var(--event-study)", opacity: 0.25 }}
-                ></div>
-                <span className="truncate text-muted-foreground group-hover:text-foreground transition-colors">
-                  Study Blocks
-                </span>
-              </div>
-              <div className="flex items-center gap-2 group">
-                <div
-                  className="w-4 h-4 rounded flex-shrink-0 group-hover:scale-110 transition-transform border"
-                  style={{ backgroundColor: "var(--event-exam)", borderColor: "var(--event-exam)", opacity: 0.25 }}
-                ></div>
-                <span className="truncate text-muted-foreground group-hover:text-foreground transition-colors">Exams</span>
+            <div className="block sm:hidden scale-in">
+              <QuickActions
+                onAddEvent={() => setIsAddDialogOpen(true)}
+                onExport={() => exportMenuRef.current?.click()}
+                onImport={() => dataManagementRef.current?.triggerFileImport()}
+                onStartNewSchedule={handleStartNewSchedule}
+                onLoadExample={hasEvents ? undefined : handleLoadExample}
+                onShowGuide={() => setIsGuideOpen(true)}
+                className="shadow-[var(--shadow-xs)]"
+              />
+            </div>
+
+            <div id="schedule-grid" role="main" aria-label="Weekly schedule grid" className="relative scale-in">
+              <WeekGrid
+                events={allEvents}
+                activeFilter={activeFilter}
+                timeZone={timeZone}
+                onEventClick={handleEventClick}
+              />
+            </div>
+
+            <div className="glass-card p-3 sm:p-4 rounded-lg scale-in shadow-[var(--shadow-xs)]">
+              <h3 className="font-semibold mb-2.5 sm:mb-3 text-xs sm:text-sm text-foreground uppercase tracking-wide">Event Types</h3>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 text-[11px] sm:text-xs">
+                <div className="flex items-center gap-1.5 group">
+                  <div
+                    className="w-3.5 h-3.5 rounded flex-shrink-0 group-hover:scale-110 transition-transform border"
+                    style={{ backgroundColor: "var(--event-inperson)", borderColor: "var(--event-inperson)", opacity: 0.25 }}
+                  ></div>
+                  <span className="truncate text-muted-foreground group-hover:text-foreground transition-colors">
+                    In-person Classes
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5 group">
+                  <div
+                    className="w-3.5 h-3.5 rounded flex-shrink-0 group-hover:scale-110 transition-transform border"
+                    style={{ backgroundColor: "var(--event-online)", borderColor: "var(--event-online)", opacity: 0.25 }}
+                  ></div>
+                  <span className="truncate text-muted-foreground group-hover:text-foreground transition-colors">
+                    Online Classes
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5 group">
+                  <div
+                    className="w-3.5 h-3.5 rounded flex-shrink-0 group-hover:scale-110 transition-transform border"
+                    style={{ backgroundColor: "var(--event-study)", borderColor: "var(--event-study)", opacity: 0.25 }}
+                  ></div>
+                  <span className="truncate text-muted-foreground group-hover:text-foreground transition-colors">
+                    Study Blocks
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5 group">
+                  <div
+                    className="w-3.5 h-3.5 rounded flex-shrink-0 group-hover:scale-110 transition-transform border"
+                    style={{ backgroundColor: "var(--event-exam)", borderColor: "var(--event-exam)", opacity: 0.25 }}
+                  ></div>
+                  <span className="truncate text-muted-foreground group-hover:text-foreground transition-colors">Exams</span>
+                </div>
               </div>
             </div>
           </div>
+
+          <aside className="space-y-4 sm:space-y-5 lg:space-y-6">
+            <div className="hidden lg:block scale-in">
+              <QuickActions
+                onAddEvent={() => setIsAddDialogOpen(true)}
+                onExport={() => exportMenuRef.current?.click()}
+                onImport={() => dataManagementRef.current?.triggerFileImport()}
+                onStartNewSchedule={handleStartNewSchedule}
+                onLoadExample={hasEvents ? undefined : handleLoadExample}
+                onShowGuide={() => setIsGuideOpen(true)}
+                className="shadow-[var(--shadow-xs)]"
+              />
+            </div>
+
+            <div className="hidden lg:block scale-in">
+              <OverviewSection
+                dates={importantDates}
+                onAddDate={handleAddDate}
+                onDeleteDate={handleDeleteDate}
+                className="shadow-[var(--shadow-xs)]"
+              />
+            </div>
+          </aside>
         </div>
       </main>
 
@@ -323,6 +523,14 @@ export default function SchedulePage() {
       />
 
       <AddEventDialog isOpen={isAddDialogOpen} onClose={() => setIsAddDialogOpen(false)} onAdd={handleAddEvent} />
+
+      <OnboardingGuideDialog
+        open={isGuideOpen}
+        onOpenChange={setIsGuideOpen}
+        onLoadExample={handleLoadExample}
+        onAddEvent={() => setIsAddDialogOpen(true)}
+        onManageData={() => dataManagementRef.current?.openMenu()}
+      />
     </div>
   )
 }

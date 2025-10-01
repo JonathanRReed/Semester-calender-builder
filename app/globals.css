@@ -79,9 +79,9 @@
   --accent-foreground: var(--rp-base);
   --destructive: var(--rp-love);
   --destructive-foreground: var(--rp-base);
-  --border: rgba(116, 114, 142, 0.45);
-  --input: rgba(116, 114, 142, 0.4);
-  --ring: var(--rp-iris);
+  --border: color-mix(in srgb, var(--rp-highlight-high), transparent 35%);
+  --input: color-mix(in srgb, var(--rp-highlight-med), transparent 45%);
+  --ring: color-mix(in srgb, var(--rp-iris), transparent 20%);
   --chart-1: var(--rp-iris);
   --chart-2: var(--rp-rose);
   --chart-3: var(--rp-gold);
@@ -91,11 +91,19 @@
   --sidebar: var(--rp-surface);
   --sidebar-foreground: var(--rp-text);
   --sidebar-primary: var(--rp-love);
-  --sidebar-primary-foreground: var(--rp-base);
   --sidebar-accent: rgba(82, 79, 103, 0.35);
   --sidebar-accent-foreground: var(--rp-text);
   --sidebar-border: rgba(116, 114, 142, 0.35);
   --sidebar-ring: var(--rp-iris);
+
+  --shadow-xs: 0 1px 0 color-mix(in srgb, var(--rp-highlight-high), transparent 60%),
+    0 6px 18px color-mix(in srgb, var(--rp-overlay), transparent 70%);
+  --shadow-sm: 0 3px 10px color-mix(in srgb, var(--rp-overlay), transparent 66%),
+    0 16px 40px color-mix(in srgb, var(--rp-highlight-high), transparent 80%);
+  --shadow-md: 0 6px 18px color-mix(in srgb, var(--rp-overlay), transparent 62%),
+    0 20px 48px color-mix(in srgb, var(--rp-highlight-high), transparent 82%);
+  --shadow-lg: 0 10px 30px color-mix(in srgb, var(--rp-overlay), transparent 58%),
+    0 28px 64px color-mix(in srgb, var(--rp-highlight-high), transparent 84%);
 
   --event-study: var(--rp-rose);
   --event-inperson: var(--rp-gold);
@@ -107,6 +115,8 @@
   --z-dropdown: 9998;
   --z-overlay: 9997;
   --z-header: 1000;
+
+  color-scheme: dark;
 }
 
 @theme inline {
@@ -154,10 +164,14 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/40;
+    @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+    background: radial-gradient(circle at 12% 18%, color-mix(in srgb, var(--rp-iris), transparent 85%), transparent 62%),
+      radial-gradient(circle at 88% 12%, color-mix(in srgb, var(--rp-rose), transparent 88%), transparent 64%),
+      radial-gradient(circle at 50% 100%, color-mix(in srgb, var(--rp-pine), transparent 90%), transparent 70%),
+      var(--background);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
   }
@@ -185,19 +199,17 @@
   }
 
   .glass-card {
-    background: color-mix(in srgb, var(--card), transparent 22%);
-    border: 1px solid color-mix(in srgb, var(--border), transparent 60%);
-    box-shadow:
-      0 24px 60px color-mix(in srgb, var(--foreground), transparent 86%),
-      0 1px 0 color-mix(in srgb, var(--foreground), transparent 90%);
-    backdrop-filter: blur(18px);
+    background: color-mix(in srgb, var(--card), transparent 18%);
+    border: 1px solid color-mix(in srgb, var(--border), transparent 45%);
+    box-shadow: var(--shadow-sm);
+    backdrop-filter: blur(14px);
   }
 
   .glass-header {
-    background: color-mix(in srgb, var(--card), transparent 10%);
-    border-bottom: 1px solid color-mix(in srgb, var(--border), transparent 65%);
-    box-shadow: 0 18px 40px color-mix(in srgb, var(--foreground), transparent 88%);
-    backdrop-filter: blur(18px);
+    background: color-mix(in srgb, var(--card), transparent 12%);
+    border-bottom: 1px solid color-mix(in srgb, var(--border), transparent 55%);
+    box-shadow: var(--shadow-xs);
+    backdrop-filter: blur(14px);
   }
 
   .gradient-text {
@@ -205,30 +217,26 @@
   }
 
   .btn-primary {
-    background: color-mix(in srgb, var(--primary), transparent 8%);
-    border: 1px solid color-mix(in srgb, var(--primary), transparent 60%);
-    box-shadow:
-      0 10px 30px color-mix(in srgb, var(--primary), transparent 65%),
-      inset 0 1px 0 color-mix(in srgb, var(--primary-foreground), transparent 80%);
+    background: color-mix(in srgb, var(--primary), transparent 12%);
+    border: 1px solid color-mix(in srgb, var(--primary), transparent 55%);
+    box-shadow: var(--shadow-xs);
     transition: all 0.25s ease;
   }
 
   .btn-primary:hover {
     transform: translateY(-1px);
-    box-shadow:
-      0 16px 34px color-mix(in srgb, var(--primary), transparent 60%),
-      inset 0 1px 0 color-mix(in srgb, var(--primary-foreground), transparent 75%);
+    box-shadow: var(--shadow-sm);
   }
 
   .btn-secondary {
-    background: color-mix(in srgb, var(--secondary), transparent 35%);
-    border: 1px solid color-mix(in srgb, var(--border), transparent 65%);
+    background: color-mix(in srgb, var(--secondary), transparent 28%);
+    border: 1px solid color-mix(in srgb, var(--border), transparent 55%);
     transition: all 0.25s ease;
   }
 
   .btn-secondary:hover {
-    background: color-mix(in srgb, var(--secondary), transparent 55%);
-    border-color: color-mix(in srgb, var(--muted), transparent 55%);
+    background: color-mix(in srgb, var(--secondary), transparent 45%);
+    border-color: color-mix(in srgb, var(--muted), transparent 45%);
     transform: translateY(-1px);
   }
 }

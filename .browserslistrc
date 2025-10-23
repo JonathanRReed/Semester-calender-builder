@@ -1,0 +1,15 @@
+# Target modern browsers to reduce polyfills and bundle size
+# This significantly improves performance metrics
+
+# Modern browsers with ES6+ support
+> 0.5%
+last 2 versions
+not dead
+not IE 11
+not op_mini all
+
+# Explicitly target modern evergreen browsers
+Chrome >= 90
+Firefox >= 88
+Safari >= 14
+Edge >= 90

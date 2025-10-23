@@ -1,0 +1,86 @@
+# Security and performance headers for Netlify deployment
+# See: https://docs.netlify.com/routing/headers/
+
+/*
+  # Security Headers
+  
+  # Content Security Policy - Prevent XSS attacks
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.helloworldfirm.com; img-src 'self' data: https: blob:; font-src 'self' https://fonts.helloworldfirm.com; connect-src 'self' https:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
+  
+  # Prevent clickjacking
+  X-Frame-Options: DENY
+  
+  # Prevent MIME type sniffing
+  X-Content-Type-Options: nosniff
+  
+  # Enable browser XSS protection
+  X-XSS-Protection: 1; mode=block
+  
+  # Referrer policy
+  Referrer-Policy: strict-origin-when-cross-origin
+  
+  # Permissions policy
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()
+  
+  # Cross-Origin policies (allow external fonts)
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Resource-Policy: same-origin
+  
+  # HSTS - Force HTTPS (31536000 = 1 year)
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  
+  # Cache control for HTML (no cache)
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Static assets with long cache (1 year)
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# JavaScript and CSS files
+/*.js
+  Cache-Control: public, max-age=31536000, immutable
+  
+/*.css
+  Cache-Control: public, max-age=31536000, immutable
+
+# Images
+/*.jpg
+  Cache-Control: public, max-age=31536000, immutable
+  
+/*.jpeg
+  Cache-Control: public, max-age=31536000, immutable
+  
+/*.png
+  Cache-Control: public, max-age=31536000, immutable
+  
+/*.webp
+  Cache-Control: public, max-age=31536000, immutable
+  
+/*.svg
+  Cache-Control: public, max-age=31536000, immutable
+  
+/*.gif
+  Cache-Control: public, max-age=31536000, immutable
+
+# Fonts
+/*.woff2
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+  
+/*.woff
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+
+# SEO files - cache for 1 day
+/robots.txt
+  Cache-Control: public, max-age=86400
+  
+/sitemap.xml
+  Cache-Control: public, max-age=86400
+  
+/llms.txt
+  Cache-Control: public, max-age=86400
+
+# Favicon
+/Icon.webp
+  Cache-Control: public, max-age=604800

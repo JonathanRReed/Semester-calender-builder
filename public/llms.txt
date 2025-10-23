@@ -1,0 +1,26 @@
+# Semester Calendar Builder
+
+> A free, privacy-first web application for students and educators to plan academic semester schedules. Built with Next.js, React, and TypeScript, it provides an intuitive interface for managing courses, study blocks, and important dates with powerful export capabilities.
+
+Semester Calendar Builder runs entirely in the browser with local data storage, ensuring complete privacy and offline functionality. Users can create and visualize their entire semester schedule in a weekly grid format with color-coded event types, drag-and-drop editing, and support for multiple time zones (PT, MT, CT, ET).
+
+Key features include visual weekly schedule grids, flexible event management with recurring events, import/export capabilities (JSON, CSV, bulk input), multiple export formats (PNG, PDF, printable calendars), important dates tracking, dark mode interface with responsive design, local storage persistence with automatic saving, and example semester templates.
+
+## Documentation
+
+- [Next.js Documentation](https://nextjs.org/docs): React framework with App Router and static export
+- [React Documentation](https://react.dev): UI library for component-based architecture
+- [TypeScript Documentation](https://www.typescriptlang.org/docs): Type-safe JavaScript development
+- [Tailwind CSS](https://tailwindcss.com/docs): Utility-first CSS framework for styling
+- [shadcn/ui Components](https://ui.shadcn.com): Accessible component library used throughout the application
+- [Lucide Icons](https://lucide.dev): Icon library for UI elements
+
+## Features
+
+- [date-fns Library](https://date-fns.org/docs): Date manipulation and formatting utilities
+- [html2canvas](https://html2canvas.hertzen.com): HTML to canvas conversion for PNG image export
+- [Sonner Toast](https://sonner.emilkowal.ski): Toast notification system for user feedback
+
+## Optional
+
+- [Bun Runtime](https://bun.sh/docs): JavaScript runtime used for development environment

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, lazy, Suspense } from "react"
 import { Plus, Sparkles, Menu, X, SlidersHorizontal, RotateCcw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import type { CourseEvent, StudyBlock, FilterType, TimeZone, ScheduleEvent, ImportantDate } from "@/types/schedule"
@@ -13,15 +13,16 @@ import {
   resetScheduleData,
 } from "@/lib/schedule-utils"
 import { WeekGrid } from "@/components/schedule/week-grid"
-import { EditEventDialog } from "@/components/schedule/edit-event-dialog"
-import { AddEventDialog } from "@/components/schedule/add-event-dialog"
 import { ExportMenu } from "@/components/schedule/export-menu"
 import { OverviewSection } from "@/components/schedule/overview-section"
 import { DataManagement, DataManagementHandle } from "@/components/schedule/data-management"
 import { OnboardingBanner } from "@/components/schedule/onboarding-banner"
 import { QuickActions } from "@/components/schedule/quick-actions"
-import { OnboardingGuideDialog } from "@/components/schedule/onboarding-guide-dialog"
 import { toast } from "sonner"
+
+const EditEventDialog = lazy(() => import("@/components/schedule/edit-event-dialog").then(mod => ({ default: mod.EditEventDialog })))
+const AddEventDialog = lazy(() => import("@/components/schedule/add-event-dialog").then(mod => ({ default: mod.AddEventDialog })))
+const OnboardingGuideDialog = lazy(() => import("@/components/schedule/onboarding-guide-dialog").then(mod => ({ default: mod.OnboardingGuideDialog })))
 
 
 const canonicalizeById = <T extends { id: string }>(items: T[]) =>
@@ -511,26 +512,32 @@ export default function SchedulePage() {
         </div>
       </main>
 
-      <EditEventDialog
-        event={editingEvent}
-        isOpen={isEditDialogOpen}
-        onClose={() => {
-          setIsEditDialogOpen(false)
-          setEditingEvent(null)
-        }}
-        onSave={handleSaveEvent}
-        onDelete={handleDeleteEvent}
-      />
+      <Suspense fallback={null}>
+        <EditEventDialog
+          event={editingEvent}
+          isOpen={isEditDialogOpen}
+          onClose={() => {
+            setIsEditDialogOpen(false)
+            setEditingEvent(null)
+          }}
+          onSave={handleSaveEvent}
+          onDelete={handleDeleteEvent}
+        />
+      </Suspense>
 
-      <AddEventDialog isOpen={isAddDialogOpen} onClose={() => setIsAddDialogOpen(false)} onAdd={handleAddEvent} />
+      <Suspense fallback={null}>
+        <AddEventDialog isOpen={isAddDialogOpen} onClose={() => setIsAddDialogOpen(false)} onAdd={handleAddEvent} />
+      </Suspense>
 
-      <OnboardingGuideDialog
-        open={isGuideOpen}
-        onOpenChange={setIsGuideOpen}
-        onLoadExample={handleLoadExample}
-        onAddEvent={() => setIsAddDialogOpen(true)}
-        onManageData={() => dataManagementRef.current?.openMenu()}
-      />
+      <Suspense fallback={null}>
+        <OnboardingGuideDialog
+          open={isGuideOpen}
+          onOpenChange={setIsGuideOpen}
+          onLoadExample={handleLoadExample}
+          onAddEvent={() => setIsAddDialogOpen(true)}
+          onManageData={() => dataManagementRef.current?.openMenu()}
+        />
+      </Suspense>
     </div>
   )
 }

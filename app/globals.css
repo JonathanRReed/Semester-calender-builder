@@ -52,6 +52,81 @@
   --font-sans: "Nebula Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-mono: "ui-monospace", "SFMono-Regular", "SFMono", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", monospace;
 
+  /* Rose Pine Dawn (Light) */
+  --rp-base: #faf4ed;
+  --rp-surface: #fffaf3;
+  --rp-overlay: #f2e9e1;
+  --rp-muted: #9893a5;
+  --rp-subtle: #797593;
+  --rp-text: #575279;
+  --rp-love: #b4637a;
+  --rp-gold: #ea9d34;
+  --rp-rose: #d7827e;
+  --rp-pine: #286983;
+  --rp-foam: #56949f;
+  --rp-iris: #907aa9;
+  --rp-highlight-low: #f4ede8;
+  --rp-highlight-med: #dfdad9;
+  --rp-highlight-high: #cecacd;
+
+  --background: var(--rp-base);
+  --foreground: var(--rp-text);
+  --card: var(--rp-surface);
+  --card-foreground: var(--rp-text);
+  --popover: var(--rp-overlay);
+  --popover-foreground: var(--rp-text);
+  --primary: var(--rp-love);
+  --primary-foreground: #fffaf3;
+  --secondary: var(--rp-highlight-low);
+  --secondary-foreground: var(--rp-text);
+  --muted: var(--rp-highlight-med);
+  --muted-foreground: var(--rp-subtle);
+  --accent: var(--rp-rose);
+  --accent-foreground: #fffaf3;
+  --destructive: var(--rp-love);
+  --destructive-foreground: #fffaf3;
+  --border: color-mix(in srgb, var(--rp-highlight-high), transparent 20%);
+  --input: color-mix(in srgb, var(--rp-highlight-med), transparent 30%);
+  --ring: color-mix(in srgb, var(--rp-iris), transparent 20%);
+  --chart-1: var(--rp-iris);
+  --chart-2: var(--rp-rose);
+  --chart-3: var(--rp-gold);
+  --chart-4: var(--rp-love);
+  --chart-5: var(--rp-subtle);
+  --radius: 0.625rem;
+  --sidebar: var(--rp-surface);
+  --sidebar-foreground: var(--rp-text);
+  --sidebar-primary: var(--rp-love);
+  --sidebar-accent: rgba(215, 130, 126, 0.15);
+  --sidebar-accent-foreground: var(--rp-text);
+  --sidebar-border: rgba(206, 202, 205, 0.6);
+  --sidebar-ring: var(--rp-iris);
+
+  --shadow-xs: 0 1px 2px color-mix(in srgb, var(--rp-highlight-high), transparent 50%),
+    0 4px 12px color-mix(in srgb, var(--rp-muted), transparent 88%);
+  --shadow-sm: 0 2px 8px color-mix(in srgb, var(--rp-highlight-high), transparent 40%),
+    0 8px 24px color-mix(in srgb, var(--rp-muted), transparent 85%);
+  --shadow-md: 0 4px 12px color-mix(in srgb, var(--rp-highlight-high), transparent 35%),
+    0 12px 32px color-mix(in srgb, var(--rp-muted), transparent 82%);
+  --shadow-lg: 0 8px 20px color-mix(in srgb, var(--rp-highlight-high), transparent 30%),
+    0 20px 48px color-mix(in srgb, var(--rp-muted), transparent 78%);
+
+  --event-study: var(--rp-rose);
+  --event-inperson: var(--rp-gold);
+  --event-online: var(--rp-iris);
+  --event-exam: var(--rp-love);
+
+  --z-tooltip: 10000;
+  --z-modal: 9999;
+  --z-dropdown: 9998;
+  --z-overlay: 9997;
+  --z-header: 1000;
+
+  color-scheme: light;
+}
+
+.dark {
+  /* Rose Pine (Night/Dark) */
   --rp-base: #191724;
   --rp-surface: #1f1d2e;
   --rp-overlay: #26233a;
@@ -92,7 +167,6 @@
   --chart-3: var(--rp-gold);
   --chart-4: var(--rp-love);
   --chart-5: var(--rp-subtle);
-  --radius: 0.625rem;
   --sidebar: var(--rp-surface);
   --sidebar-foreground: var(--rp-text);
   --sidebar-primary: var(--rp-love);
@@ -114,12 +188,6 @@
   --event-inperson: var(--rp-gold);
   --event-online: var(--rp-iris);
   --event-exam: var(--rp-love);
-
-  --z-tooltip: 10000;
-  --z-modal: 9999;
-  --z-dropdown: 9998;
-  --z-overlay: 9997;
-  --z-header: 1000;
 
   color-scheme: dark;
 }

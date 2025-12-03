@@ -277,7 +277,7 @@ export default function SchedulePage() {
   }
   return (
     <div className="min-h-screen bg-background">
-      <header className="glass-header p-3 sm:p-4 sticky top-0 z-30 slide-up">
+      <header className="glass-header p-3 sm:p-4 slide-up">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col gap-4">
             <div className="flex items-start justify-between gap-3">

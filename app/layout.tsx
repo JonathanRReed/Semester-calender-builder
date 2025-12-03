@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import './globals.css'
 import { FONT_ASSETS, LOGO_ASSETS, SOCIAL_LINKS } from '@/lib/assets'
 
@@ -14,6 +14,14 @@ const FONT_PRELOADS = [
   FONT_ASSETS.bold,
 ] as const
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+  themeColor: '#191724',
+}
+
 export const metadata: Metadata = {
   title: 'Semester Calendar Builder - Plan Your Perfect Academic Schedule',
   description: 'Build and organize your semester schedule with ease. Add courses, study blocks, and important dates. Export to PDF, PNG, or JSON. Free online calendar tool for students.',
@@ -23,13 +31,6 @@ export const metadata: Metadata = {
   publisher: 'Jonathan Reed',
   generator: 'Next.js',
   metadataBase: new URL('https://semesterbuild.jonathanrreed.com'),
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 5,
-    userScalable: true,
-  },
-  themeColor: '#191724',
   alternates: {
     canonical: '/',
   },

@@ -73,7 +73,7 @@ export function OverviewSection({ dates, onAddDate, className }: OverviewSection
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <h4 className="font-medium text-sm text-foreground leading-tight">{date.title}</h4>
+                    <h3 className="font-medium text-sm text-foreground leading-tight">{date.title}</h3>
                     <p className="text-muted-foreground text-[11px] mt-0.5">{formatDate(date.date)}</p>
                     {date.description && <p className="text-muted-foreground text-[11px] mt-0.5">{date.description}</p>}
                   </div>

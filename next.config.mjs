@@ -7,7 +7,6 @@ const nextConfig = {
   
   // Production optimizations
   reactStrictMode: true,
-  swcMinify: true,
   
   // Optimize production bundle
   compiler: {
@@ -29,39 +28,6 @@ const nextConfig = {
   
   // Modern JavaScript output (reduce polyfills)
   transpilePackages: [],
-  
-  // Cache control headers (for static export with hosting provider)
-  async headers() {
-    return [
-      {
-        source: '/:path*',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=0, must-revalidate',
-          },
-        ],
-      },
-      {
-        source: '/_next/static/:path*',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-        ],
-      },
-      {
-        source: '/Icon.webp',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-        ],
-      },
-    ]
-  },
 }
 
 export default nextConfig

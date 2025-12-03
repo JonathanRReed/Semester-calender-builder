@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, lazy, Suspense } from "react"
 import { Plus, Sparkles, Menu, X, SlidersHorizontal, RotateCcw } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { ThemeToggle } from "@/components/theme-toggle"
 import type { CourseEvent, StudyBlock, FilterType, TimeZone, ScheduleEvent, ImportantDate } from "@/types/schedule"
 import { SEED_COURSES, SEED_STUDY_BLOCKS, IMPORTANT_DATES } from "@/lib/schedule-data"
 import {
@@ -276,7 +277,7 @@ export default function SchedulePage() {
   }
   return (
     <div className="min-h-screen bg-background">
-      <header className="glass-header p-3 sm:p-4 sticky top-0 z-30 slide-up">
+      <header className="glass-header p-3 sm:p-4 slide-up">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col gap-4">
             <div className="flex items-start justify-between gap-3">
@@ -287,10 +288,11 @@ export default function SchedulePage() {
                 </p>
               </div>
               <div className="flex items-center gap-2">
+                <ThemeToggle />
                 <Button
                   variant="outline"
                   size="icon"
-                  className="sm:hidden"
+                  className="h-9 w-9 sm:hidden"
                   onClick={() => setIsMenuOpen((open) => !open)}
                   aria-label={isMenuOpen ? "Close menu" : "Open menu"}
                   aria-controls="header-controls"
@@ -300,7 +302,7 @@ export default function SchedulePage() {
                 <Button
                   variant="outline"
                   size="icon"
-                  className="hidden sm:inline-flex"
+                  className="h-9 w-9 hidden sm:inline-flex"
                   onClick={() => setShowHeaderPanels((visible) => !visible)}
                   aria-label={showHeaderPanels ? "Hide quick actions and filters" : "Show quick actions and filters"}
                   aria-pressed={showHeaderPanels}
@@ -447,7 +449,7 @@ export default function SchedulePage() {
             </div>
 
             <div className="glass-card p-3 sm:p-4 rounded-lg scale-in shadow-[var(--shadow-xs)]">
-              <h3 className="font-semibold mb-2.5 sm:mb-3 text-xs sm:text-sm text-foreground uppercase tracking-wide">Event Types</h3>
+              <h2 className="font-semibold mb-2.5 sm:mb-3 text-xs sm:text-sm text-foreground uppercase tracking-wide">Event Types</h2>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 text-[11px] sm:text-xs">
                 <div className="flex items-center gap-1.5 group">
                   <div

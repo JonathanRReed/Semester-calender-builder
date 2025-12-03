@@ -5,7 +5,7 @@
   # Security Headers
   
   # Content Security Policy - Prevent XSS attacks
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.helloworldfirm.com; img-src 'self' data: https: blob:; font-src 'self' https://fonts.helloworldfirm.com; connect-src 'self' https:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.helloworldfirm.com; img-src 'self' data: https: blob:; font-src 'self' https://fonts.helloworldfirm.com; connect-src 'self' https:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests
   
   # Prevent clickjacking
   X-Frame-Options: DENY

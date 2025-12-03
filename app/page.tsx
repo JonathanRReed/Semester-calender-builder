@@ -449,7 +449,7 @@ export default function SchedulePage() {
             </div>
 
             <div className="glass-card p-3 sm:p-4 rounded-lg scale-in shadow-[var(--shadow-xs)]">
-              <h3 className="font-semibold mb-2.5 sm:mb-3 text-xs sm:text-sm text-foreground uppercase tracking-wide">Event Types</h3>
+              <h2 className="font-semibold mb-2.5 sm:mb-3 text-xs sm:text-sm text-foreground uppercase tracking-wide">Event Types</h2>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 text-[11px] sm:text-xs">
                 <div className="flex items-center gap-1.5 group">
                   <div

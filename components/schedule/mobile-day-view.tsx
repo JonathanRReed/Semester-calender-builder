@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import type { ScheduleEvent, TimeZone } from "@/types/schedule"
 import { EventCard } from "./event-card"
 import { getCampusStatus } from "@/lib/schedule-utils"
-import { DAYS } from "@/lib/schedule-data"
+import { DAYS } from "@/lib/constants"
 
 interface MobileDayViewProps {
   events: ScheduleEvent[]

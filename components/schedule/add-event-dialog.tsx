@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "sonner"
 import type { ScheduleEvent, CourseEvent, StudyBlock } from "@/types/schedule"
-import { DAYS } from "@/lib/schedule-data"
+import { DAYS } from "@/lib/constants"
 
 interface AddEventDialogProps {
   isOpen: boolean

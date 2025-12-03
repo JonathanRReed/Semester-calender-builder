@@ -37,12 +37,12 @@ export function MobileDayView({ events, timeZone, onEventClick }: MobileDayViewP
     <div className="bg-card/50 border border-border/50 rounded-lg backdrop-blur-sm">
       {/* Day navigation header */}
       <div className="flex items-center justify-between p-4 border-b border-border/50">
-        <Button variant="ghost" size="sm" onClick={prevDay} className="text-muted-foreground hover:text-foreground">
+        <Button variant="ghost" size="sm" onClick={prevDay} className="text-muted-foreground hover:text-foreground" aria-label="Previous day">
           <ChevronLeft className="w-4 h-4" />
         </Button>
 
         <div className="text-center">
-          <h3 className="font-semibold text-foreground text-lg">{currentDay}</h3>
+          <h2 className="font-semibold text-foreground text-lg">{currentDay}</h2>
           <div className={`text-xs px-2 py-1 rounded border mt-1 ${getCampusStatusColor()}`}>
             {campusStatus === "ON CAMPUS"
               ? "ON CAMPUS"
@@ -52,21 +52,26 @@ export function MobileDayView({ events, timeZone, onEventClick }: MobileDayViewP
           </div>
         </div>
 
-        <Button variant="ghost" size="sm" onClick={nextDay} className="text-muted-foreground hover:text-foreground">
+        <Button variant="ghost" size="sm" onClick={nextDay} className="text-muted-foreground hover:text-foreground" aria-label="Next day">
           <ChevronRight className="w-4 h-4" />
         </Button>
       </div>
 
       {/* Day dots indicator */}
-      <div className="flex justify-center gap-1 py-2 border-b border-border/50">
-        {DAYS.map((_, index) => (
+      <div className="flex justify-center gap-1 py-2 border-b border-border/50" role="tablist" aria-label="Select day of week">
+        {DAYS.map((day, index) => (
           <button
             key={index}
             onClick={() => setCurrentDayIndex(index)}
-            className={`w-2 h-2 rounded-full transition-colors ${
-              index === currentDayIndex ? "bg-foreground/70" : "bg-border"
+            className={`w-6 h-6 p-2 flex items-center justify-center rounded-full transition-colors ${
+              index === currentDayIndex ? "bg-foreground/70" : "bg-transparent hover:bg-border/50"
             }`}
-          />
+            role="tab"
+            aria-selected={index === currentDayIndex}
+            aria-label={day}
+          >
+            <span className={`w-2 h-2 rounded-full ${index === currentDayIndex ? "bg-background" : "bg-border"}`} />
+          </button>
         ))}
       </div>
 

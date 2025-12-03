@@ -87,9 +87,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="dns-prefetch" href="https://fonts.helloworldfirm.com" />
-        <link rel="dns-prefetch" href="https://img.helloworldfirm.com" />
         <link rel="preconnect" href="https://fonts.helloworldfirm.com" crossOrigin="anonymous" />
-        <link rel="preconnect" href="https://img.helloworldfirm.com" crossOrigin="anonymous" />
         {FONT_PRELOADS.map((href) => (
           <link key={href} rel="preload" href={href} as="font" type="font/woff2" crossOrigin="anonymous" fetchPriority="high" />
         ))}

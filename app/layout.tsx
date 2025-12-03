@@ -19,7 +19,10 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 5,
   userScalable: true,
-  themeColor: '#191724',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#faf4ed' },
+    { media: '(prefers-color-scheme: dark)', color: '#191724' },
+  ],
 }
 
 export const metadata: Metadata = {
@@ -81,7 +84,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className="dark">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="dns-prefetch" href="https://fonts.helloworldfirm.com" />
         <link rel="dns-prefetch" href="https://img.helloworldfirm.com" />
@@ -109,8 +112,8 @@ html {
       <body>
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
-          enableSystem={false}
+          defaultTheme="system"
+          enableSystem
           disableTransitionOnChange
         >
           <ErrorBoundary>

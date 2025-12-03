@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, lazy, Suspense } from "react"
 import { Plus, Sparkles, Menu, X, SlidersHorizontal, RotateCcw } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { ThemeToggle } from "@/components/theme-toggle"
 import type { CourseEvent, StudyBlock, FilterType, TimeZone, ScheduleEvent, ImportantDate } from "@/types/schedule"
 import { SEED_COURSES, SEED_STUDY_BLOCKS, IMPORTANT_DATES } from "@/lib/schedule-data"
 import {
@@ -287,10 +288,11 @@ export default function SchedulePage() {
                 </p>
               </div>
               <div className="flex items-center gap-2">
+                <ThemeToggle />
                 <Button
                   variant="outline"
                   size="icon"
-                  className="sm:hidden"
+                  className="h-9 w-9 sm:hidden"
                   onClick={() => setIsMenuOpen((open) => !open)}
                   aria-label={isMenuOpen ? "Close menu" : "Open menu"}
                   aria-controls="header-controls"
@@ -300,7 +302,7 @@ export default function SchedulePage() {
                 <Button
                   variant="outline"
                   size="icon"
-                  className="hidden sm:inline-flex"
+                  className="h-9 w-9 hidden sm:inline-flex"
                   onClick={() => setShowHeaderPanels((visible) => !visible)}
                   aria-label={showHeaderPanels ? "Hide quick actions and filters" : "Show quick actions and filters"}
                   aria-pressed={showHeaderPanels}

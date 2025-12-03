@@ -43,7 +43,7 @@ export function OnboardingBanner({ hasEvents, onAddEvent, onManageData, onLoadEx
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <Calendar className="w-5 h-5 text-primary" />
-                <h3 className="font-semibold text-foreground">Welcome! Let&apos;s build your first semester plan.</h3>
+                <h2 className="font-semibold text-foreground">Welcome! Let&apos;s build your first semester plan.</h2>
               </div>
               <p className="text-muted-foreground text-sm">
                 Start with the example semester or jump right in. Your data is stored locally in your browser so you can experiment safely.

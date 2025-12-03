@@ -272,8 +272,6 @@ export const SEED_STUDY_BLOCKS: StudyBlock[] = [
   },
 ]
 
-export const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-
 export const IMPORTANT_DATES: ImportantDate[] = [
   {
     id: "orientation-week",

@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import './globals.css'
 import { FONT_ASSETS, LOGO_ASSETS, SOCIAL_LINKS } from '@/lib/assets'
 
@@ -14,6 +14,17 @@ const FONT_PRELOADS = [
   FONT_ASSETS.bold,
 ] as const
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#faf4ed' },
+    { media: '(prefers-color-scheme: dark)', color: '#191724' },
+  ],
+}
+
 export const metadata: Metadata = {
   title: 'Semester Calendar Builder - Plan Your Perfect Academic Schedule',
   description: 'Build and organize your semester schedule with ease. Add courses, study blocks, and important dates. Export to PDF, PNG, or JSON. Free online calendar tool for students.',
@@ -23,13 +34,6 @@ export const metadata: Metadata = {
   publisher: 'Jonathan Reed',
   generator: 'Next.js',
   metadataBase: new URL('https://semesterbuild.jonathanrreed.com'),
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 5,
-    userScalable: true,
-  },
-  themeColor: '#191724',
   alternates: {
     canonical: '/',
   },
@@ -80,12 +84,10 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className="dark">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="dns-prefetch" href="https://fonts.helloworldfirm.com" />
-        <link rel="dns-prefetch" href="https://img.helloworldfirm.com" />
         <link rel="preconnect" href="https://fonts.helloworldfirm.com" crossOrigin="anonymous" />
-        <link rel="preconnect" href="https://img.helloworldfirm.com" crossOrigin="anonymous" />
         {FONT_PRELOADS.map((href) => (
           <link key={href} rel="preload" href={href} as="font" type="font/woff2" crossOrigin="anonymous" fetchPriority="high" />
         ))}
@@ -108,8 +110,8 @@ html {
       <body>
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
-          enableSystem={false}
+          defaultTheme="system"
+          enableSystem
           disableTransitionOnChange
         >
           <ErrorBoundary>

@@ -19,6 +19,7 @@ import { OverviewSection } from "@/components/schedule/overview-section"
 import { DataManagement, DataManagementHandle } from "@/components/schedule/data-management"
 import { OnboardingBanner } from "@/components/schedule/onboarding-banner"
 import { QuickActions } from "@/components/schedule/quick-actions"
+import { Footer } from "@/components/footer"
 import { toast } from "sonner"
 
 const EditEventDialog = lazy(() => import("@/components/schedule/edit-event-dialog").then(mod => ({ default: mod.EditEventDialog })))
@@ -68,6 +69,38 @@ const mergeById = <T extends { id: string }>(existing: T[], incoming: T[]) => {
     map.set(item.id, item)
   }
   return Array.from(map.values())
+}
+
+const FAQ_ITEMS = [
+  {
+    question: 'How do I plan my semester schedule?',
+    answer: 'Use the Semester Calendar Builder to add your courses, study blocks, and important dates. The visual weekly grid helps you organize your time and avoid conflicts.',
+  },
+  {
+    question: 'Can I export my schedule to Google Calendar?',
+    answer: 'Yes! Export your schedule as an ICS file and import it directly into Google Calendar, Apple Calendar, or Outlook.',
+  },
+  {
+    question: 'Does this semester planner work on mobile?',
+    answer: 'The Semester Calendar Builder is fully responsive and works on phones, tablets, and desktops.',
+  },
+  {
+    question: 'Is my schedule data stored online?',
+    answer: 'No, all your data is stored locally in your browser. Your schedule never leaves your device.',
+  },
+] as const
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: FAQ_ITEMS.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: answer,
+    },
+  })),
 }
 
 export default function SchedulePage() {
@@ -540,6 +573,25 @@ export default function SchedulePage() {
           onManageData={() => dataManagementRef.current?.openMenu()}
         />
       </Suspense>
+
+      {/* SEO: FAQ Schema (visually hidden) */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+      <section className="sr-only" aria-label="Frequently Asked Questions">
+        <h2>FAQ</h2>
+        <dl>
+          {FAQ_ITEMS.map(({ question, answer }) => (
+            <div key={question}>
+              <dt>{question}</dt>
+              <dd>{answer}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+
+      <Footer />
     </div>
   )
 }

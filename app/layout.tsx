@@ -25,10 +25,38 @@ export const viewport: Viewport = {
   ],
 }
 
-export const metadata: Metadata = {
-  title: 'Semester Calendar Builder - Plan Your Perfect Academic Schedule',
+const jsonLdSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'Semester Calendar Builder',
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Web',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'USD',
+  },
+  author: {
+    '@type': 'Person',
+    name: 'Jonathan Reed',
+    url: 'https://jonathanrreed.com',
+  },
   description: 'Build and organize your semester schedule with ease. Add courses, study blocks, and important dates. Export to PDF, PNG, or JSON. Free online calendar tool for students.',
-  keywords: ['semester calendar', 'class schedule builder', 'student planner', 'academic calendar', 'course scheduler', 'study planner', 'college schedule', 'university timetable'],
+  url: 'https://semesterbuild.jonathanrreed.com',
+  featureList: [
+    'Visual weekly calendar',
+    'In-person and online class support',
+    'Study block scheduling',
+    'ICS/CSV/PNG export',
+    'Important date tracking',
+    'Dark mode support',
+  ],
+}
+
+export const metadata: Metadata = {
+  title: 'Semester Calendar Builder | Course Schedule Planner by Jonathan Reed',
+  description: 'Build and organize your semester schedule with ease. Add courses, study blocks, and important dates. Export to PDF, PNG, or JSON. Free online calendar tool for students.',
+  keywords: ['semester calendar', 'class schedule builder', 'student planner', 'academic calendar', 'course scheduler', 'study planner', 'college schedule', 'university timetable', 'semester planner', 'course schedule builder'],
   authors: [{ name: 'Jonathan Reed' }],
   creator: 'Jonathan Reed',
   publisher: 'Jonathan Reed',
@@ -46,7 +74,7 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     url: '/',
-    title: 'Semester Calendar Builder - Plan Your Perfect Academic Schedule',
+    title: 'Semester Calendar Builder | Course Schedule Planner by Jonathan Reed',
     description: 'Build and organize your semester schedule with ease. Add courses, study blocks, and important dates. Export to PDF, PNG, or JSON. Free online calendar tool for students.',
     siteName: 'Semester Calendar Builder',
     images: [
@@ -60,7 +88,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Semester Calendar Builder - Plan Your Perfect Academic Schedule',
+    title: 'Semester Calendar Builder | Course Schedule Planner by Jonathan Reed',
     description: 'Build and organize your semester schedule with ease. Add courses, study blocks, and important dates. Free online calendar tool for students.',
     images: [LOGO_ASSETS.full],
     creator: '@jonathanreed',
@@ -106,6 +134,10 @@ html {
   font-family: var(--font-sans);
 }
         `}</style>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdSchema) }}
+        />
       </head>
       <body>
         <ThemeProvider

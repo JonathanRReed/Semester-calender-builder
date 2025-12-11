@@ -317,7 +317,7 @@ export default function SchedulePage() {
               <div className="flex-1">
                 <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground">Semester Calendar Builder</h1>
                 <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-                  {hasEvents ? `${allEvents.length} events scheduled` : "Build your perfect semester schedule"}
+                  Semester Calendar Builder is a simple planning app by Jonathan Reed for laying out classes, time blocks & deadlines.
                 </p>
               </div>
               <div className="flex items-center gap-2">

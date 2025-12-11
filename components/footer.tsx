@@ -9,7 +9,17 @@ const FOOTER_LINKS = [
 
 export function Footer() {
     return (
-        <footer className="glass-card mt-8 p-4 text-center text-xs text-muted-foreground">
+        <footer className="glass-card mt-8 p-4 text-center text-xs text-muted-foreground space-y-3">
+            <p>
+                <a
+                    href="https://jonathanrreed.com/projects/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-foreground transition-colors underline-offset-4 hover:underline"
+                >
+                    Jonathan Reed AI and developer portfolio
+                </a>
+            </p>
             <nav aria-label="Related projects">
                 <ul className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
                     {FOOTER_LINKS.map(({ href, label }, index) => (

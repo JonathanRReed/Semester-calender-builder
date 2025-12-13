@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
+import { AlertTriangle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -8,20 +9,24 @@ import { Textarea } from "@/components/ui/textarea"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "sonner"
-import type { ScheduleEvent, CourseEvent, StudyBlock } from "@/types/schedule"
+import type { ScheduleEvent, CourseEvent, StudyBlock, DayOfWeek } from "@/types/schedule"
 import { DAYS } from "@/lib/constants"
+import { generateRecurringEvents } from "@/lib/schedule-utils"
+import { checkRecurringEventConflicts } from "@/lib/conflict-utils"
 
 interface AddEventDialogProps {
   isOpen: boolean
   onClose: () => void
   onAdd: (event: Omit<ScheduleEvent, "id">) => void
+  onAddMultiple?: (events: Omit<ScheduleEvent, "id">[]) => void
+  existingEvents?: ScheduleEvent[]
 }
 
 type EventTypeOption = "study" | "course"
 
 type FormData = {
   title: string
-  day: string
+  selectedDays: DayOfWeek[]
   startCT: string
   endCT: string
   courseType: "inperson" | "online" | "exam"
@@ -30,11 +35,12 @@ type FormData = {
   courseCode: string
   section: string
   notes: string
+  credits: string
 }
 
 const INITIAL_FORM: FormData = {
   title: "",
-  day: "",
+  selectedDays: [],
   startCT: "",
   endCT: "",
   courseType: "inperson",
@@ -43,6 +49,7 @@ const INITIAL_FORM: FormData = {
   courseCode: "",
   section: "",
   notes: "",
+  credits: "",
 }
 
 const toMinutes = (value: string) => {
@@ -55,7 +62,42 @@ const toMinutes = (value: string) => {
   return hours * 60 + minutes
 }
 
-export function AddEventDialog({ isOpen, onClose, onAdd }: AddEventDialogProps) {
+// Day button component for multi-select
+function DayButton({
+  day,
+  isSelected,
+  onClick,
+  hasConflict
+}: {
+  day: string
+  isSelected: boolean
+  onClick: () => void
+  hasConflict?: boolean
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`
+        px-3 py-2 text-sm font-medium rounded-md transition-all duration-200 relative
+        ${isSelected
+          ? hasConflict
+            ? "bg-destructive/20 text-destructive border-2 border-destructive"
+            : "bg-primary text-primary-foreground shadow-sm"
+          : "bg-secondary/50 text-muted-foreground hover:bg-secondary hover:text-foreground border border-border/50"
+        }
+      `}
+      aria-pressed={isSelected}
+    >
+      {day}
+      {hasConflict && isSelected && (
+        <span className="absolute -top-1 -right-1 w-3 h-3 bg-destructive rounded-full animate-pulse" />
+      )}
+    </button>
+  )
+}
+
+export function AddEventDialog({ isOpen, onClose, onAdd, onAddMultiple, existingEvents = [] }: AddEventDialogProps) {
   const [eventType, setEventType] = useState<EventTypeOption>("study")
   const [formData, setFormData] = useState<FormData>(INITIAL_FORM)
 
@@ -65,19 +107,49 @@ export function AddEventDialog({ isOpen, onClose, onAdd }: AddEventDialogProps) 
   const trimmedCourseCode = formData.courseCode.trim()
   const trimmedSection = formData.section.trim()
   const trimmedInstructor = formData.instructor.trim()
+  const parsedCredits = formData.credits ? parseInt(formData.credits, 10) : undefined
 
-  const canAttemptSubmit = trimmedTitle.length > 0 && formData.day !== ""
+  const canAttemptSubmit = trimmedTitle.length > 0 && formData.selectedDays.length > 0
+
+  // Check for conflicts with existing events
+  const conflicts = useMemo(() => {
+    if (!formData.startCT || !formData.endCT || formData.selectedDays.length === 0) {
+      return []
+    }
+    return checkRecurringEventConflicts(
+      formData.selectedDays,
+      formData.startCT,
+      formData.endCT,
+      existingEvents
+    )
+  }, [formData.selectedDays, formData.startCT, formData.endCT, existingEvents])
+
+  const conflictDays = new Set(conflicts.map(c => c.day))
 
   const resetForm = () => {
     setFormData(INITIAL_FORM)
     setEventType("study")
   }
 
+  const toggleDay = (day: DayOfWeek) => {
+    setFormData((prev) => ({
+      ...prev,
+      selectedDays: prev.selectedDays.includes(day)
+        ? prev.selectedDays.filter((d) => d !== day)
+        : [...prev.selectedDays, day],
+    }))
+  }
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
     if (formData.startCT === "" || formData.endCT === "") {
-      toast.error("Please complete the title, day, and start/end times before adding an event.")
+      toast.error("Please complete the title, days, and start/end times before adding an event.")
+      return
+    }
+
+    if (formData.selectedDays.length === 0) {
+      toast.error("Please select at least one day.")
       return
     }
 
@@ -94,32 +166,90 @@ export function AddEventDialog({ isOpen, onClose, onAdd }: AddEventDialogProps) 
       return
     }
 
-    if (eventType === "study") {
-      const payload: Omit<StudyBlock, "id"> = {
-        title: trimmedTitle,
-        type: "study",
-        day: formData.day,
-        startCT: formData.startCT,
-        endCT: formData.endCT,
-        notes: trimmedNotes || undefined,
-      }
-      onAdd(payload)
-    } else {
-      const payload: Omit<CourseEvent, "id"> = {
-        title: trimmedTitle,
-        courseCode: trimmedCourseCode,
-        section: trimmedSection,
-        type: formData.courseType,
-        day: formData.day,
-        startCT: formData.startCT,
-        endCT: formData.endCT,
-        location: trimmedLocation,
-        instructor: trimmedInstructor || undefined,
-      }
-      onAdd(payload)
+    // Warn about conflicts but allow the user to proceed
+    if (conflicts.length > 0) {
+      const conflictDaysList = conflicts.map(c => c.day).join(", ")
+      toast.warning(`Note: This event overlaps with existing events on ${conflictDaysList}`)
     }
 
-    toast.success("Event added to your schedule.")
+    // Single day - use the original onAdd
+    if (formData.selectedDays.length === 1) {
+      const day = formData.selectedDays[0]!
+
+      if (eventType === "study") {
+        const payload: Omit<StudyBlock, "id"> = {
+          title: trimmedTitle,
+          type: "study",
+          day,
+          startCT: formData.startCT,
+          endCT: formData.endCT,
+          notes: trimmedNotes || undefined,
+        }
+        onAdd(payload)
+      } else {
+        const payload: Omit<CourseEvent, "id"> = {
+          title: trimmedTitle,
+          courseCode: trimmedCourseCode,
+          section: trimmedSection,
+          type: formData.courseType,
+          day,
+          startCT: formData.startCT,
+          endCT: formData.endCT,
+          location: trimmedLocation,
+          instructor: trimmedInstructor || undefined,
+          credits: !Number.isNaN(parsedCredits) ? parsedCredits : undefined,
+        }
+        onAdd(payload)
+      }
+
+      toast.success("Event added to your schedule.")
+    } else {
+      // Multiple days - generate recurring events
+      if (eventType === "study") {
+        const baseEvent = {
+          title: trimmedTitle,
+          type: "study" as const,
+          startCT: formData.startCT,
+          endCT: formData.endCT,
+          notes: trimmedNotes || undefined,
+        }
+
+        if (onAddMultiple) {
+          const events = generateRecurringEvents(baseEvent, formData.selectedDays)
+          onAddMultiple(events)
+        } else {
+          // Fallback: add each event individually
+          for (const day of formData.selectedDays) {
+            onAdd({ ...baseEvent, day })
+          }
+        }
+      } else {
+        const baseEvent = {
+          title: trimmedTitle,
+          courseCode: trimmedCourseCode,
+          section: trimmedSection,
+          type: formData.courseType,
+          startCT: formData.startCT,
+          endCT: formData.endCT,
+          location: trimmedLocation,
+          instructor: trimmedInstructor || undefined,
+          credits: !Number.isNaN(parsedCredits) ? parsedCredits : undefined,
+        }
+
+        if (onAddMultiple) {
+          const events = generateRecurringEvents(baseEvent, formData.selectedDays)
+          onAddMultiple(events)
+        } else {
+          // Fallback: add each event individually
+          for (const day of formData.selectedDays) {
+            onAdd({ ...baseEvent, day })
+          }
+        }
+      }
+
+      toast.success(`Event added to ${formData.selectedDays.length} days: ${formData.selectedDays.join(", ")}`)
+    }
+
     resetForm()
     onClose()
   }
@@ -137,10 +267,12 @@ export function AddEventDialog({ isOpen, onClose, onAdd }: AddEventDialogProps) 
 
   return (
     <Dialog open={isOpen} onOpenChange={handleDialogOpenChange}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Add New Event</DialogTitle>
-          <DialogDescription>Capture class details or schedule a focused study block.</DialogDescription>
+          <DialogDescription>
+            Select multiple days to create recurring events (e.g., Mon/Wed/Fri class).
+          </DialogDescription>
         </DialogHeader>
 
         <form className="space-y-4" onSubmit={handleSubmit}>
@@ -150,7 +282,6 @@ export function AddEventDialog({ isOpen, onClose, onAdd }: AddEventDialogProps) 
               value={eventType}
               onValueChange={(value: EventTypeOption) => {
                 setEventType(value)
-                setFormData((prev) => ({ ...prev, courseType: prev.courseType }))
               }}
             >
               <SelectTrigger aria-labelledby="event-type-label">
@@ -174,47 +305,67 @@ export function AddEventDialog({ isOpen, onClose, onAdd }: AddEventDialogProps) 
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          {/* Multi-day selection */}
+          <div>
+            <Label className="mb-2 block">
+              Days
+              {formData.selectedDays.length > 1 && (
+                <span className="text-xs text-muted-foreground ml-2">
+                  ({formData.selectedDays.length} days selected — will create recurring events)
+                </span>
+              )}
+            </Label>
+            <div className="flex flex-wrap gap-2">
+              {DAYS.map((day) => (
+                <DayButton
+                  key={day}
+                  day={day}
+                  isSelected={formData.selectedDays.includes(day as DayOfWeek)}
+                  hasConflict={conflictDays.has(day)}
+                  onClick={() => toggleDay(day as DayOfWeek)}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Conflict warning */}
+          {conflicts.length > 0 && (
+            <div className="flex items-start gap-2 p-3 bg-destructive/10 border border-destructive/30 rounded-lg text-sm">
+              <AlertTriangle className="w-4 h-4 text-destructive mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="font-medium text-destructive">Schedule Conflict Detected</p>
+                <p className="text-muted-foreground text-xs mt-1">
+                  {conflicts.map((c, i) => (
+                    <span key={i}>
+                      {c.day}: overlaps with "{c.conflictingEvent.title}"
+                      {i < conflicts.length - 1 && <br />}
+                    </span>
+                  ))}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {eventType === "course" && (
             <div>
-              <Label id="day-label">Day</Label>
+              <Label htmlFor="course-type">Course Type</Label>
               <Select
-                value={formData.day}
-                onValueChange={(value) => setFormData((prev) => ({ ...prev, day: value }))}
+                value={formData.courseType}
+                onValueChange={(value: "inperson" | "online" | "exam") =>
+                  setFormData((prev) => ({ ...prev, courseType: value }))
+                }
               >
-                <SelectTrigger aria-labelledby="day-label">
-                  <SelectValue placeholder="Select day" />
+                <SelectTrigger id="course-type">
+                  <SelectValue placeholder="Select type" />
                 </SelectTrigger>
                 <SelectContent>
-                  {DAYS.map((day) => (
-                    <SelectItem key={day} value={day}>
-                      {day}
-                    </SelectItem>
-                  ))}
+                  <SelectItem value="inperson">In-person</SelectItem>
+                  <SelectItem value="online">Online</SelectItem>
+                  <SelectItem value="exam">Exam</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-
-            {eventType === "course" && (
-              <div>
-                <Label htmlFor="course-type">Course Type</Label>
-                <Select
-                  value={formData.courseType}
-                  onValueChange={(value: "inperson" | "online" | "exam") =>
-                    setFormData((prev) => ({ ...prev, courseType: value }))
-                  }
-                >
-                  <SelectTrigger id="course-type">
-                    <SelectValue placeholder="Select type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="inperson">In-person</SelectItem>
-                    <SelectItem value="online">Online</SelectItem>
-                    <SelectItem value="exam">Exam</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-          </div>
+          )}
 
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -242,14 +393,14 @@ export function AddEventDialog({ isOpen, onClose, onAdd }: AddEventDialogProps) 
 
           {eventType === "course" && (
             <>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 gap-4">
                 <div>
                   <Label htmlFor="course-code">Course Code</Label>
                   <Input
                     id="course-code"
                     value={formData.courseCode}
                     onChange={(e) => setFormData((prev) => ({ ...prev, courseCode: e.target.value }))}
-                    placeholder="e.g., MATH 2413"
+                    placeholder="MATH 2413"
                   />
                 </div>
                 <div>
@@ -258,7 +409,19 @@ export function AddEventDialog({ isOpen, onClose, onAdd }: AddEventDialogProps) 
                     id="course-section"
                     value={formData.section}
                     onChange={(e) => setFormData((prev) => ({ ...prev, section: e.target.value }))}
-                    placeholder="e.g., 004"
+                    placeholder="004"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="course-credits">Credits</Label>
+                  <Input
+                    id="course-credits"
+                    type="number"
+                    min="0"
+                    max="12"
+                    value={formData.credits}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, credits: e.target.value }))}
+                    placeholder="3"
                   />
                 </div>
               </div>
@@ -303,7 +466,9 @@ export function AddEventDialog({ isOpen, onClose, onAdd }: AddEventDialogProps) 
               Cancel
             </Button>
             <Button type="submit" disabled={!canAttemptSubmit} aria-disabled={!canAttemptSubmit}>
-              Add Event
+              {formData.selectedDays.length > 1
+                ? `Add to ${formData.selectedDays.length} Days`
+                : "Add Event"}
             </Button>
           </DialogFooter>
         </form>

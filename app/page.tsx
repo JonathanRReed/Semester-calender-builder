@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useEffect, useRef, lazy, Suspense } from "react"
-import { Plus, Sparkles, Menu, X, SlidersHorizontal, RotateCcw } from "lucide-react"
+import { useState, useEffect, useRef, lazy, Suspense, useCallback } from "react"
+import { Plus, Sparkles, Menu, X, SlidersHorizontal, RotateCcw, Printer } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/theme-toggle"
 import type { CourseEvent, StudyBlock, FilterType, TimeZone, ScheduleEvent, ImportantDate } from "@/types/schedule"
@@ -12,6 +12,7 @@ import {
   clearScheduleData,
   ensureScheduleInitialized,
   resetScheduleData,
+  saveLastExportTimestamp,
 } from "@/lib/schedule-utils"
 import { WeekGrid } from "@/components/schedule/week-grid"
 import { ExportMenu } from "@/components/schedule/export-menu"
@@ -20,6 +21,15 @@ import { DataManagement, DataManagementHandle } from "@/components/schedule/data
 import { OnboardingBanner } from "@/components/schedule/onboarding-banner"
 import { QuickActions } from "@/components/schedule/quick-actions"
 import { Footer } from "@/components/footer"
+import { BackupReminder } from "@/components/schedule/backup-reminder"
+import { CreditsDisplay } from "@/components/schedule/credits-display"
+import { useKeyboardShortcuts } from "@/components/schedule/keyboard-shortcuts"
+import { EmptyState } from "@/components/schedule/empty-state"
+import { SemesterWeekIndicator, SemesterSettingsDialog, loadSemesterDates } from "@/components/schedule/semester-settings"
+import { QuickHelp } from "@/components/schedule/quick-help"
+import { ViewToggle, type ViewMode } from "@/components/schedule/view-toggle"
+import { SemesterView } from "@/components/schedule/semester-view"
+import { StatsDashboard } from "@/components/schedule/stats-dashboard"
 import { toast } from "sonner"
 
 const EditEventDialog = lazy(() => import("@/components/schedule/edit-event-dialog").then(mod => ({ default: mod.EditEventDialog })))
@@ -118,6 +128,9 @@ export default function SchedulePage() {
   const [editingEvent, setEditingEvent] = useState<ScheduleEvent | null>(null)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
+  const [isSemesterSettingsOpen, setIsSemesterSettingsOpen] = useState(false)
+  const [semesterDates, setSemesterDates] = useState<{ startDate: string; endDate: string } | null>(null)
+  const [viewMode, setViewMode] = useState<ViewMode>("week")
 
   // Refs for quick actions
   const dataManagementRef = useRef<DataManagementHandle>(null)
@@ -166,6 +179,12 @@ export default function SchedulePage() {
     }
 
     setIsLoaded(true)
+
+    // Load semester dates
+    const savedDates = loadSemesterDates()
+    if (savedDates) {
+      setSemesterDates(savedDates)
+    }
   }, [])
 
   // Auto-save when data changes (debounced)
@@ -236,6 +255,38 @@ export default function SchedulePage() {
     setStudyBlocks((prev) => prev.filter((block) => block.id !== eventId))
   }
 
+  // Handler for saving all events in a recurrence group
+  const handleSaveAllEvents = useCallback((updatedEvents: ScheduleEvent[], recurrenceGroupId: string) => {
+    // Create maps for quick lookup
+    const updatedMap = new Map(updatedEvents.map(e => [e.id, e]))
+
+    setCourses((prev) =>
+      prev.map((course) => {
+        if (course.recurrenceGroupId === recurrenceGroupId) {
+          const updated = updatedMap.get(course.id)
+          return updated ? (updated as CourseEvent) : course
+        }
+        return course
+      })
+    )
+
+    setStudyBlocks((prev) =>
+      prev.map((block) => {
+        if (block.recurrenceGroupId === recurrenceGroupId) {
+          const updated = updatedMap.get(block.id)
+          return updated ? (updated as StudyBlock) : block
+        }
+        return block
+      })
+    )
+  }, [])
+
+  // Handler for deleting all events in a recurrence group
+  const handleDeleteAllEvents = useCallback((recurrenceGroupId: string) => {
+    setCourses((prev) => prev.filter((course) => course.recurrenceGroupId !== recurrenceGroupId))
+    setStudyBlocks((prev) => prev.filter((block) => block.recurrenceGroupId !== recurrenceGroupId))
+  }, [])
+
   const handleAddEvent = (newEvent: Omit<ScheduleEvent, "id">) => {
     const id = crypto.randomUUID()
     const eventWithId = { ...newEvent, id }
@@ -246,6 +297,44 @@ export default function SchedulePage() {
       setCourses((prev) => [...prev, eventWithId as CourseEvent])
     }
   }
+
+  // Handler for adding multiple recurring events at once
+  const handleAddMultipleEvents = useCallback((newEvents: Omit<ScheduleEvent, "id">[]) => {
+    const coursesToAdd: CourseEvent[] = []
+    const blocksToAdd: StudyBlock[] = []
+
+    for (const event of newEvents) {
+      const id = crypto.randomUUID()
+      const eventWithId = { ...event, id }
+
+      if (event.type === "study") {
+        blocksToAdd.push(eventWithId as StudyBlock)
+      } else {
+        coursesToAdd.push(eventWithId as CourseEvent)
+      }
+    }
+
+    if (coursesToAdd.length > 0) {
+      setCourses((prev) => [...prev, ...coursesToAdd])
+    }
+    if (blocksToAdd.length > 0) {
+      setStudyBlocks((prev) => [...prev, ...blocksToAdd])
+    }
+  }, [])
+
+  // Handler for export with timestamp tracking
+  const handleExport = useCallback(() => {
+    saveLastExportTimestamp()
+    exportMenuRef.current?.click()
+  }, [])
+
+  // Keyboard shortcuts
+  useKeyboardShortcuts({
+    onAddEvent: () => setIsAddDialogOpen(true),
+    onExport: handleExport,
+    onShowGuide: () => setIsGuideOpen(true),
+    enabled: !isEditDialogOpen && !isAddDialogOpen && !isGuideOpen,
+  })
 
   const handleAddDate = (newDate: Omit<ImportantDate, "id">) => {
     const id = crypto.randomUUID()
@@ -315,9 +404,16 @@ export default function SchedulePage() {
           <div className="flex flex-col gap-4">
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1">
-                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground">Semester Calendar Builder</h1>
-                <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-                  {hasEvents ? `${allEvents.length} events scheduled` : "Build your perfect semester schedule"}
+                <div className="flex items-center gap-3 flex-wrap">
+                  <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground">Semester Calendar Builder</h1>
+                  <CreditsDisplay courses={courses} />
+                  <SemesterWeekIndicator onOpenSettings={() => setIsSemesterSettingsOpen(true)} />
+                  <QuickHelp />
+                </div>
+                <p className="text-xs sm:text-sm text-muted-foreground mt-2 flex items-center gap-2 flex-wrap">
+                  <span>Plan your typical week below</span>
+                  <span className="text-muted-foreground/50">•</span>
+                  <span>Track specific dates in the sidebar</span>
                 </p>
               </div>
               <div className="flex items-center gap-2">
@@ -391,6 +487,16 @@ export default function SchedulePage() {
                     <span className="xs:hidden">Add</span>
                   </Button>
                   <ExportMenu ref={exportMenuRef} events={allEvents} />
+                  <Button
+                    onClick={() => window.print()}
+                    size="sm"
+                    variant="outline"
+                    className="w-full sm:w-auto no-print"
+                    aria-label="Print schedule"
+                  >
+                    <Printer className="w-3 h-3 sm:w-4 sm:h-4" />
+                    <span className="hidden xs:inline">Print</span>
+                  </Button>
                 </div>
               </div>
 
@@ -448,6 +554,11 @@ export default function SchedulePage() {
               onManageData={() => dataManagementRef.current?.openMenu()}
               onLoadExample={handleLoadExample}
             />
+            {hasEvents && (
+              <BackupReminder
+                onExport={handleExport}
+              />
+            )}
           </div>
 
           <div className="space-y-4 sm:space-y-6">
@@ -472,13 +583,54 @@ export default function SchedulePage() {
               />
             </div>
 
-            <div id="schedule-grid" role="main" aria-label="Weekly schedule grid" className="relative scale-in">
-              <WeekGrid
-                events={allEvents}
-                activeFilter={activeFilter}
-                timeZone={timeZone}
-                onEventClick={handleEventClick}
-              />
+            <div id="schedule-grid" role="main" aria-label="Schedule view" className="relative scale-in">
+              {/* View toggle and section header */}
+              {hasEvents && (
+                <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
+                  <ViewToggle
+                    currentView={viewMode}
+                    onViewChange={setViewMode}
+                    hasSemesterDates={!!semesterDates?.startDate && !!semesterDates?.endDate}
+                    onSetupSemester={() => setIsSemesterSettingsOpen(true)}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    {viewMode === "week"
+                      ? "Your typical weekly schedule — events repeat each week"
+                      : "Overview of your entire semester"
+                    }
+                  </p>
+                </div>
+              )}
+
+              {/* View content */}
+              {!hasEvents ? (
+                <EmptyState
+                  onAddEvent={() => setIsAddDialogOpen(true)}
+                  onLoadExample={handleLoadExample}
+                />
+              ) : viewMode === "week" ? (
+                <WeekGrid
+                  events={allEvents}
+                  activeFilter={activeFilter}
+                  timeZone={timeZone}
+                  onEventClick={handleEventClick}
+                />
+              ) : semesterDates?.startDate && semesterDates?.endDate ? (
+                <SemesterView
+                  events={allEvents}
+                  importantDates={importantDates}
+                  semesterStart={semesterDates.startDate}
+                  semesterEnd={semesterDates.endDate}
+                  onEventClick={handleEventClick}
+                />
+              ) : (
+                <div className="text-center py-12">
+                  <p className="text-muted-foreground mb-4">Set your semester dates to see the semester view</p>
+                  <Button onClick={() => setIsSemesterSettingsOpen(true)}>
+                    Set Semester Dates
+                  </Button>
+                </div>
+              )}
             </div>
 
             <div className="glass-card p-3 sm:p-4 rounded-lg scale-in shadow-[var(--shadow-xs)]">
@@ -543,6 +695,17 @@ export default function SchedulePage() {
                 className="shadow-[var(--shadow-xs)]"
               />
             </div>
+
+            {/* Stats Dashboard */}
+            {hasEvents && (
+              <div className="hidden lg:block scale-in">
+                <StatsDashboard
+                  events={allEvents}
+                  importantDates={importantDates}
+                  className="shadow-[var(--shadow-xs)]"
+                />
+              </div>
+            )}
           </aside>
         </div>
       </main>
@@ -556,12 +719,21 @@ export default function SchedulePage() {
             setEditingEvent(null)
           }}
           onSave={handleSaveEvent}
+          onSaveAll={handleSaveAllEvents}
           onDelete={handleDeleteEvent}
+          onDeleteAll={handleDeleteAllEvents}
+          allEvents={allEvents}
         />
       </Suspense>
 
       <Suspense fallback={null}>
-        <AddEventDialog isOpen={isAddDialogOpen} onClose={() => setIsAddDialogOpen(false)} onAdd={handleAddEvent} />
+        <AddEventDialog
+          isOpen={isAddDialogOpen}
+          onClose={() => setIsAddDialogOpen(false)}
+          onAdd={handleAddEvent}
+          onAddMultiple={handleAddMultipleEvents}
+          existingEvents={allEvents}
+        />
       </Suspense>
 
       <Suspense fallback={null}>
@@ -573,6 +745,13 @@ export default function SchedulePage() {
           onManageData={() => dataManagementRef.current?.openMenu()}
         />
       </Suspense>
+
+      <SemesterSettingsDialog
+        isOpen={isSemesterSettingsOpen}
+        onClose={() => setIsSemesterSettingsOpen(false)}
+        onSave={setSemesterDates}
+        currentDates={semesterDates}
+      />
 
       {/* SEO: FAQ Schema (visually hidden) */}
       <script

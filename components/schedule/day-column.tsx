@@ -1,9 +1,10 @@
 "use client"
 
-import React from "react"
+import React, { useMemo } from "react"
 import type { ScheduleEvent, TimeZone } from "@/types/schedule"
 import { EventCard } from "./event-card"
 import { getCampusStatus, convertTimeToMinutes } from "@/lib/schedule-utils"
+import { getConflictingEventIds } from "@/lib/conflict-utils"
 
 interface DayColumnProps {
   day: string
@@ -15,6 +16,9 @@ interface DayColumnProps {
 
 export const DayColumn = React.memo(function DayColumn({ day, events, allEvents, timeZone, onEventClick }: DayColumnProps) {
   const campusStatus = getCampusStatus(allEvents, day)
+
+  // Get set of event IDs that have conflicts
+  const conflictingIds = useMemo(() => getConflictingEventIds(allEvents), [allEvents])
 
   const positionedEvents = React.useMemo(() =>
     events
@@ -172,7 +176,12 @@ export const DayColumn = React.memo(function DayColumn({ day, events, allEvents,
         {/* Positioned events */}
         {finalPositions.map(({ event, style }) => (
           <div key={event.id} style={style}>
-            <EventCard event={event} timeZone={timeZone} onClick={() => onEventClick?.(event)} />
+            <EventCard
+              event={event}
+              timeZone={timeZone}
+              onClick={() => onEventClick?.(event)}
+              hasConflict={conflictingIds.has(event.id)}
+            />
           </div>
         ))}
 
@@ -185,6 +194,7 @@ export const DayColumn = React.memo(function DayColumn({ day, events, allEvents,
                 event={event}
                 timeZone={timeZone}
                 onClick={() => onEventClick?.(event)}
+                hasConflict={conflictingIds.has(event.id)}
               />
             ))}
           </div>

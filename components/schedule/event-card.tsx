@@ -1,4 +1,5 @@
 import React from "react"
+import { AlertTriangle, Repeat, MapPin, Clock, BookOpen } from "lucide-react"
 import type { ScheduleEvent, TimeZone } from "@/types/schedule"
 import { formatTime, parseTime } from "@/lib/schedule-utils"
 import { Tooltip } from "./tooltip"
@@ -7,51 +8,80 @@ interface EventCardProps {
   event: ScheduleEvent
   timeZone: TimeZone
   onClick?: () => void
+  hasConflict?: boolean
 }
 
-export const EventCard = React.memo(function EventCard({ event, timeZone, onClick }: EventCardProps) {
-  const getEventColorVar = (event: ScheduleEvent) => {
-    if (event.type === "study") return "--event-study"
-    if ("type" in event) {
-      switch (event.type) {
-        case "inperson":
-          return "--event-inperson"
-        case "online":
-          return "--event-online"
-        case "exam":
-          return "--event-exam"
-        default:
-          return "--event-inperson"
+export const EventCard = React.memo(function EventCard({ event, timeZone, onClick, hasConflict = false }: EventCardProps) {
+  const getEventStyles = (event: ScheduleEvent) => {
+    if (event.type === "study") {
+      return {
+        bg: "linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.08) 100%)",
+        border: "rgba(16, 185, 129, 0.35)",
+        accent: "#10b981",
       }
     }
-    return "--event-inperson"
+    switch (event.type) {
+      case "inperson":
+        return {
+          bg: "linear-gradient(135deg, rgba(244, 63, 94, 0.15) 0%, rgba(244, 63, 94, 0.08) 100%)",
+          border: "rgba(244, 63, 94, 0.35)",
+          accent: "#f43f5e",
+        }
+      case "online":
+        return {
+          bg: "linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0.08) 100%)",
+          border: "rgba(59, 130, 246, 0.35)",
+          accent: "#3b82f6",
+        }
+      case "exam":
+        return {
+          bg: "linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(239, 68, 68, 0.1) 100%)",
+          border: "rgba(239, 68, 68, 0.4)",
+          accent: "#ef4444",
+        }
+      default:
+        return {
+          bg: "linear-gradient(135deg, rgba(244, 63, 94, 0.15) 0%, rgba(244, 63, 94, 0.08) 100%)",
+          border: "rgba(244, 63, 94, 0.35)",
+          accent: "#f43f5e",
+        }
+    }
   }
 
-  const getEventColorDark = () => {
-    return "text-foreground"
-  }
-
-  const colorClasses = getEventColorDark()
-  const colorVar = getEventColorVar(event)
+  const styles = getEventStyles(event)
   const startTime = parseTime(event.startCT)
   const endTime = parseTime(event.endCT)
+  const isRecurring = !!event.recurrenceGroupId
+  const hasCredits = "credits" in event && event.credits !== undefined && event.credits > 0
+
+  // Conflict border style
+  const conflictStyle = hasConflict
+    ? "ring-2 ring-red-500 ring-offset-1 ring-offset-background shadow-red-500/20"
+    : ""
 
   // Skip async courses with 00:00 times
   if (event.startCT === "00:00" && event.endCT === "00:00") {
     return (
       <Tooltip event={event}>
         <div
-          className={`p-2 rounded-lg border ${colorClasses} opacity-80 cursor-pointer transition-transform duration-300 text-xs backdrop-blur-sm shadow-[var(--shadow-xs)] hover:opacity-95 hover:shadow-[var(--shadow-sm)] hover:-translate-y-0.5`}
+          className={`p-2 rounded-xl border backdrop-blur-sm cursor-pointer transition-all duration-300 text-xs shadow-lg hover:shadow-xl hover:-translate-y-0.5 hover:scale-[1.02] ${conflictStyle}`}
           style={{
-            background: `color-mix(in srgb, var(${colorVar}), transparent 82%)`,
-            borderColor: `color-mix(in srgb, var(${colorVar}), transparent 55%)`,
+            background: styles.bg,
+            borderColor: styles.border,
           }}
           onClick={onClick}
         >
-          <div className="font-medium truncate leading-tight" title={event.title}>
-            {event.title}
+          <div className="flex items-center gap-1">
+            <div className="font-semibold truncate leading-tight flex-1 text-foreground" title={event.title}>
+              {event.title}
+            </div>
+            {isRecurring && <Repeat className="w-3 h-3 opacity-50 flex-shrink-0" />}
+            {hasConflict && <AlertTriangle className="w-3 h-3 text-red-500 flex-shrink-0" />}
           </div>
-          <div className="opacity-75 mt-1 text-xs">Async</div>
+          <div className="opacity-75 mt-1 text-xs flex items-center gap-1">
+            <Clock className="w-3 h-3" />
+            Async
+          </div>
         </div>
       </Tooltip>
     )
@@ -60,28 +90,65 @@ export const EventCard = React.memo(function EventCard({ event, timeZone, onClic
   return (
     <Tooltip event={event}>
       <div
-        className={`p-2 rounded-lg border ${colorClasses} text-xs backdrop-blur-sm cursor-pointer transition-transform duration-300 shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-md)] hover:-translate-y-1`}
+        className={`p-2.5 rounded-xl border backdrop-blur-sm cursor-pointer transition-all duration-300 text-xs shadow-lg hover:shadow-xl hover:-translate-y-1 hover:scale-[1.02] group ${conflictStyle}`}
         style={{
-          background: `color-mix(in srgb, var(${colorVar}), transparent 78%)`,
-          borderColor: `color-mix(in srgb, var(${colorVar}), transparent 50%)`,
+          background: styles.bg,
+          borderColor: styles.border,
         }}
         onClick={onClick}
       >
-        <div className="font-semibold truncate leading-tight mb-1" title={event.title}>
-          {event.title}
+        {/* Accent bar */}
+        <div
+          className="absolute left-0 top-2 bottom-2 w-1 rounded-r-full opacity-80 group-hover:opacity-100 transition-opacity"
+          style={{ background: styles.accent }}
+        />
+
+        {/* Header with title and indicators */}
+        <div className="flex items-start gap-1.5 mb-1.5 pl-2">
+          <div className="font-bold truncate leading-tight flex-1 text-foreground" title={event.title}>
+            {event.title}
+          </div>
+          <div className="flex items-center gap-1 flex-shrink-0">
+            {hasCredits && (
+              <span
+                className="inline-flex items-center px-1.5 py-0.5 text-[9px] font-bold rounded-full"
+                style={{ background: `${styles.accent}20`, color: styles.accent }}
+              >
+                {(event as { credits: number }).credits}cr
+              </span>
+            )}
+            {isRecurring && (
+              <span title="Recurring event">
+                <Repeat className="w-3 h-3 opacity-50" />
+              </span>
+            )}
+            {hasConflict && (
+              <span title="Schedule conflict">
+                <AlertTriangle className="w-3 h-3 text-red-500 animate-pulse" />
+              </span>
+            )}
+          </div>
         </div>
-        <div className="opacity-90 text-[10px] leading-tight font-medium">
-          {formatTime(startTime.hour, startTime.minute, timeZone)} -{" "}
-          {formatTime(endTime.hour, endTime.minute, timeZone)}
+
+        {/* Time with icon */}
+        <div className="flex items-center gap-1 text-[10px] font-medium text-muted-foreground pl-2">
+          <Clock className="w-3 h-3" />
+          {formatTime(startTime.hour, startTime.minute, timeZone)} - {formatTime(endTime.hour, endTime.minute, timeZone)}
         </div>
+
+        {/* Location */}
         {"location" in event && event.location && (
-          <div className="opacity-70 truncate text-[10px] leading-tight mt-1" title={event.location}>
-            Location: {event.location}
+          <div className="flex items-center gap-1 text-[10px] text-muted-foreground mt-1 pl-2 truncate" title={event.location}>
+            <MapPin className="w-3 h-3 flex-shrink-0" />
+            <span className="truncate">{event.location}</span>
           </div>
         )}
+
+        {/* Study notes */}
         {event.type === "study" && "notes" in event && event.notes && (
-          <div className="opacity-70 truncate text-[10px] leading-tight mt-1" title={event.notes}>
-            Notes: {event.notes}
+          <div className="flex items-center gap-1 text-[10px] text-muted-foreground mt-1 pl-2 truncate" title={event.notes}>
+            <BookOpen className="w-3 h-3 flex-shrink-0" />
+            <span className="truncate">{event.notes}</span>
           </div>
         )}
       </div>

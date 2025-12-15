@@ -26,7 +26,7 @@ function getOverlap(
         return null
     }
     return {
-        start: Math.max(start1, end1),
+        start: Math.max(start1, start2),
         end: Math.min(end1, end2),
     }
 }

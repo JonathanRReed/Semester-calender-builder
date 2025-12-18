@@ -15,35 +15,40 @@ export const EventCard = React.memo(function EventCard({ event, timeZone, onClic
   const getEventStyles = (event: ScheduleEvent) => {
     if (event.type === "study") {
       return {
-        bg: "linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.08) 100%)",
-        border: "rgba(16, 185, 129, 0.35)",
+        bg: "linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(16, 185, 129, 0.06) 100%)",
+        border: "rgba(16, 185, 129, 0.25)",
         accent: "#10b981",
+        glow: "rgba(16, 185, 129, 0.15)",
       }
     }
     switch (event.type) {
       case "inperson":
         return {
-          bg: "linear-gradient(135deg, rgba(244, 63, 94, 0.15) 0%, rgba(244, 63, 94, 0.08) 100%)",
-          border: "rgba(244, 63, 94, 0.35)",
+          bg: "linear-gradient(135deg, rgba(244, 63, 94, 0.12) 0%, rgba(244, 63, 94, 0.06) 100%)",
+          border: "rgba(244, 63, 94, 0.25)",
           accent: "#f43f5e",
+          glow: "rgba(244, 63, 94, 0.15)",
         }
       case "online":
         return {
-          bg: "linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0.08) 100%)",
-          border: "rgba(59, 130, 246, 0.35)",
+          bg: "linear-gradient(135deg, rgba(59, 130, 246, 0.12) 0%, rgba(59, 130, 246, 0.06) 100%)",
+          border: "rgba(59, 130, 246, 0.25)",
           accent: "#3b82f6",
+          glow: "rgba(59, 130, 246, 0.15)",
         }
       case "exam":
         return {
-          bg: "linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(239, 68, 68, 0.1) 100%)",
-          border: "rgba(239, 68, 68, 0.4)",
+          bg: "linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0.08) 100%)",
+          border: "rgba(239, 68, 68, 0.3)",
           accent: "#ef4444",
+          glow: "rgba(239, 68, 68, 0.2)",
         }
       default:
         return {
-          bg: "linear-gradient(135deg, rgba(244, 63, 94, 0.15) 0%, rgba(244, 63, 94, 0.08) 100%)",
-          border: "rgba(244, 63, 94, 0.35)",
+          bg: "linear-gradient(135deg, rgba(244, 63, 94, 0.12) 0%, rgba(244, 63, 94, 0.06) 100%)",
+          border: "rgba(244, 63, 94, 0.25)",
           accent: "#f43f5e",
+          glow: "rgba(244, 63, 94, 0.15)",
         }
     }
   }
@@ -64,7 +69,7 @@ export const EventCard = React.memo(function EventCard({ event, timeZone, onClic
     return (
       <Tooltip event={event}>
         <div
-          className={`p-2 rounded-xl border backdrop-blur-sm cursor-pointer transition-all duration-300 text-xs shadow-lg hover:shadow-xl hover:-translate-y-0.5 hover:scale-[1.02] ${conflictStyle}`}
+          className={`p-2 rounded-xl border backdrop-blur-sm cursor-pointer transition-all duration-200 text-xs shadow-[0_2px_6px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.08)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.1)] hover:-translate-y-0.5 ${conflictStyle}`}
           style={{
             background: styles.bg,
             borderColor: styles.border,
@@ -90,7 +95,7 @@ export const EventCard = React.memo(function EventCard({ event, timeZone, onClic
   return (
     <Tooltip event={event}>
       <div
-        className={`p-2.5 rounded-xl border backdrop-blur-sm cursor-pointer transition-all duration-300 text-xs shadow-lg hover:shadow-xl hover:-translate-y-1 hover:scale-[1.02] group ${conflictStyle}`}
+        className={`p-2.5 rounded-xl border backdrop-blur-sm cursor-pointer transition-all duration-200 text-xs shadow-[0_2px_8px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.1)] hover:shadow-[0_6px_16px_rgba(0,0,0,0.12)] hover:-translate-y-0.5 group ${conflictStyle}`}
         style={{
           background: styles.bg,
           borderColor: styles.border,

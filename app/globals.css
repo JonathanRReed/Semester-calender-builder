@@ -239,6 +239,7 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply text-foreground;
     background: radial-gradient(circle at 12% 18%, color-mix(in srgb, var(--rp-iris), transparent 85%), transparent 62%),
@@ -248,6 +249,7 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
   }
+
   code,
   pre {
     font-family: var(--font-mono);
@@ -258,31 +260,42 @@
   .z-tooltip {
     z-index: var(--z-tooltip);
   }
+
   .z-modal {
     z-index: var(--z-modal);
   }
+
   .z-dropdown {
     z-index: var(--z-dropdown);
   }
+
   .z-overlay {
     z-index: var(--z-overlay);
   }
+
   .z-header {
     z-index: var(--z-header);
   }
 
   .glass-card {
-    background: color-mix(in srgb, var(--card), transparent 18%);
-    border: 1px solid color-mix(in srgb, var(--border), transparent 45%);
-    box-shadow: var(--shadow-sm);
-    backdrop-filter: blur(14px);
+    background: color-mix(in srgb, var(--card), transparent 15%);
+    border: 1px solid color-mix(in srgb, var(--border), transparent 40%);
+    box-shadow:
+      0 1px 3px color-mix(in srgb, var(--rp-base), transparent 80%),
+      0 4px 8px color-mix(in srgb, var(--rp-base), transparent 88%),
+      0 8px 16px color-mix(in srgb, var(--rp-base), transparent 92%),
+      inset 0 1px 0 color-mix(in srgb, white, transparent 92%);
+    backdrop-filter: blur(16px);
   }
 
   .glass-header {
-    background: color-mix(in srgb, var(--card), transparent 12%);
-    border-bottom: 1px solid color-mix(in srgb, var(--border), transparent 55%);
-    box-shadow: var(--shadow-xs);
-    backdrop-filter: blur(14px);
+    background: color-mix(in srgb, var(--card), transparent 10%);
+    border-bottom: 1px solid color-mix(in srgb, var(--border), transparent 50%);
+    box-shadow:
+      0 2px 4px color-mix(in srgb, var(--rp-base), transparent 85%),
+      0 4px 12px color-mix(in srgb, var(--rp-base), transparent 90%),
+      inset 0 1px 0 color-mix(in srgb, white, transparent 94%);
+    backdrop-filter: blur(20px);
   }
 
   .gradient-text {
@@ -290,27 +303,95 @@
   }
 
   .btn-primary {
-    background: color-mix(in srgb, var(--primary), transparent 12%);
-    border: 1px solid color-mix(in srgb, var(--primary), transparent 55%);
-    box-shadow: var(--shadow-xs);
-    transition: all 0.25s ease;
+    background: linear-gradient(180deg,
+        color-mix(in srgb, var(--primary), white 8%),
+        var(--primary));
+    border: 1px solid color-mix(in srgb, var(--primary), black 15%);
+    box-shadow:
+      0 1px 2px color-mix(in srgb, var(--primary), transparent 60%),
+      0 2px 8px color-mix(in srgb, var(--primary), transparent 80%),
+      inset 0 1px 0 color-mix(in srgb, white, transparent 80%);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .btn-primary:hover {
     transform: translateY(-1px);
-    box-shadow: var(--shadow-sm);
+    box-shadow:
+      0 2px 4px color-mix(in srgb, var(--primary), transparent 50%),
+      0 4px 12px color-mix(in srgb, var(--primary), transparent 70%),
+      inset 0 1px 0 color-mix(in srgb, white, transparent 75%);
+  }
+
+  .btn-primary:active {
+    transform: translateY(0);
+    box-shadow:
+      0 1px 2px color-mix(in srgb, var(--primary), transparent 70%),
+      inset 0 1px 2px color-mix(in srgb, black, transparent 85%);
   }
 
   .btn-secondary {
-    background: color-mix(in srgb, var(--secondary), transparent 28%);
-    border: 1px solid color-mix(in srgb, var(--border), transparent 55%);
-    transition: all 0.25s ease;
+    background: linear-gradient(180deg,
+        color-mix(in srgb, var(--card), transparent 20%),
+        color-mix(in srgb, var(--secondary), transparent 10%));
+    border: 1px solid color-mix(in srgb, var(--border), transparent 30%);
+    box-shadow:
+      0 1px 2px color-mix(in srgb, var(--rp-base), transparent 85%),
+      inset 0 1px 0 color-mix(in srgb, white, transparent 90%);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .btn-secondary:hover {
-    background: color-mix(in srgb, var(--secondary), transparent 45%);
-    border-color: color-mix(in srgb, var(--muted), transparent 45%);
+    background: linear-gradient(180deg,
+        color-mix(in srgb, var(--card), transparent 10%),
+        var(--secondary));
+    border-color: color-mix(in srgb, var(--border), transparent 20%);
     transform: translateY(-1px);
+    box-shadow:
+      0 2px 6px color-mix(in srgb, var(--rp-base), transparent 75%),
+      inset 0 1px 0 color-mix(in srgb, white, transparent 88%);
+  }
+
+  .btn-secondary:active {
+    transform: translateY(0);
+    box-shadow: inset 0 1px 2px color-mix(in srgb, black, transparent 92%);
+  }
+
+  /* Premium Input Styling */
+  .input-premium {
+    background: color-mix(in srgb, var(--card), transparent 30%);
+    border: 1px solid color-mix(in srgb, var(--border), transparent 40%);
+    box-shadow:
+      inset 0 1px 3px color-mix(in srgb, var(--rp-base), transparent 90%),
+      0 1px 0 color-mix(in srgb, white, transparent 95%);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .input-premium:hover {
+    border-color: color-mix(in srgb, var(--border), transparent 20%);
+  }
+
+  .input-premium:focus {
+    background: color-mix(in srgb, var(--card), transparent 20%);
+    border-color: color-mix(in srgb, var(--rp-foam), transparent 40%);
+  }
+
+  /* Premium Badge/Pill Styling */
+  .badge-premium {
+    background: linear-gradient(135deg,
+        color-mix(in srgb, var(--accent), transparent 85%),
+        color-mix(in srgb, var(--accent), transparent 90%));
+    border: 1px solid color-mix(in srgb, var(--accent), transparent 70%);
+    box-shadow: 0 1px 2px color-mix(in srgb, var(--accent), transparent 90%);
+  }
+
+  /* Subtle divider line */
+  .divider-subtle {
+    height: 1px;
+    background: linear-gradient(90deg,
+        transparent,
+        color-mix(in srgb, var(--border), transparent 40%) 20%,
+        color-mix(in srgb, var(--border), transparent 40%) 80%,
+        transparent);
   }
 }
 
@@ -331,7 +412,237 @@
   }
 }
 
+/* ============================================
+   PREMIUM POLISH SYSTEM
+   ============================================ */
+
+/* Smooth color transitions for theme toggle */
+*,
+*::before,
+*::after {
+  transition-property: background-color, border-color, box-shadow, color, fill, stroke;
+  transition-duration: 0.3s;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Disable transitions for elements that shouldn't animate */
+[data-no-transition],
+[data-no-transition] *,
+.no-transition,
+.no-transition * {
+  transition: none !important;
+}
+
+/* Custom Scrollbar - Rose Pine themed */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--rp-surface);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg,
+      color-mix(in srgb, var(--rp-highlight-high), transparent 20%),
+      color-mix(in srgb, var(--rp-muted), transparent 30%));
+  border-radius: 5px;
+  border: 2px solid var(--rp-surface);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg,
+      var(--rp-highlight-high),
+      var(--rp-muted));
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--rp-surface);
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--rp-highlight-high) var(--rp-surface);
+}
+
+/* Enhanced Focus Rings - Accessible and beautiful */
+:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--background),
+    0 0 0 4px color-mix(in srgb, var(--rp-iris), transparent 30%),
+    0 0 12px color-mix(in srgb, var(--rp-iris), transparent 60%);
+}
+
+button:focus-visible,
+[role="button"]:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--background),
+    0 0 0 4px color-mix(in srgb, var(--primary), transparent 30%),
+    0 0 10px color-mix(in srgb, var(--primary), transparent 70%);
+}
+
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--background),
+    0 0 0 4px color-mix(in srgb, var(--rp-foam), transparent 40%),
+    0 0 8px color-mix(in srgb, var(--rp-foam), transparent 75%);
+}
+
+/* Noise Texture Overlay - Premium matte finish */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+.dark body::before {
+  opacity: 0.035;
+}
+
+/* ============================================
+   ENHANCED HOVER STATES
+   ============================================ */
+
+/* Subtle glow on card hover */
+.glass-card {
+  position: relative;
+}
+
+.glass-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  pointer-events: none;
+  box-shadow:
+    0 0 20px color-mix(in srgb, var(--rp-iris), transparent 85%),
+    inset 0 1px 0 color-mix(in srgb, white, transparent 92%);
+  transition: opacity 0.3s ease;
+}
+
+.glass-card:hover::after {
+  opacity: 1;
+}
+
+/* Premium button hover glow */
+.btn-primary::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  opacity: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center,
+      color-mix(in srgb, var(--primary), transparent 70%) 0%,
+      transparent 70%);
+  transition: opacity 0.3s ease;
+  z-index: -1;
+}
+
+.btn-primary {
+  position: relative;
+}
+
+.btn-primary:hover::after {
+  opacity: 1;
+}
+
+/* ============================================
+   REFINED SHADOWS - Multi-layer depth
+   ============================================ */
+
+.shadow-premium-xs {
+  box-shadow:
+    0 1px 2px color-mix(in srgb, var(--rp-base), transparent 85%),
+    0 2px 4px color-mix(in srgb, var(--rp-base), transparent 90%),
+    0 0 0 1px color-mix(in srgb, var(--border), transparent 50%);
+}
+
+.shadow-premium-sm {
+  box-shadow:
+    0 1px 3px color-mix(in srgb, var(--rp-base), transparent 80%),
+    0 4px 8px color-mix(in srgb, var(--rp-base), transparent 88%),
+    0 8px 16px color-mix(in srgb, var(--rp-base), transparent 92%),
+    0 0 0 1px color-mix(in srgb, var(--border), transparent 60%);
+}
+
+.shadow-premium-md {
+  box-shadow:
+    0 2px 4px color-mix(in srgb, var(--rp-base), transparent 75%),
+    0 6px 12px color-mix(in srgb, var(--rp-base), transparent 85%),
+    0 12px 24px color-mix(in srgb, var(--rp-base), transparent 90%),
+    0 0 0 1px color-mix(in srgb, var(--border), transparent 55%);
+}
+
+.shadow-premium-lg {
+  box-shadow:
+    0 4px 8px color-mix(in srgb, var(--rp-base), transparent 70%),
+    0 12px 24px color-mix(in srgb, var(--rp-base), transparent 82%),
+    0 24px 48px color-mix(in srgb, var(--rp-base), transparent 88%),
+    0 0 0 1px color-mix(in srgb, var(--border), transparent 50%);
+}
+
+/* Inset highlight for cards - top edge gleam */
+.gleam-top {
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, white, transparent 90%),
+    var(--shadow-sm);
+}
+
+.dark .gleam-top {
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, white, transparent 95%),
+    var(--shadow-sm);
+}
+
+/* ============================================
+   SELECTION STYLING
+   ============================================ */
+
+::selection {
+  background: color-mix(in srgb, var(--rp-iris), transparent 40%);
+  color: var(--foreground);
+}
+
+::-moz-selection {
+  background: color-mix(in srgb, var(--rp-iris), transparent 40%);
+  color: var(--foreground);
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+
 @media print {
+
+  /* Disable noise overlay for print */
+  body::before {
+    display: none !important;
+  }
+
+  /* Disable transitions for print */
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+  }
+
   body {
     background: white !important;
     color: black !important;

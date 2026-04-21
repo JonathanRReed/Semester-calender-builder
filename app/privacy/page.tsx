@@ -3,7 +3,10 @@ import { Footer } from '@/components/footer'
 
 export const metadata: Metadata = {
   title: 'Privacy Policy for Semester Calendar Builder',
-  description: 'Privacy policy for Semester Calendar Builder, a local-first academic schedule planner by Jonathan Reed.',
+  description: 'Read the Semester Calendar Builder privacy policy covering local browser storage, exports, hosting logs, and student schedule data handling.',
+  alternates: {
+    canonical: '/privacy',
+  },
 }
 
 export default function PrivacyPage() {
@@ -12,6 +15,7 @@ export default function PrivacyPage() {
       <section className="mx-auto max-w-3xl px-6 py-16 space-y-6">
         <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Privacy</p>
         <h1 className="text-4xl font-bold tracking-tight">Privacy Policy</h1>
+        <p className="text-sm text-muted-foreground">Updated April 21, 2026</p>
         <div className="space-y-4 text-base leading-7 text-muted-foreground">
           <p>
             Semester Calendar Builder stores schedule details in your browser. Courses, study blocks, exams, deadlines,
@@ -29,11 +33,31 @@ export default function PrivacyPage() {
           <p>
             This policy is maintained by Jonathan Reed for the public Semester Calendar Builder website.
           </p>
+          <p>
+            The planner is designed around local browser storage. That means your schedule can remain available on the
+            same device and browser, but it also means the schedule is not automatically synced across devices. If you
+            need a backup, use the export tools and store the resulting file somewhere you trust.
+          </p>
+          <p>
+            Exported calendar, image, and JSON files may include class names, instructors, locations, notes, exam dates,
+            and study plans that you typed into the app. Treat those exports like any other personal academic document.
+            Do not upload or share them publicly unless you are comfortable with the information they contain.
+          </p>
+          <p>
+            The hosting provider may process standard request data such as IP address, browser information, requested
+            URLs, timestamps, and security events needed to deliver and protect the website. Those logs are separate from
+            the schedule you create in the browser and are used for reliability, abuse prevention, and basic operations.
+          </p>
+          <p>
+            The app does not need a login to work. It does not process payments, sell student schedule data, or provide a
+            backend account where course details are stored for later retrieval. If that changes, the policy should be
+            updated before those features are launched.
+          </p>
         </div>
         <nav className="flex flex-wrap gap-4 text-sm">
           <a className="underline underline-offset-4" href="/">Open the planner</a>
-          <a className="underline underline-offset-4" href="/about/">About</a>
-          <a className="underline underline-offset-4" href="/contact/">Contact</a>
+          <a className="underline underline-offset-4" href="/about">About</a>
+          <a className="underline underline-offset-4" href="/contact">Contact</a>
         </nav>
       </section>
       <Footer />

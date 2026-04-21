@@ -396,6 +396,7 @@ export default function SchedulePage() {
           <div className="text-muted-foreground">Loading your schedule...</div>
           <section className="mt-8 text-left text-sm leading-6 text-muted-foreground">
             <h2 className="text-base font-semibold text-foreground">Private academic schedule planner</h2>
+            <p className="mt-2">Updated April 21, 2026</p>
             <p className="mt-2">
               Semester Calendar Builder helps students create a clear weekly plan for classes, study blocks, exams,
               labs, online courses, assignments, and important academic dates. The planner is built for fast course
@@ -406,10 +407,25 @@ export default function SchedulePage() {
               export the result as calendar or image files. Schedule data is stored locally in the browser so students can
               plan a semester without creating an account.
             </p>
+            <p className="mt-2">
+              Use it when a semester starts, when registration changes, or when a weekly routine needs to be rebuilt.
+              The planner supports online and in-person classes, recurring work blocks, exam reminders, and export
+              formats that make it easier to keep a copy outside the browser.
+            </p>
+            <p className="mt-2">
+              The app is local-first by design. Students can test several versions of a schedule, clear the calendar, or
+              save a backup without sending the full plan to a hosted account system. That makes it useful for advising
+              sessions, personal planning, and quick schedule reviews before classes begin.
+            </p>
+            <p className="mt-2">
+              A good semester plan shows more than class meetings. It also shows study time, labs, office hours,
+              assignment work, meals, work shifts, commute time, and recovery blocks. Building those pieces into one view
+              helps students avoid overload and make better tradeoffs before deadlines pile up.
+            </p>
             <nav className="mt-3 flex flex-wrap gap-3">
-              <a className="underline underline-offset-4" href="/about/">About</a>
-              <a className="underline underline-offset-4" href="/contact/">Contact</a>
-              <a className="underline underline-offset-4" href="/privacy/">Privacy</a>
+              <a className="underline underline-offset-4" href="/about">About</a>
+              <a className="underline underline-offset-4" href="/contact">Contact</a>
+              <a className="underline underline-offset-4" href="/privacy">Privacy</a>
             </nav>
           </section>
         </div>

@@ -1,0 +1,4 @@
+Contact: https://jonathanrreed.com/contact/
+Preferred-Languages: en
+Canonical: https://semesterbuild.jonathanrreed.com/.well-known/security.txt
+Expires: 2027-04-21T00:00:00Z

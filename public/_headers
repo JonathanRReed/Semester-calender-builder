@@ -81,6 +81,9 @@
 /llms.txt
   Cache-Control: public, max-age=86400
 
+/.well-known/security.txt
+  Cache-Control: public, max-age=86400
+
 # Favicon
 /Icon.webp
   Cache-Control: public, max-age=604800

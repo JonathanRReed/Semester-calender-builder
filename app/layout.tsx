@@ -42,27 +42,20 @@ const jsonLdSchema = {
     alternateName: 'Jonathan R Reed',
     url: 'https://jonathanrreed.com',
   },
-  description: 'Build and organize your semester schedule with ease. Add courses, study blocks, and important dates. Export to PDF, PNG, or JSON. Free online calendar tool for students.',
+  description: 'Plan classes, study blocks, exams, and academic deadlines in a private browser-based semester calendar.',
   url: 'https://semesterbuild.jonathanrreed.com',
   featureList: [
     'Visual weekly calendar',
     'In-person and online class support',
     'Study block scheduling',
-    'ICS/CSV/PNG export',
+    'ICS, CSV, PNG, and JSON export',
     'Important date tracking',
     'Dark mode support',
   ],
-  aggregateRating: {
-    '@type': 'AggregateRating',
-    ratingValue: '5',
-    ratingCount: '1',
-    bestRating: '5',
-    worstRating: '1',
-  },
 }
 
 export const metadata: Metadata = {
-  title: 'Semester Calendar Builder | Course planning app by Jonathan R Reed',
+  title: 'Semester Calendar Builder by Jonathan R Reed',
   description: 'Semester Calendar Builder by Jonathan R Reed helps students lay out classes, time blocks and deadlines in a clean visual calendar.',
   keywords: ['semester calendar', 'class schedule builder', 'student planner', 'academic calendar', 'course scheduler', 'study planner', 'college schedule', 'university timetable', 'semester planner', 'course schedule builder'],
   authors: [{ name: 'Jonathan Reed' }],

@@ -1,6 +1,9 @@
 import { SOCIAL_LINKS } from '@/lib/assets'
 
 const FOOTER_LINKS = [
+    { href: '/about/', label: 'About' },
+    { href: '/contact/', label: 'Contact' },
+    { href: '/privacy/', label: 'Privacy' },
     { href: SOCIAL_LINKS.website, label: 'Jonathan Reed' },
     { href: 'https://helloworldfirm.com', label: 'Hello.World Consulting' },
     { href: 'https://5whys.jonathanrreed.com', label: 'Career Studio' },
@@ -26,8 +29,7 @@ export function Footer() {
                         <li key={href} className="flex items-center gap-4">
                             <a
                                 href={href}
-                                target="_blank"
-                                rel="noopener noreferrer"
+                                {...(href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
                                 className="hover:text-foreground transition-colors underline-offset-4 hover:underline"
                             >
                                 {label}

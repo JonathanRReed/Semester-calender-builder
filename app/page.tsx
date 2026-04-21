@@ -389,16 +389,38 @@ export default function SchedulePage() {
 
   if (!isLoaded) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
+      <main id="main-content" className="min-h-screen bg-background flex items-center justify-center px-6">
+        <div className="max-w-2xl text-center">
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-3">Semester Calendar Builder</h1>
           <div className="w-8 h-8 border-2 border-ring border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <div className="text-muted-foreground">Loading your schedule...</div>
+          <section className="mt-8 text-left text-sm leading-6 text-muted-foreground">
+            <h2 className="text-base font-semibold text-foreground">Private academic schedule planner</h2>
+            <p className="mt-2">
+              Semester Calendar Builder helps students create a clear weekly plan for classes, study blocks, exams,
+              labs, online courses, assignments, and important academic dates. The planner is built for fast course
+              scheduling at the start of a term and for quick adjustments when class times or workload change.
+            </p>
+            <p className="mt-2">
+              Add in-person meetings, remote classes, recurring study sessions, office hours, exams, and deadlines, then
+              export the result as calendar or image files. Schedule data is stored locally in the browser so students can
+              plan a semester without creating an account.
+            </p>
+            <nav className="mt-3 flex flex-wrap gap-3">
+              <a className="underline underline-offset-4" href="/about/">About</a>
+              <a className="underline underline-offset-4" href="/contact/">Contact</a>
+              <a className="underline underline-offset-4" href="/privacy/">Privacy</a>
+            </nav>
+          </section>
         </div>
-      </div>
+      </main>
     )
   }
   return (
     <div className="min-h-screen bg-background">
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-background focus:px-3 focus:py-2 focus:text-sm focus:text-foreground focus:shadow-lg">
+        Skip to schedule
+      </a>
       <header className="glass-header p-3 sm:p-4 slide-up">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col gap-4">
@@ -545,7 +567,7 @@ export default function SchedulePage() {
           </div>
         </div>
       </header>
-      <main className="main-content p-3 sm:p-4 pb-20 sm:pb-4">
+      <main id="main-content" className="main-content p-3 sm:p-4 pb-20 sm:pb-4">
         <div className="schedule-container max-w-7xl mx-auto grid gap-4 sm:gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(240px,0.9fr)] lg:items-start">
           <div className="lg:col-span-2 space-y-4">
             <OnboardingBanner

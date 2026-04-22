@@ -46,9 +46,12 @@ export default function AboutPage() {
           </p>
           <p>
             A typical semester has fixed course meetings, shifting assignment deadlines, exam weeks, office hours, lab
-            sections, commute time, meals, work shifts, and recovery time. Many students try to hold that plan in a
-            notes app or spreadsheet, but those tools make it hard to see overlap. Semester Calendar Builder turns that
-            information into a visual weekly schedule so conflicts are easier to spot before they become a problem.
+            sections, commute time, meals, work shifts, and recovery time.
+          </p>
+          <p>
+            Many students try to hold that plan in a notes app or spreadsheet, but those tools make it hard to see
+            overlap. Semester Calendar Builder turns that information into a visual weekly schedule so conflicts are
+            easier to spot before they become a problem.
           </p>
           <p>
             The planner supports both quick starts and careful setup. Students can begin with a blank week, load an

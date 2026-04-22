@@ -391,9 +391,31 @@ export default function SchedulePage() {
     return (
       <main id="main-content" className="min-h-screen bg-background flex items-center justify-center px-6">
         <div className="max-w-2xl text-center">
-          <p className="text-2xl sm:text-3xl font-bold text-foreground mb-3">Semester Calendar Builder</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-3">Semester Calendar Builder</h1>
           <div className="w-8 h-8 border-2 border-ring border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <div className="text-muted-foreground">Loading your schedule...</div>
+          <section className="sr-only" aria-label="Semester Calendar Builder overview">
+            <p>
+              Semester Calendar Builder is a private browser planner for students who need to organize classes, study
+              blocks, exams, deadlines, office hours, and recurring academic work in one visual schedule. The app is built
+              by Jonathan R Reed for planning a typical semester week, checking conflicts before registration, and
+              creating exports that can move into Google Calendar, Apple Calendar, Outlook, spreadsheets, images, or a
+              backup JSON file.
+            </p>
+            <p>
+              The planner stores schedule data locally in the browser instead of requiring an account. Students can add
+              in-person classes, online classes, personal study sessions, important dates, and notes, then switch between
+              weekly and semester views. The interface supports dark mode, keyboard shortcuts, onboarding help, schedule
+              reset tools, backup reminders, conflict review, and export options for sharing a clean plan with advisors,
+              classmates, family, or personal planning systems.
+            </p>
+            <p>
+              This page is intended for course planning, study time blocking, registration review, academic calendar
+              cleanup, and schedule handoff work. It is not a school database, gradebook, or account system. It is a
+              lightweight planning surface for turning a rough set of courses and deadlines into a readable semester
+              calendar that can be reviewed, printed, archived, or imported elsewhere.
+            </p>
+          </section>
         </div>
       </main>
     )

@@ -19,7 +19,7 @@ function generateWeeks(start: string, end: string): { weekNumber: number; startD
     const endDate = new Date(end + "T00:00:00")
 
     // Find the first Monday
-    let current = new Date(startDate)
+    const current = new Date(startDate)
     while (current.getDay() !== 1) {
         current.setDate(current.getDate() + 1)
     }
@@ -67,7 +67,6 @@ export function SemesterView({
     importantDates,
     semesterStart,
     semesterEnd,
-    onEventClick,
 }: SemesterViewProps) {
     const weeks = useMemo(() => generateWeeks(semesterStart, semesterEnd), [semesterStart, semesterEnd])
 

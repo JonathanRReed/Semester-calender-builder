@@ -1,11 +1,26 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { Footer } from '@/components/footer'
+import { LOGO_ASSETS } from '@/lib/assets'
 
 export const metadata: Metadata = {
   title: 'Privacy Policy for Semester Calendar Builder',
   description: 'Read the Semester Calendar Builder privacy policy covering local browser storage, exports, hosting logs, and student schedule data handling.',
   alternates: {
-    canonical: '/privacy',
+    canonical: '/privacy/',
+  },
+  openGraph: {
+    url: '/privacy/',
+    title: 'Privacy Policy for Semester Calendar Builder',
+    description: 'Read the Semester Calendar Builder privacy policy covering local browser storage, exports, hosting logs, and student schedule data handling.',
+    images: [
+      {
+        url: LOGO_ASSETS.full,
+        width: 1200,
+        height: 630,
+        alt: 'Semester Calendar Builder visual planner interface',
+      },
+    ],
   },
 }
 
@@ -55,9 +70,9 @@ export default function PrivacyPage() {
           </p>
         </div>
         <nav className="flex flex-wrap gap-4 text-sm">
-          <a className="underline underline-offset-4" href="/">Open the planner</a>
-          <a className="underline underline-offset-4" href="/about">About</a>
-          <a className="underline underline-offset-4" href="/contact">Contact</a>
+          <Link className="underline underline-offset-4" href="/">Open the planner</Link>
+          <Link className="underline underline-offset-4" href="/about/">About</Link>
+          <Link className="underline underline-offset-4" href="/contact/">Contact</Link>
         </nav>
       </section>
       <Footer />

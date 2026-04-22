@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Info, Calendar, Clock, AlertCircle, BookOpen, Keyboard, X } from "lucide-react"
+import { Info, Calendar, Clock, AlertCircle, BookOpen, Keyboard } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
     Dialog,

@@ -1,11 +1,26 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { Footer } from '@/components/footer'
+import { LOGO_ASSETS } from '@/lib/assets'
 
 export const metadata: Metadata = {
-  title: 'Contact Semester Calendar Builder',
+  title: 'Contact Semester Calendar Builder | Jonathan R Reed',
   description: 'Contact Jonathan Reed about Semester Calendar Builder, student schedule planning, academic calendar workflows, bug reports, and product feedback.',
   alternates: {
-    canonical: '/contact',
+    canonical: '/contact/',
+  },
+  openGraph: {
+    url: '/contact/',
+    title: 'Contact Semester Calendar Builder | Jonathan R Reed',
+    description: 'Contact Jonathan Reed about Semester Calendar Builder, student schedule planning, academic calendar workflows, bug reports, and product feedback.',
+    images: [
+      {
+        url: LOGO_ASSETS.full,
+        width: 1200,
+        height: 630,
+        alt: 'Semester Calendar Builder visual planner interface',
+      },
+    ],
   },
 }
 
@@ -42,11 +57,22 @@ export default function ContactPage() {
             student information product. Please do not send private student records, account passwords, payment data, or
             sensitive health information through feedback messages.
           </p>
+          <p>
+            If you are comparing the planner with a spreadsheet, calendar app, or school portal, explain where the
+            existing workflow breaks down. The most useful feedback usually points to a specific planning moment, such as
+            registration week, finals preparation, a changed work schedule, or a semester where online and in-person
+            classes need to be balanced in one view.
+          </p>
+          <p>
+            For accessibility notes, include the page, browser, input method, and assistive technology if relevant.
+            Reports about keyboard navigation, export labels, contrast, time formatting, or mobile schedule editing are
+            especially helpful because those details affect real registration and advising workflows.
+          </p>
         </div>
         <nav className="flex flex-wrap gap-4 text-sm">
           <a className="underline underline-offset-4" href="https://jonathanrreed.com/contact/">Contact Jonathan Reed</a>
-          <a className="underline underline-offset-4" href="/">Open the planner</a>
-          <a className="underline underline-offset-4" href="/privacy">Privacy</a>
+          <Link className="underline underline-offset-4" href="/">Open the planner</Link>
+          <Link className="underline underline-offset-4" href="/privacy/">Privacy</Link>
         </nav>
       </section>
       <Footer />

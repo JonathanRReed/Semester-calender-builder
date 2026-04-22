@@ -33,8 +33,24 @@ const jsonLdSchema = {
   operatingSystem: 'Web',
   offers: {
     '@type': 'Offer',
-    price: '0',
+    price: 0,
     priceCurrency: 'USD',
+  },
+  review: {
+    '@type': 'Review',
+    author: {
+      '@type': 'Person',
+      name: 'Jonathan Reed',
+      alternateName: 'Jonathan R Reed',
+      url: 'https://jonathanrreed.com',
+    },
+    reviewRating: {
+      '@type': 'Rating',
+      ratingValue: 5,
+      bestRating: 5,
+      worstRating: 1,
+    },
+    reviewBody: 'A free private semester planning app for arranging classes, study blocks, exams, deadlines, exports, and advisor-ready schedule reviews in a browser.',
   },
   author: {
     '@type': 'Person',
@@ -115,8 +131,6 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <link rel="dns-prefetch" href="https://fonts.helloworldfirm.com" />
-        <link rel="preconnect" href="https://fonts.helloworldfirm.com" crossOrigin="anonymous" />
         {FONT_PRELOADS.map((href) => (
           <link key={href} rel="preload" href={href} as="font" type="font/woff2" crossOrigin="anonymous" fetchPriority="high" />
         ))}
@@ -137,7 +151,7 @@ html {
         `}</style>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdSchema) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdSchema).replace(/</g, '\\u003c') }}
         />
         <script
           dangerouslySetInnerHTML={{

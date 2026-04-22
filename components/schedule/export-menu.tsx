@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Download, FileText, ImageIcon, Calendar, Table, Check } from "lucide-react"
+import { Download, FileText, ImageIcon, Calendar, Table } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -38,7 +38,7 @@ export const ExportMenu = React.forwardRef<HTMLButtonElement, ExportMenuProps>(f
       toast.success("Schedule exported as PNG", {
         description: "Image saved to your downloads",
       })
-    } catch (error) {
+    } catch {
       toast.error("Failed to export PNG")
     } finally {
       setIsExporting(false)

@@ -391,7 +391,7 @@ export default function SchedulePage() {
     return (
       <main id="main-content" className="min-h-screen bg-background flex items-center justify-center px-6">
         <div className="max-w-2xl text-center">
-          <p className="text-2xl sm:text-3xl font-bold text-foreground mb-3">Semester Calendar Builder</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-3">Semester Calendar Builder</h1>
           <div className="w-8 h-8 border-2 border-ring border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <div className="text-muted-foreground">Loading your schedule...</div>
           <section className="mt-8 text-left text-sm leading-6 text-muted-foreground">

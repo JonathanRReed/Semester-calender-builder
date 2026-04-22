@@ -4,14 +4,14 @@ import { Footer } from '@/components/footer'
 import { LOGO_ASSETS } from '@/lib/assets'
 
 export const metadata: Metadata = {
-  title: 'About Semester Calendar Builder | Jonathan R Reed',
+  title: 'Academic planning details | Semester Calendar Builder by Jonathan R Reed',
   description: 'Learn who built Semester Calendar Builder and how the private browser-based planner helps students organize academic schedules.',
   alternates: {
     canonical: '/about/',
   },
   openGraph: {
     url: '/about/',
-    title: 'About Semester Calendar Builder | Jonathan R Reed',
+    title: 'Academic planning details | Semester Calendar Builder by Jonathan R Reed',
     description: 'Learn who built Semester Calendar Builder and how the private browser-based planner helps students organize academic schedules.',
     images: [
       {

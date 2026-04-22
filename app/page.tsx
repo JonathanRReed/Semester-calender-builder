@@ -391,53 +391,9 @@ export default function SchedulePage() {
     return (
       <main id="main-content" className="min-h-screen bg-background flex items-center justify-center px-6">
         <div className="max-w-2xl text-center">
-          <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-3">Semester Calendar Builder</h1>
+          <p className="text-2xl sm:text-3xl font-bold text-foreground mb-3">Semester Calendar Builder</p>
           <div className="w-8 h-8 border-2 border-ring border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <div className="text-muted-foreground">Loading your schedule...</div>
-          <section className="mt-8 text-left text-sm leading-6 text-muted-foreground">
-            <h2 className="text-base font-semibold text-foreground">Private academic schedule planner</h2>
-            <p className="mt-2">Updated April 21, 2026</p>
-            <p className="mt-2">
-              Semester Calendar Builder helps students create a clear weekly plan for classes, study blocks, exams,
-              labs, online courses, assignments, and important academic dates. The planner is built for fast course
-              scheduling at the start of a term and for quick adjustments when class times or workload change.
-            </p>
-            <p className="mt-2">
-              Add in-person meetings, remote classes, recurring study sessions, office hours, exams, and deadlines, then
-              export the result as calendar or image files. Schedule data is stored locally in the browser so students can
-              plan a semester without creating an account.
-            </p>
-            <p className="mt-2">
-              Use it when a semester starts, when registration changes, or when a weekly routine needs to be rebuilt.
-              The planner supports online and in-person classes, recurring work blocks, exam reminders, and export
-              formats that make it easier to keep a copy outside the browser.
-            </p>
-            <p className="mt-2">
-              The app is local-first by design. Students can test several versions of a schedule, clear the calendar, or
-              save a backup without sending the full plan to a hosted account system. That makes it useful for advising
-              sessions, personal planning, and quick schedule reviews before classes begin.
-            </p>
-            <p className="mt-2">
-              A good semester plan shows more than class meetings. It also shows study time, labs, office hours,
-              assignment work, meals, work shifts, commute time, and recovery blocks. Building those pieces into one view
-              helps students avoid overload and make better tradeoffs before deadlines pile up.
-            </p>
-            <p className="mt-2">
-              The builder is useful before registration, during add-drop week, and any time a student needs to compare
-              academic commitments with personal routines. A visual week makes it easier to see whether a schedule is
-              realistic before committing to a class, job shift, lab section, or recurring study plan.
-            </p>
-            <p className="mt-2">
-              Because exports are available, the schedule can move into Google Calendar, Apple Calendar, Outlook,
-              spreadsheets, images, or personal backups. The browser planner can be used for setup and review without
-              becoming the only place where the final semester plan lives.
-            </p>
-            <nav className="mt-3 flex flex-wrap gap-3">
-              <a className="underline underline-offset-4" href="/about/">About</a>
-              <a className="underline underline-offset-4" href="/contact/">Contact</a>
-              <a className="underline underline-offset-4" href="/privacy/">Privacy</a>
-            </nav>
-          </section>
         </div>
       </main>
     )
@@ -816,26 +772,6 @@ export default function SchedulePage() {
             </div>
           ))}
         </dl>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-3 sm:px-4 pb-6 text-sm leading-6 text-muted-foreground">
-        <h2 className="text-base font-semibold text-foreground">Private semester planning workflow</h2>
-        <p className="mt-2">
-          Semester Calendar Builder helps students map a realistic academic week before the term becomes crowded. Use it
-          to place classes, labs, study blocks, exams, work shifts, office hours, online course time, and assignment
-          deadlines in one schedule, then export the plan for calendar apps, advising conversations, or personal backup.
-        </p>
-        <p className="mt-2">
-          The planner is local-first. Course details stay in the browser unless you choose an export, and the app does
-          not require an account, payment, analytics profile, or remote schedule database to build a useful semester
-          plan.
-        </p>
-        <p className="mt-2">
-          It is built for registration and week-by-week planning. Students can compare class meetings against study
-          time, labs, work shifts, commute windows, and exam preparation without moving private
-          course details into another hosted account. The finished schedule can be printed, saved as an image, exported
-          to calendar formats, or kept as a browser-local planning record.
-        </p>
       </section>
 
       <Footer />

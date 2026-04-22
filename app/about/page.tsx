@@ -1,11 +1,26 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { Footer } from '@/components/footer'
+import { LOGO_ASSETS } from '@/lib/assets'
 
 export const metadata: Metadata = {
-  title: 'About Semester Calendar Builder',
+  title: 'About Semester Calendar Builder | Jonathan R Reed',
   description: 'Learn who built Semester Calendar Builder and how the private browser-based planner helps students organize academic schedules.',
   alternates: {
-    canonical: '/about',
+    canonical: '/about/',
+  },
+  openGraph: {
+    url: '/about/',
+    title: 'About Semester Calendar Builder | Jonathan R Reed',
+    description: 'Learn who built Semester Calendar Builder and how the private browser-based planner helps students organize academic schedules.',
+    images: [
+      {
+        url: LOGO_ASSETS.full,
+        width: 1200,
+        height: 630,
+        alt: 'Semester Calendar Builder visual planner interface',
+      },
+    ],
   },
 }
 
@@ -47,11 +62,16 @@ export default function AboutPage() {
             advising conversations, and personal schedule cleanup when students want a clear view without another
             dashboard to manage.
           </p>
+          <p>
+            Semester Calendar Builder is also meant to make handoffs easier. A student can sketch a realistic week,
+            export the result, and bring that file into a conversation with an advisor, parent, coach, or project group.
+            The planner keeps the workflow simple so the schedule remains the point.
+          </p>
         </div>
         <nav className="flex flex-wrap gap-4 text-sm">
-          <a className="underline underline-offset-4" href="/">Open the planner</a>
-          <a className="underline underline-offset-4" href="/contact">Contact</a>
-          <a className="underline underline-offset-4" href="/privacy">Privacy</a>
+          <Link className="underline underline-offset-4" href="/">Open the planner</Link>
+          <Link className="underline underline-offset-4" href="/contact/">Contact</Link>
+          <Link className="underline underline-offset-4" href="/privacy/">Privacy</Link>
         </nav>
       </section>
       <Footer />

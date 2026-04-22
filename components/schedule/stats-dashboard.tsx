@@ -4,10 +4,8 @@ import { useMemo } from "react"
 import {
     Clock,
     BookOpen,
-    Calendar,
     TrendingUp,
     GraduationCap,
-    Coffee,
     Laptop,
     MapPin
 } from "lucide-react"

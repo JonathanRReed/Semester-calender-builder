@@ -25,7 +25,7 @@ export const ONBOARDING_STEPS = [
   },
   {
     icon: <Download className="w-4 h-4 text-primary" />,
-    title: "Share it instantly",
+    title: "Export your plan",
     description: "Export to PNG, ICS, or CSV once everything looks right.",
   },
 ]

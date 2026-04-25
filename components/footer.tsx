@@ -1,4 +1,6 @@
-import { SOCIAL_LINKS } from '@/lib/assets'
+import { SOCIAL_LINKS, LOGO_ASSETS } from '@/lib/assets'
+import Image from 'next/image'
+import Link from 'next/link'
 
 const FOOTER_LINKS = [
     { href: '/about/', label: 'About' },
@@ -12,7 +14,16 @@ const FOOTER_LINKS = [
 
 export function Footer() {
     return (
-        <footer className="glass-card mt-8 p-4 text-center text-xs text-muted-foreground space-y-3">
+        <footer className="glass-card mt-8 p-4 text-center text-xs text-muted-foreground space-y-4">
+            <Link href="/" className="inline-block">
+                <Image
+                    src={LOGO_ASSETS.footer}
+                    alt="Semester Calendar Builder"
+                    width={200}
+                    height={67}
+                    className="mx-auto h-8 w-auto opacity-80 hover:opacity-100 transition-opacity"
+                />
+            </Link>
             <p>
                 <a
                     href="https://jonathanrreed.com/projects/"

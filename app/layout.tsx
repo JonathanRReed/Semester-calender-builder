@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 import { FONT_ASSETS, LOGO_ASSETS, SOCIAL_LINKS } from '@/lib/assets'
 
-const FAVICON_PATH = '/Icon.webp'
 import { ThemeProvider } from '@/components/theme-provider'
 import { Toaster } from '@/components/ui/toaster'
 import { ErrorBoundary } from '@/components/error-boundary'
@@ -83,9 +82,15 @@ export const metadata: Metadata = {
     canonical: '/',
   },
   icons: {
-    icon: FAVICON_PATH,
-    shortcut: FAVICON_PATH,
-    apple: FAVICON_PATH,
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+    ],
+    apple: '/apple-touch-icon-180x180.png',
+    other: [
+      { rel: 'manifest', url: '/site.webmanifest' },
+    ],
   },
   openGraph: {
     type: 'website',
@@ -134,8 +139,11 @@ export default function RootLayout({
         {FONT_PRELOADS.map((href) => (
           <link key={href} rel="preload" href={href} as="font" type="font/woff2" crossOrigin="anonymous" fetchPriority="high" />
         ))}
-        <link rel="icon" href={FAVICON_PATH} type="image/webp" />
-        <link rel="apple-touch-icon" href={FAVICON_PATH} />
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png" />
+        <link rel="manifest" href="/site.webmanifest" />
         <link rel="me" href={SOCIAL_LINKS.bluesky} />
         <link rel="me" href={SOCIAL_LINKS.linkedin} />
         <link rel="me" href={SOCIAL_LINKS.github} />
@@ -158,24 +166,8 @@ html {
             __html: `
 (function () {
   if (typeof window === "undefined") return;
-
-  const ascii = \`
-    ___  ________  ________     
-   |\\\\  \\\\|\\\\   __  \\\\|\\\\   __  \\\\    
-   \\\\ \\\\  \\\\ \\\\  \\\\|\\\\  \\\\ \\\\  \\\\|\\\\  \\\\   
- __ \\\\ \\\\  \\\\ \\\\   _  _\\\\ \\\\   _  _\\\\  
-|\\\\  \\\\\\\\_\\\\  \\\\ \\\\  \\\\\\\\  \\\\\\\\ \\\\  \\\\\\\\  \\\\|
-\\\\ \\\\________\\\\ \\\\__\\\\\\\\ _\\\\\\\\ \\\\__\\\\\\\\ _\\\\
- \\\\|________|\\\\|__|\\\\|__|\\\\|__|\\\\|__|
-                                
-                                
-                                
-  \`;
-
-  console.log(ascii);
-  console.log("Hey there. Interested in code?");
-  console.log("Check out my GitHub: https://github.com/JonathanRReed");
-  console.log("Most of my sites repos are open source.");
+  console.log("Semester Calendar Builder");
+  console.log("Source: https://github.com/JonathanRReed");
 })();
             `,
           }}

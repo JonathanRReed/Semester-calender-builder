@@ -62,7 +62,7 @@ export function EmptyState({ onAddEvent, onLoadExample }: EmptyStateProps) {
             {/* Main CTA overlay */}
             <div className="relative z-10 flex flex-col items-center justify-center min-h-[400px] text-center px-4">
                 <div className="glass-card p-8 rounded-2xl max-w-md mx-auto shadow-lg">
-                    <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+                    <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-linear-to-br from-primary/20 to-primary/5 flex items-center justify-center">
                         <Calendar className="w-8 h-8 text-primary" />
                     </div>
 
@@ -88,7 +88,7 @@ export function EmptyState({ onAddEvent, onLoadExample }: EmptyStateProps) {
                     <div className="mt-6 pt-6 border-t border-border/50">
                         <p className="text-xs text-muted-foreground flex items-center justify-center gap-2">
                             <Clock className="w-3.5 h-3.5" />
-                            Takes less than 5 minutes to set up
+                            Quick to set up
                         </p>
                     </div>
                 </div>

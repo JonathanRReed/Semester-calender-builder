@@ -38,7 +38,7 @@ export function QuickHelp({ className }: QuickHelpProps) {
                             How to Use Semester Calendar Builder
                         </DialogTitle>
                         <DialogDescription>
-                            A quick guide to building your perfect semester schedule
+                            A quick guide to using the semester calendar
                         </DialogDescription>
                     </DialogHeader>
 
@@ -87,7 +87,7 @@ export function QuickHelp({ className }: QuickHelpProps) {
                                 <li>Enter the date and title (e.g., "Thanksgiving Break")</li>
                             </ol>
                             <p className="text-xs text-muted-foreground/80 mt-1">
-                                💡 Tip: When exporting to ICS, breaks will be included as all-day events in your calendar.
+                                Tip: When exporting to ICS, breaks will be included as all-day events in your calendar.
                             </p>
                         </div>
 
@@ -117,7 +117,7 @@ export function QuickHelp({ className }: QuickHelpProps) {
                         <div className="p-3 bg-primary/5 border border-primary/20 rounded-lg">
                             <h3 className="font-semibold text-sm flex items-center gap-2 mb-1">
                                 <BookOpen className="w-4 h-4 text-primary" />
-                                Pro Tip: Recurring Classes
+                                Recurring Classes
                             </h3>
                             <p className="text-sm text-muted-foreground">
                                 When adding a class that meets Mon/Wed/Fri, select <strong>all three days</strong> in the Add Event dialog.

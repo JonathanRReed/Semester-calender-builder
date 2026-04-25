@@ -9,10 +9,10 @@ A calendar builder for managing your semester schedule with support for courses,
 - **Bulk Import/Export** - CSV, ICS (iCalendar), and text formats
 - **Important Dates** - Track deadlines, exams, and breaks
 - **PNG Export** - Generate shareable schedule images
-- **Dark Mode** - Beautiful Rose Pine night theme
-- **Mobile Responsive** - Works seamlessly on all devices
+- **Dark Mode** - Rose Pine night theme
+- **Mobile Responsive** - Works on all devices
 - **Local Storage** - Your data never leaves your device
-- **Guided Onboarding** - Load a sample semester and follow quick tips right in the app
+- **Onboarding** - Load a sample semester and follow quick tips right in the app
 
 ## Getting Started
 

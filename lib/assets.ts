@@ -7,9 +7,11 @@ export const FONT_ASSETS = {
 } as const
 
 export const LOGO_ASSETS = {
-  favicon192: "https://img.helloworldfirm.com/logos/192x192-logo.avif",
-  favicon512: "https://img.helloworldfirm.com/logos/512x512-logo.avif",
-  full: "https://img.helloworldfirm.com/logos/full-logo.avif",
+  favicon192: "/favicon-192x192.png",
+  favicon512: "/favicon-512x512.png",
+  full: "/logo/logo-og.png",
+  logo: "/logo/logo.png",
+  footer: "/logo/logo-footer-600w.png",
 } as const
 
 export const SOCIAL_ICON_ASSETS = {

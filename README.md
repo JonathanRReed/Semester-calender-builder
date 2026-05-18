@@ -1,6 +1,6 @@
 # Semester Calendar Builder
 
-A calendar builder for managing your semester schedule with support for courses, study blocks, and important dates.
+A portfolio-ready calendar builder for managing semester schedules with support for courses, study blocks, and important dates.
 
 ## Features
 
@@ -25,7 +25,7 @@ A calendar builder for managing your semester schedule with support for courses,
 ```bash
 # Clone the repository
 git clone <repository-url>
-cd Semester-calender-builder
+cd semester-calendar-builder
 
 # Install dependencies
 bun install

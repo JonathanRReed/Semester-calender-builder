@@ -25,7 +25,7 @@ A portfolio-ready calendar builder for managing semester schedules with support 
 ```bash
 # Clone the repository
 git clone <repository-url>
-cd semester-calendar-builder
+cd Semester-calender-builder
 
 # Install dependencies
 bun install

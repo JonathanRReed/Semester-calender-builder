@@ -1,6 +1,6 @@
 # Semester Calendar Builder
 
-A calendar builder for managing your semester schedule with support for courses, study blocks, and important dates.
+A portfolio-ready calendar builder for managing semester schedules with support for courses, study blocks, and important dates.
 
 ## Features
 
@@ -42,7 +42,7 @@ Open [http://localhost:3000](http://localhost:3000) to see your calendar.
 # Create optimized production build
 bun run build
 
-# Start production server
+# Start static export server
 bun run start
 ```
 

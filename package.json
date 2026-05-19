@@ -7,7 +7,7 @@
     "build": "next build",
     "dev": "next dev",
     "lint": "eslint .",
-    "start": "next start",
+    "start": "bunx serve@latest out",
     "analyze": "ANALYZE=true next build",
     "serve": "serve out -p 3000"
   },

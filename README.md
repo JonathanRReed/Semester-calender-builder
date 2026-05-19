@@ -42,7 +42,7 @@ Open [http://localhost:3000](http://localhost:3000) to see your calendar.
 # Create optimized production build
 bun run build
 
-# Start production server
+# Start static export server
 bun run start
 ```
 

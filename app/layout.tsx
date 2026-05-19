@@ -166,8 +166,6 @@ html {
             __html: `
 (function () {
   if (typeof window === "undefined") return;
-  console.log("Semester Calendar Builder");
-  console.log("Source: https://github.com/JonathanRReed");
 })();
             `,
           }}

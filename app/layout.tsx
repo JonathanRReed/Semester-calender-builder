@@ -6,8 +6,6 @@ import { ThemeProvider } from '@/components/theme-provider'
 import { Toaster } from '@/components/ui/toaster'
 import { ErrorBoundary } from '@/components/error-boundary'
 
-const FONT_SANS = "'Nebula Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
-const FONT_MONO = "'ui-monospace', 'SFMono-Regular', 'SFMono', 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', monospace"
 const FONT_PRELOADS = [
   FONT_ASSETS.book,
   FONT_ASSETS.bold,
@@ -139,36 +137,13 @@ export default function RootLayout({
         {FONT_PRELOADS.map((href) => (
           <link key={href} rel="preload" href={href} as="font" type="font/woff2" crossOrigin="anonymous" fetchPriority="high" />
         ))}
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png" />
-        <link rel="manifest" href="/site.webmanifest" />
         <link rel="me" href={SOCIAL_LINKS.bluesky} />
         <link rel="me" href={SOCIAL_LINKS.linkedin} />
         <link rel="me" href={SOCIAL_LINKS.github} />
         <link rel="me" href={SOCIAL_LINKS.website} />
-        <style>{`
-:root {
-  --font-sans: ${FONT_SANS};
-  --font-mono: ${FONT_MONO};
-}
-html {
-  font-family: var(--font-sans);
-}
-        `}</style>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdSchema).replace(/</g, '\\u003c') }}
-        />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-(function () {
-  if (typeof window === "undefined") return;
-})();
-            `,
-          }}
         />
       </head>
       <body>

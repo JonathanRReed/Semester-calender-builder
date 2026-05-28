@@ -4,7 +4,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "next build",
+    "build": "next build && node scripts/optimize-static-info-pages.mjs",
     "dev": "next dev",
     "lint": "eslint .",
     "start": "bunx serve@latest out",

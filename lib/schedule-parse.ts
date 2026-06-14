@@ -145,10 +145,24 @@ export function parseTimeRange(input: string): TimeRangeResult {
 
   if (parts.length < 2) return { ok: false, error: `missing end time in "${input.trim()}"` }
 
-  const start = parseTime(parts[0] as string)
-  const end = parseTime(parts[1] as string)
-  if (!start) return { ok: false, error: `bad start time "${parts[0]}"` }
-  if (!end) return { ok: false, error: `bad end time "${parts[1]}"` }
+  const startRaw = parts[0] as string
+  const endRaw = parts[1] as string
+  let start = parseTime(startRaw)
+  const end = parseTime(endRaw)
+  if (!start) return { ok: false, error: `bad start time "${startRaw}"` }
+  if (!end) return { ok: false, error: `bad end time "${endRaw}"` }
+
+  // If only the end carries a meridiem ("2:00-3:15 PM"), apply it to the meridiem-less start —
+  // but only when that keeps the range valid (so "11:00-1:00 PM" stays 11:00–13:00).
+  const startHasMeridiem = /[ap]\.?m/i.test(startRaw)
+  const endMeridiem = endRaw.match(/([ap])\.?m/i)
+  if (!startHasMeridiem && endMeridiem) {
+    const adjusted = parseTime(`${startRaw} ${endMeridiem[1]!.toLowerCase()}m`)
+    if (adjusted && toMinutes(adjusted) < toMinutes(end)) {
+      start = adjusted
+    }
+  }
+
   if (toMinutes(end) <= toMinutes(start)) {
     return { ok: false, error: `end time "${end}" is not after start "${start}"` }
   }

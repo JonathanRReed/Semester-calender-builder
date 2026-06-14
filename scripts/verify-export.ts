@@ -122,5 +122,38 @@ console.log("helper checks:")
 assert(escapeICS("a,b;c\\d\ne") === "a\\,b\\;c\\\\d\\ne", "escapeICS handles , ; \\ and newline")
 assert(enc.encode(foldLine("A".repeat(200)).split("\r\n ")[0] ?? "").length <= 75, "foldLine first segment <=75 octets")
 
+console.log("divergent occurrence + exam handling:")
+// An independently edited/dragged occurrence must split into its own VEVENT (not revert).
+const divGroup: CourseEvent[] = (
+  [
+    ["Mon", "09:00", "09:50"],
+    ["Wed", "09:00", "09:50"],
+    ["Fri", "11:00", "11:50"], // dragged to a different time
+  ] as const
+).map(([day, startCT, endCT], i) => ({
+  id: `div-${i}`,
+  title: "BIO 101",
+  courseCode: "BIO 101",
+  section: "",
+  type: "inperson",
+  day,
+  startCT,
+  endCT,
+  location: "",
+  recurrenceGroupId: "grp-div",
+}))
+const divIcs = generateICSFile(divGroup, [], semester)
+assert((divIcs.match(/BEGIN:VEVENT/g) || []).length === 2, "divergent occurrence splits into 2 VEVENTs")
+assert(/BYDAY=MO,WE/.test(divIcs), "unchanged Mon+Wed stay consolidated")
+assert(/BYDAY=FR/.test(divIcs) && divIcs.includes("T110000"), "dragged Fri keeps its new time in its own event")
+
+// Undated exam course-events are skipped (not placed in week one).
+const examOnly: CourseEvent[] = [{
+  id: "x1", title: "Midterm", courseCode: "BIO 101", section: "", type: "exam",
+  day: "Tue", startCT: "14:00", endCT: "16:00", location: "",
+}]
+assert((generateICSFile(examOnly, [], semester).match(/BEGIN:VEVENT/g) || []).length === 0, "undated exam course-event not exported")
+assert(summarizeIcsExport(examOnly, [], semester).examEvents === 1, "skipped exam counted in summary")
+
 console.log(`\n${passed} passed, ${failed} failed`)
 if (failed > 0) process.exit(1)

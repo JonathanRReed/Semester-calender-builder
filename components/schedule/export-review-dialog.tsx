@@ -51,8 +51,8 @@ export function ExportReviewDialog({
   ]
   if (summary.examEvents > 0) {
     rows.push({
-      icon: <CalendarClock className="w-4 h-4 text-primary" />,
-      label: `${summary.examEvents} exam ${summary.examEvents === 1 ? "event" : "events"}`,
+      icon: <CalendarX2 className="w-4 h-4 text-muted-foreground" />,
+      label: `${summary.examEvents} grid exam${summary.examEvents === 1 ? "" : "s"} not added (add as an Important Date with a real date)`,
     })
   }
   if (summary.importantDatesExported > 0) {

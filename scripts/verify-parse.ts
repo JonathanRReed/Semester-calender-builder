@@ -58,6 +58,9 @@ assert(eq(parseTimeRange("0930-1045"), { ok: true, start: "09:30", end: "10:45" 
 assert(eq(parseTimeRange("9 to 10"), { ok: true, start: "09:00", end: "10:00" }), "range 'to'")
 assert(parseTimeRange("10:00-9:00").ok === false, "range end<start → error")
 assert(parseTimeRange("9:30").ok === false, "range missing end → error")
+assert(eq(parseTimeRange("2:00-3:15 PM"), { ok: true, start: "14:00", end: "15:15" }), "range: end PM propagates to meridiem-less start")
+assert(eq(parseTimeRange("9-10 AM"), { ok: true, start: "09:00", end: "10:00" }), "range: end AM propagates to start")
+assert(eq(parseTimeRange("11:00-1:00 PM"), { ok: true, start: "11:00", end: "13:00" }), "range: ambiguous 11–1 PM keeps AM start")
 
 console.log("pipe course line:")
 const line = parsePipeCourseLine("CS 101 | Intro | MWF | 9:30-10:45 | Hall A | Dr. Smith")

@@ -104,10 +104,13 @@ function firstOccurrence(from: Date, days: Set<DayOfWeek>): Date {
 // --- grouping ----------------------------------------------------------------
 
 function groupKey(event: ScheduleEvent): string {
-  if (event.recurrenceGroupId) return `g:${event.recurrenceGroupId}`
   const code = "courseCode" in event ? event.courseCode : ""
   const section = "courseCode" in event ? event.section : ""
-  return `s:${event.type}|${code}|${section}|${event.title}|${event.startCT}|${event.endCT}`
+  const location = "location" in event ? event.location : ""
+  const base = event.recurrenceGroupId ? `g:${event.recurrenceGroupId}` : `s:${event.type}|${code}|${section}`
+  // Include the per-occurrence details so an independently edited/dragged occurrence
+  // splits into its own VEVENT instead of inheriting the representative's time/title.
+  return `${base}|${event.title}|${event.startCT}|${event.endCT}|${location}`
 }
 
 function descriptionFor(event: ScheduleEvent): string {
@@ -191,10 +194,16 @@ function buildIcs(
     }
     if (days.size === 0) continue
 
+    // Exam course-events carry only a weekday + time (no real date), so they can't be placed
+    // on a dated calendar correctly. Skip them — exams belong as dated Important Dates.
+    if (rep.type === "exam") {
+      summary.examEvents++
+      continue
+    }
+
     const sortedDays = Array.from(days).sort((a, b) => DAY_RANK[a] - DAY_RANK[b])
     const start = firstOccurrence(semStart, days)
     const uid = (rep.recurrenceGroupId ?? `evt-${key.replace(/[^a-zA-Z0-9]/g, "").slice(0, 40)}`) + "@semester-calendar-builder"
-    const isExam = rep.type === "exam"
 
     lines.push("BEGIN:VEVENT")
     lines.push(`UID:${uid}`)
@@ -212,31 +221,26 @@ function buildIcs(
     if ("section" in rep && rep.section) lines.push(`X-SCB-SECTION:${escapeICS(rep.section)}`)
     if ("credits" in rep && rep.credits) lines.push(`X-SCB-CREDITS:${rep.credits}`)
 
-    if (!isExam) {
-      // Weekly recurrence across the semester.
-      const byday = sortedDays.map((d) => DAY_TO_RRULE[d]).join(",")
-      let rrule = `RRULE:FREQ=WEEKLY;BYDAY=${byday}`
-      if (untilFloating) rrule += `;UNTIL=${untilFloating}`
-      lines.push(rrule)
+    // Weekly recurrence across the semester.
+    const byday = sortedDays.map((d) => DAY_TO_RRULE[d]).join(",")
+    let rrule = `RRULE:FREQ=WEEKLY;BYDAY=${byday}`
+    if (untilFloating) rrule += `;UNTIL=${untilFloating}`
+    lines.push(rrule)
 
-      // Exclude break/finals days that land on a class weekday within the range.
-      const exdates: string[] = []
-      for (const [ymdKey, breakDate] of breakDays) {
-        const day = GETDAY_TO_DAY[breakDate.getDay()] as DayOfWeek
-        if (!days.has(day)) continue
-        if (breakDate < start) continue
-        if (semEnd && breakDate > semEnd) continue
-        exdates.push(`${ymdKey}T${rep.startCT.replace(":", "")}00`)
-      }
-      if (exdates.length > 0) {
-        lines.push(`EXDATE:${exdates.join(",")}`)
-        summary.breakExclusions += exdates.length
-      }
-      summary.classGroups++
-    } else {
-      // Exams have no weekly pattern — single timed occurrence.
-      summary.examEvents++
+    // Exclude break/finals days that land on a class weekday within the range.
+    const exdates: string[] = []
+    for (const [ymdKey, breakDate] of breakDays) {
+      const day = GETDAY_TO_DAY[breakDate.getDay()] as DayOfWeek
+      if (!days.has(day)) continue
+      if (breakDate < start) continue
+      if (semEnd && breakDate > semEnd) continue
+      exdates.push(`${ymdKey}T${rep.startCT.replace(":", "")}00`)
     }
+    if (exdates.length > 0) {
+      lines.push(`EXDATE:${exdates.join(",")}`)
+      summary.breakExclusions += exdates.length
+    }
+    summary.classGroups++
 
     lines.push("END:VEVENT")
   }

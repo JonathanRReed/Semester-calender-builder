@@ -140,7 +140,10 @@ export function BulkInputDialog({ open, onOpenChange, onImport, existingEvents =
       setTextResult(null)
       onOpenChange(false)
     } else {
-      toast.warning(`Added ${courses.length + studyBlocks.length} item(s), ${errors.length} line(s) need attention`)
+      // Keep ONLY the failed lines in the box so a fix-and-re-import doesn't duplicate
+      // the rows that already imported successfully.
+      setTextInput(errors.map((e) => e.text).join("\n"))
+      toast.warning(`Added ${courses.length + studyBlocks.length} item(s); ${errors.length} line(s) need attention`)
     }
   }
 

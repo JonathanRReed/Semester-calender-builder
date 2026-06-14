@@ -195,7 +195,9 @@ export default function SchedulePage() {
   useEffect(() => {
     if (isLoaded) {
       const timeoutId = setTimeout(() => {
-        const result = saveScheduleData(courses, studyBlocks, importantDates)
+        // Pass semesterDates explicitly so React state is the source of truth (fixes
+        // undo-after-reset, where the stored value would otherwise stay null).
+        const result = saveScheduleData(courses, studyBlocks, importantDates, semesterDates)
         if (!result.ok && result.quotaExceeded) {
           toast.error("Couldn't save — browser storage is full or blocked", {
             description: "Download a backup from Export so you don't lose your changes.",
@@ -204,7 +206,7 @@ export default function SchedulePage() {
       }, 500)
       return () => clearTimeout(timeoutId)
     }
-  }, [courses, studyBlocks, importantDates, isLoaded])
+  }, [courses, studyBlocks, importantDates, semesterDates, isLoaded])
 
   // Keep in sync if the schedule is edited in another tab.
   useEffect(() => {
@@ -443,7 +445,7 @@ export default function SchedulePage() {
     toast.success("Example semester loaded. Tweak anything or replace it with your own schedule.")
   }
 
-  const handleSemesterRestore = useCallback((dates: SemesterDates) => {
+  const handleSemesterRestore = useCallback((dates: SemesterDates | null) => {
     saveSemesterDates(dates)
     setSemesterDates(dates)
   }, [])

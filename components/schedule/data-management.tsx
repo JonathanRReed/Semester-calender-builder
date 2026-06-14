@@ -18,7 +18,7 @@ import type { CourseEvent, StudyBlock, ImportantDate, SemesterDates, ScheduleEve
 
 interface DataManagementProps {
   onDataUpdate: (data: { courses: CourseEvent[]; studyBlocks: StudyBlock[]; importantDates: ImportantDate[]; mode?: "append" | "replace" }) => void
-  onSemesterRestore?: (dates: SemesterDates) => void
+  onSemesterRestore?: (dates: SemesterDates | null) => void
   existingEvents?: ScheduleEvent[]
 }
 
@@ -64,7 +64,9 @@ export const DataManagement = React.forwardRef<DataManagementHandle, DataManagem
           importantDates: backup.importantDates,
           mode: "replace",
         })
-        if (backup.semesterDates && onSemesterRestore) onSemesterRestore(backup.semesterDates)
+        // Always apply the backup's semester dates (including null) so a no-semester
+        // backup clears any previously stored term instead of leaving it attached.
+        if (onSemesterRestore) onSemesterRestore(backup.semesterDates ?? null)
         const total = backup.courses.length + backup.studyBlocks.length + backup.importantDates.length
         toast.success(`Restored backup: ${total} item${total === 1 ? "" : "s"} from ${file.name}`)
         return

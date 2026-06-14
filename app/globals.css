@@ -1,10 +1,11 @@
 @import "tailwindcss";
+@plugin "tailwindcss-animate";
 
 @custom-variant dark (&:is(.dark *));
 
 @font-face {
   font-family: "Nebula Sans";
-  src: url("https://fonts.helloworldfirm.com/NebulaSans-Light.woff2") format("woff2");
+  src: url("/fonts/NebulaSans-Light.woff2") format("woff2");
   font-weight: 300;
   font-style: normal;
   font-display: optional;
@@ -13,7 +14,7 @@
 
 @font-face {
   font-family: "Nebula Sans";
-  src: url("https://fonts.helloworldfirm.com/NebulaSans-LightItalic.woff2") format("woff2");
+  src: url("/fonts/NebulaSans-LightItalic.woff2") format("woff2");
   font-weight: 300;
   font-style: italic;
   font-display: optional;
@@ -22,7 +23,7 @@
 
 @font-face {
   font-family: "Nebula Sans";
-  src: url("https://fonts.helloworldfirm.com/NebulaSans-Book.woff2") format("woff2");
+  src: url("/fonts/NebulaSans-Book.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: optional;
@@ -31,7 +32,7 @@
 
 @font-face {
   font-family: "Nebula Sans";
-  src: url("https://fonts.helloworldfirm.com/NebulaSans-Bold.woff2") format("woff2");
+  src: url("/fonts/NebulaSans-Bold.woff2") format("woff2");
   font-weight: 700;
   font-style: normal;
   font-display: optional;
@@ -40,7 +41,7 @@
 
 @font-face {
   font-family: "Nebula Sans";
-  src: url("https://fonts.helloworldfirm.com/NebulaSans-BoldItalic.woff2") format("woff2");
+  src: url("/fonts/NebulaSans-BoldItalic.woff2") format("woff2");
   font-weight: 700;
   font-style: italic;
   font-display: optional;
@@ -416,10 +417,16 @@
    PREMIUM POLISH SYSTEM
    ============================================ */
 
-/* Smooth color transitions for theme toggle */
-*,
-*::before,
-*::after {
+/* Smooth color transitions — scoped to interactive elements (not every node) */
+a,
+button,
+input,
+textarea,
+select,
+[role="button"],
+[data-slot],
+.glass-card,
+.btn-primary {
   transition-property: background-color, border-color, box-shadow, color, fill, stroke;
   transition-duration: 0.3s;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
@@ -431,6 +438,43 @@
 .no-transition,
 .no-transition * {
   transition: none !important;
+}
+
+/* ---- Entrance animations (custom classes used across the app) ---- */
+@keyframes scb-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes scb-scale-in {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes scb-slide-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in,
+.animate-fade-in {
+  animation: scb-fade-in 0.4s ease both;
+}
+.scale-in {
+  animation: scb-scale-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.slide-up {
+  animation: scb-slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* Custom Scrollbar - Rose Pine themed */

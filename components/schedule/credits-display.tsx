@@ -11,12 +11,21 @@ interface CreditsDisplayProps {
 }
 
 export function CreditsDisplay({ courses, className }: CreditsDisplayProps) {
-    const { totalCredits, loadStatus, hasCredits } = useMemo(() => {
+    const { totalCredits, loadStatus, hasCredits, missingCount } = useMemo(() => {
         const total = calculateTotalCredits(courses)
         const status = getCreditLoadStatus(total)
         // Check if any course has credits defined
         const hasCreds = courses.some(c => c.credits !== undefined && c.credits > 0)
-        return { totalCredits: total, loadStatus: status, hasCredits: hasCreds }
+        // Count unique courses (by code+section) that are missing credits.
+        const seen = new Set<string>()
+        let missing = 0
+        for (const c of courses) {
+            const key = `${c.courseCode}-${c.section}`
+            if (seen.has(key)) continue
+            seen.add(key)
+            if (!(c.credits !== undefined && c.credits > 0)) missing++
+        }
+        return { totalCredits: total, loadStatus: status, hasCredits: hasCreds, missingCount: missing }
     }, [courses])
 
     // Don't show if no courses have credits defined
@@ -57,6 +66,14 @@ export function CreditsDisplay({ courses, className }: CreditsDisplayProps) {
                 </span>
                 {loadStatus === "heavy" && (
                     <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
+                )}
+                {missingCount > 0 && (
+                    <span
+                        className="text-[11px] text-amber-500"
+                        title={`${missingCount} course${missingCount > 1 ? "s" : ""} have no credits set — total may be low`}
+                    >
+                        · {missingCount} missing
+                    </span>
                 )}
             </div>
         </div>

@@ -1,10 +1,10 @@
 "use client"
 
-import { useState, useEffect, useRef, lazy, Suspense, useCallback } from "react"
-import { Plus, Sparkles, Menu, X, SlidersHorizontal, RotateCcw, Printer } from "lucide-react"
+import { useState, useEffect, useRef, lazy, Suspense, useCallback, useMemo } from "react"
+import { Plus, Sparkles, Menu, X, SlidersHorizontal, RotateCcw, Printer, Undo2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/theme-toggle"
-import type { CourseEvent, StudyBlock, FilterType, TimeZone, ScheduleEvent, ImportantDate } from "@/types/schedule"
+import type { CourseEvent, StudyBlock, FilterType, ScheduleEvent, ImportantDate, SemesterDates, DayOfWeek } from "@/types/schedule"
 import { SEED_COURSES, SEED_STUDY_BLOCKS, IMPORTANT_DATES } from "@/lib/schedule-data"
 import {
   saveScheduleData,
@@ -14,6 +14,8 @@ import {
   resetScheduleData,
   saveLastExportTimestamp,
 } from "@/lib/schedule-utils"
+import { generateJSONBackup } from "@/lib/export-utils"
+import type { StoredSchedule } from "@/lib/schedule-utils"
 import { WeekGrid } from "@/components/schedule/week-grid"
 import { ExportMenu } from "@/components/schedule/export-menu"
 import { OverviewSection } from "@/components/schedule/overview-section"
@@ -25,9 +27,10 @@ import { BackupReminder } from "@/components/schedule/backup-reminder"
 import { CreditsDisplay } from "@/components/schedule/credits-display"
 import { useKeyboardShortcuts } from "@/components/schedule/keyboard-shortcuts"
 import { EmptyState } from "@/components/schedule/empty-state"
-import { SemesterWeekIndicator, SemesterSettingsDialog, loadSemesterDates } from "@/components/schedule/semester-settings"
+import { SemesterWeekIndicator, SemesterSettingsDialog, loadSemesterDates, saveSemesterDates } from "@/components/schedule/semester-settings"
 import { QuickHelp } from "@/components/schedule/quick-help"
 import { ViewToggle, type ViewMode } from "@/components/schedule/view-toggle"
+import { SearchFilter } from "@/components/schedule/search-filter"
 import { SemesterView } from "@/components/schedule/semester-view"
 import { StatsDashboard } from "@/components/schedule/stats-dashboard"
 import { toast } from "sonner"
@@ -118,7 +121,7 @@ export default function SchedulePage() {
   const [studyBlocks, setStudyBlocks] = useState<StudyBlock[]>([])
   const [importantDates, setImportantDates] = useState<ImportantDate[]>([])
   const [activeFilter, setActiveFilter] = useState<FilterType>("all")
-  const [timeZone, setTimeZone] = useState<TimeZone>("CT")
+  const [searchTerm, setSearchTerm] = useState("")
   const [isLoaded, setIsLoaded] = useState(false)
   const [isGuideOpen, setIsGuideOpen] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -128,6 +131,7 @@ export default function SchedulePage() {
   const [editingEvent, setEditingEvent] = useState<ScheduleEvent | null>(null)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
+  const [addPrefill, setAddPrefill] = useState<{ day: DayOfWeek; startCT: string; endCT: string } | null>(null)
   const [isSemesterSettingsOpen, setIsSemesterSettingsOpen] = useState(false)
   const [semesterDates, setSemesterDates] = useState<{ startDate: string; endDate: string } | null>(null)
   const [viewMode, setViewMode] = useState<ViewMode>("week")
@@ -187,15 +191,65 @@ export default function SchedulePage() {
     }
   }, [])
 
-  // Auto-save when data changes (debounced)
+  // Auto-save when data changes (debounced) — surface storage failures instead of losing data silently.
   useEffect(() => {
     if (isLoaded) {
       const timeoutId = setTimeout(() => {
-        saveScheduleData(courses, studyBlocks, importantDates)
+        const result = saveScheduleData(courses, studyBlocks, importantDates)
+        if (!result.ok && result.quotaExceeded) {
+          toast.error("Couldn't save — browser storage is full or blocked", {
+            description: "Download a backup from Export so you don't lose your changes.",
+          })
+        }
       }, 500)
       return () => clearTimeout(timeoutId)
     }
   }, [courses, studyBlocks, importantDates, isLoaded])
+
+  // Keep in sync if the schedule is edited in another tab.
+  useEffect(() => {
+    if (!isLoaded) return
+    const onStorage = (e: StorageEvent) => {
+      if (e.key !== "schedule-data" || e.newValue == null) return
+      const latest = loadScheduleData()
+      setCourses(latest.courses)
+      setStudyBlocks(latest.studyBlocks)
+      setImportantDates(latest.importantDates)
+      setSemesterDates(latest.semesterDates)
+    }
+    window.addEventListener("storage", onStorage)
+    return () => window.removeEventListener("storage", onStorage)
+  }, [isLoaded])
+
+  // ---- Undo: in-session snapshot stack ----
+  // A ref mirror of state so captureUndo() can stay stable (safe inside useCallback handlers).
+  const stateRef = useRef<StoredSchedule>({ courses, studyBlocks, importantDates, semesterDates })
+  useEffect(() => {
+    stateRef.current = { courses, studyBlocks, importantDates, semesterDates }
+  }, [courses, studyBlocks, importantDates, semesterDates])
+
+  const undoStackRef = useRef<StoredSchedule[]>([])
+  const [canUndo, setCanUndo] = useState(false)
+
+  const captureUndo = useCallback(() => {
+    undoStackRef.current.push({ ...stateRef.current })
+    if (undoStackRef.current.length > 15) undoStackRef.current.shift()
+    setCanUndo(true)
+  }, [])
+
+  const handleUndo = useCallback(() => {
+    const prev = undoStackRef.current.pop()
+    setCanUndo(undoStackRef.current.length > 0)
+    if (!prev) {
+      toast.info("Nothing to undo")
+      return
+    }
+    setCourses(prev.courses)
+    setStudyBlocks(prev.studyBlocks)
+    setImportantDates(prev.importantDates)
+    setSemesterDates(prev.semesterDates)
+    toast.success("Undid last change")
+  }, [])
 
   const handleDataUpdate = (data: {
     courses: CourseEvent[]
@@ -209,6 +263,8 @@ export default function SchedulePage() {
       importantDates: incomingDates,
       mode = "append",
     } = data
+
+    captureUndo()
 
     if (mode === "replace") {
       const normalizedCourses = uniqueById(incomingCourses)
@@ -238,7 +294,24 @@ export default function SchedulePage() {
     setIsEditDialogOpen(true)
   }
 
+  // Click an empty grid slot → open Add dialog prefilled with that day + time.
+  const handleCreateAt = useCallback((day: string, startCT: string, endCT: string) => {
+    setAddPrefill({ day: day as DayOfWeek, startCT, endCT })
+    setIsAddDialogOpen(true)
+  }, [])
+
+  // Drag an event to a new time (or resize it) on the grid.
+  const handleUpdateEventTime = useCallback(
+    (eventId: string, startCT: string, endCT: string) => {
+      captureUndo()
+      setCourses((prev) => prev.map((c) => (c.id === eventId ? { ...c, startCT, endCT } : c)))
+      setStudyBlocks((prev) => prev.map((b) => (b.id === eventId ? { ...b, startCT, endCT } : b)))
+    },
+    [captureUndo],
+  )
+
   const handleSaveEvent = (updatedEvent: ScheduleEvent) => {
+    captureUndo()
     if (updatedEvent.type === "study") {
       setStudyBlocks((prev) =>
         prev.map((block) => (block.id === updatedEvent.id ? (updatedEvent as StudyBlock) : block)),
@@ -251,12 +324,15 @@ export default function SchedulePage() {
   }
 
   const handleDeleteEvent = (eventId: string) => {
+    captureUndo()
     setCourses((prev) => prev.filter((course) => course.id !== eventId))
     setStudyBlocks((prev) => prev.filter((block) => block.id !== eventId))
+    toast("Event deleted", { action: { label: "Undo", onClick: handleUndo } })
   }
 
   // Handler for saving all events in a recurrence group
   const handleSaveAllEvents = useCallback((updatedEvents: ScheduleEvent[], recurrenceGroupId: string) => {
+    captureUndo()
     // Create maps for quick lookup
     const updatedMap = new Map(updatedEvents.map(e => [e.id, e]))
 
@@ -279,15 +355,18 @@ export default function SchedulePage() {
         return block
       })
     )
-  }, [])
+  }, [captureUndo])
 
   // Handler for deleting all events in a recurrence group
   const handleDeleteAllEvents = useCallback((recurrenceGroupId: string) => {
+    captureUndo()
     setCourses((prev) => prev.filter((course) => course.recurrenceGroupId !== recurrenceGroupId))
     setStudyBlocks((prev) => prev.filter((block) => block.recurrenceGroupId !== recurrenceGroupId))
-  }, [])
+    toast("Recurring event deleted", { action: { label: "Undo", onClick: handleUndo } })
+  }, [captureUndo, handleUndo])
 
   const handleAddEvent = (newEvent: Omit<ScheduleEvent, "id">) => {
+    captureUndo()
     const id = crypto.randomUUID()
     const eventWithId = { ...newEvent, id }
 
@@ -300,6 +379,7 @@ export default function SchedulePage() {
 
   // Handler for adding multiple recurring events at once
   const handleAddMultipleEvents = useCallback((newEvents: Omit<ScheduleEvent, "id">[]) => {
+    captureUndo()
     const coursesToAdd: CourseEvent[] = []
     const blocksToAdd: StudyBlock[] = []
 
@@ -320,7 +400,7 @@ export default function SchedulePage() {
     if (blocksToAdd.length > 0) {
       setStudyBlocks((prev) => [...prev, ...blocksToAdd])
     }
-  }, [])
+  }, [captureUndo])
 
   // Handler for export with timestamp tracking
   const handleExport = useCallback(() => {
@@ -333,19 +413,24 @@ export default function SchedulePage() {
     onAddEvent: () => setIsAddDialogOpen(true),
     onExport: handleExport,
     onShowGuide: () => setIsGuideOpen(true),
+    onUndo: handleUndo,
     enabled: !isEditDialogOpen && !isAddDialogOpen && !isGuideOpen,
   })
 
   const handleAddDate = (newDate: Omit<ImportantDate, "id">) => {
+    captureUndo()
     const id = crypto.randomUUID()
     setImportantDates((prev) => [...prev, { ...newDate, id }])
   }
 
   const handleDeleteDate = (dateId: string) => {
+    captureUndo()
     setImportantDates((prev) => prev.filter((date) => date.id !== dateId))
+    toast("Date deleted", { action: { label: "Undo", onClick: handleUndo } })
   }
 
   const handleLoadExample = () => {
+    captureUndo()
     const courseSeed = SEED_COURSES.map((course) => ({ ...course }))
     const studySeed = SEED_STUDY_BLOCKS.map((block) => ({ ...block }))
     const dateSeed = IMPORTANT_DATES.map((date) => ({ ...date }))
@@ -358,27 +443,42 @@ export default function SchedulePage() {
     toast.success("Example semester loaded. Tweak anything or replace it with your own schedule.")
   }
 
+  const handleSemesterRestore = useCallback((dates: SemesterDates) => {
+    saveSemesterDates(dates)
+    setSemesterDates(dates)
+  }, [])
+
   const handleStartNewSchedule = () => {
+    captureUndo()
+    // Back up whatever the user currently has BEFORE wiping it.
+    const hadData = courses.length > 0 || studyBlocks.length > 0 || importantDates.length > 0
+    if (hadData) {
+      const snapshot = generateJSONBackup([...courses, ...studyBlocks], importantDates, semesterDates)
+      const blob = new Blob([snapshot], { type: "application/json" })
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement("a")
+      link.href = url
+      link.download = "semester-schedule-backup.json"
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
+    }
+
     const blank = resetScheduleData()
     setCourses(blank.courses)
     setStudyBlocks(blank.studyBlocks)
     setImportantDates(blank.importantDates)
+    setSemesterDates(null)
 
-    const snapshot = JSON.stringify(blank, null, 2)
-    const blob = new Blob([snapshot], { type: "application/json" })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement("a")
-    link.href = url
-    link.download = "semester-schedule.json"
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    URL.revokeObjectURL(url)
-
-    toast.success("Started a new schedule. A JSON snapshot has been downloaded for safekeeping.")
+    toast.success(
+      hadData
+        ? "Started a new schedule. A backup of your previous schedule was downloaded."
+        : "Started a new schedule.",
+    )
   }
 
-  const allEvents = [...courses, ...studyBlocks]
+  const allEvents = useMemo(() => [...courses, ...studyBlocks], [courses, studyBlocks])
   const hasEvents = allEvents.length > 0
 
   const headerPanelClasses = [
@@ -494,7 +594,12 @@ export default function SchedulePage() {
                   <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Quick Actions</span>
                 </div>
                 <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch gap-2">
-                  <DataManagement ref={dataManagementRef} onDataUpdate={handleDataUpdate} />
+                  <DataManagement
+                    ref={dataManagementRef}
+                    onDataUpdate={handleDataUpdate}
+                    onSemesterRestore={handleSemesterRestore}
+                    existingEvents={allEvents}
+                  />
                   <Button
                     onClick={() => setIsGuideOpen(true)}
                     size="sm"
@@ -506,6 +611,18 @@ export default function SchedulePage() {
                     <span className="hidden xs:inline">Onboarding Guide</span>
                     <span className="xs:hidden">Guide</span>
                   </Button>
+                  {canUndo && (
+                    <Button
+                      onClick={handleUndo}
+                      size="sm"
+                      variant="outline"
+                      className="w-full sm:w-auto"
+                      aria-label="Undo last change"
+                    >
+                      <Undo2 className="w-3 h-3 sm:w-4 sm:h-4" />
+                      <span className="hidden xs:inline">Undo</span>
+                    </Button>
+                  )}
                   <Button
                     onClick={handleStartNewSchedule}
                     size="sm"
@@ -527,7 +644,13 @@ export default function SchedulePage() {
                     <span className="hidden xs:inline">Add Event</span>
                     <span className="xs:hidden">Add</span>
                   </Button>
-                  <ExportMenu ref={exportMenuRef} events={allEvents} />
+                  <ExportMenu
+                    ref={exportMenuRef}
+                    events={allEvents}
+                    importantDates={importantDates}
+                    semester={semesterDates}
+                    onSetupSemester={() => setIsSemesterSettingsOpen(true)}
+                  />
                   <Button
                     onClick={() => window.print()}
                     size="sm"
@@ -542,26 +665,6 @@ export default function SchedulePage() {
               </div>
 
               <div className="glass-card p-2.5 sm:p-3 rounded-lg shadow-[var(--shadow-xs)] space-y-3">
-                <div>
-                  <span className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
-                    Time Zone
-                  </span>
-                  <div className="flex flex-nowrap sm:flex-wrap items-center gap-2 overflow-x-auto sm:overflow-visible pr-1">
-                    {(["PT", "MT", "CT", "ET"] as TimeZone[]).map((tz) => (
-                      <Button
-                        key={tz}
-                        size="sm"
-                        variant={timeZone === tz ? "default" : "outline"}
-                        className="min-w-[3.5rem]"
-                        onClick={() => setTimeZone(tz)}
-                        aria-pressed={timeZone === tz}
-                      >
-                        {tz}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-
                 <div>
                   <span className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
                     Filter Events
@@ -624,16 +727,21 @@ export default function SchedulePage() {
               />
             </div>
 
-            <div id="schedule-grid" role="main" aria-label="Schedule view" className="relative scale-in">
+            <div id="schedule-grid" role="region" aria-label="Schedule view" className="relative scale-in">
               {/* View toggle and section header */}
               {hasEvents && (
                 <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
-                  <ViewToggle
-                    currentView={viewMode}
-                    onViewChange={setViewMode}
-                    hasSemesterDates={!!semesterDates?.startDate && !!semesterDates?.endDate}
-                    onSetupSemester={() => setIsSemesterSettingsOpen(true)}
-                  />
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <ViewToggle
+                      currentView={viewMode}
+                      onViewChange={setViewMode}
+                      hasSemesterDates={!!semesterDates?.startDate && !!semesterDates?.endDate}
+                      onSetupSemester={() => setIsSemesterSettingsOpen(true)}
+                    />
+                    {viewMode === "week" && (
+                      <SearchFilter events={allEvents} searchTerm={searchTerm} onSearchChange={setSearchTerm} />
+                    )}
+                  </div>
                   <p className="text-xs text-muted-foreground">
                     {viewMode === "week"
                       ? "Your typical weekly schedule, events repeat each week"
@@ -653,8 +761,11 @@ export default function SchedulePage() {
                 <WeekGrid
                   events={allEvents}
                   activeFilter={activeFilter}
-                  timeZone={timeZone}
+                  searchTerm={searchTerm}
                   onEventClick={handleEventClick}
+                  onCreateAt={handleCreateAt}
+                  onUpdateTime={handleUpdateEventTime}
+                  semester={semesterDates}
                 />
               ) : semesterDates?.startDate && semesterDates?.endDate ? (
                 <SemesterView
@@ -770,10 +881,14 @@ export default function SchedulePage() {
       <Suspense fallback={null}>
         <AddEventDialog
           isOpen={isAddDialogOpen}
-          onClose={() => setIsAddDialogOpen(false)}
+          onClose={() => {
+            setIsAddDialogOpen(false)
+            setAddPrefill(null)
+          }}
           onAdd={handleAddEvent}
           onAddMultiple={handleAddMultipleEvents}
           existingEvents={allEvents}
+          prefill={addPrefill}
         />
       </Suspense>
 

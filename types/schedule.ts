@@ -60,6 +60,15 @@ export interface ImportantDate {
   endDate?: string          // Optional end date for multi-day events (YYYY-MM-DD)
   description?: string
   type: "event" | "deadline" | "break" | "exam" | "finals"
+  startTime?: string        // Optional start time (HH:MM) — e.g. a timed exam
+  endTime?: string          // Optional end time (HH:MM) — pairs with startTime
+  location?: string         // Optional location — e.g. exam room
+}
+
+// Semester boundaries (YYYY-MM-DD). Used to anchor recurring calendar exports.
+export interface SemesterDates {
+  startDate: string
+  endDate: string
 }
 
 // Backup tracking
@@ -68,5 +77,15 @@ export interface ScheduleMetadata {
   createdAt: string           // When the schedule was first created
 }
 
+// A complete, portable snapshot of everything the planner stores.
+// Used for JSON backup/restore so a single file fully captures the schedule.
+export interface ScheduleBackup {
+  version: number
+  courses: CourseEvent[]
+  studyBlocks: StudyBlock[]
+  importantDates: ImportantDate[]
+  semesterDates?: SemesterDates | null
+  exportedAt?: string
+}
+
 export type FilterType = "all" | "inperson" | "online" | "study" | "exam"
-export type TimeZone = "PT" | "MT" | "CT" | "ET"

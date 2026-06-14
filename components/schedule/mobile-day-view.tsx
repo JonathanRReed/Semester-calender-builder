@@ -3,22 +3,24 @@
 import { useState } from "react"
 import { ChevronLeft, ChevronRight, Calendar } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import type { ScheduleEvent, TimeZone } from "@/types/schedule"
+import type { ScheduleEvent } from "@/types/schedule"
 import { EventCard } from "./event-card"
 import { getCampusStatus } from "@/lib/schedule-utils"
 import { DAYS } from "@/lib/constants"
 
 interface MobileDayViewProps {
   events: ScheduleEvent[]
-  timeZone: TimeZone
+  conflictingIds: Set<string>
   onEventClick?: (event: ScheduleEvent) => void
+  weekDates?: Record<string, string> | null
 }
 
-export function MobileDayView({ events, timeZone, onEventClick }: MobileDayViewProps) {
+export function MobileDayView({ events, conflictingIds, onEventClick, weekDates }: MobileDayViewProps) {
   const [currentDayIndex, setCurrentDayIndex] = useState(0)
   const currentDay = DAYS[currentDayIndex] ?? "Mon"
   const dayEvents = events.filter((event) => event.day === currentDay)
   const campusStatus = getCampusStatus(events, currentDay)
+  const currentDate = weekDates?.[currentDay]
 
   const nextDay = () => {
     setCurrentDayIndex((prev) => (prev + 1) % DAYS.length)
@@ -42,7 +44,10 @@ export function MobileDayView({ events, timeZone, onEventClick }: MobileDayViewP
         </Button>
 
         <div className="text-center">
-          <h2 className="font-semibold text-foreground text-lg">{currentDay}</h2>
+          <h2 className="font-semibold text-foreground text-lg">
+            {currentDay}
+            {currentDate && <span className="text-muted-foreground font-normal text-sm ml-1.5">{currentDate}</span>}
+          </h2>
           <div className={`text-xs px-2 py-1 rounded border mt-1 ${getCampusStatusColor()}`}>
             {campusStatus === "ON CAMPUS"
               ? "ON CAMPUS"
@@ -89,8 +94,8 @@ export function MobileDayView({ events, timeZone, onEventClick }: MobileDayViewP
               <EventCard
                 key={event.id}
                 event={event}
-                timeZone={timeZone}
                 onClick={() => onEventClick?.(event)}
+                hasConflict={conflictingIds.has(event.id)}
               />
             ))
         )}

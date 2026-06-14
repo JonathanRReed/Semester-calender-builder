@@ -1,9 +1,9 @@
 export const FONT_ASSETS = {
-  light: "https://fonts.helloworldfirm.com/NebulaSans-Light.woff2",
-  lightItalic: "https://fonts.helloworldfirm.com/NebulaSans-LightItalic.woff2",
-  book: "https://fonts.helloworldfirm.com/NebulaSans-Book.woff2",
-  bold: "https://fonts.helloworldfirm.com/NebulaSans-Bold.woff2",
-  boldItalic: "https://fonts.helloworldfirm.com/NebulaSans-BoldItalic.woff2",
+  light: "/fonts/NebulaSans-Light.woff2",
+  lightItalic: "/fonts/NebulaSans-LightItalic.woff2",
+  book: "/fonts/NebulaSans-Book.woff2",
+  bold: "/fonts/NebulaSans-Bold.woff2",
+  boldItalic: "/fonts/NebulaSans-BoldItalic.woff2",
 } as const
 
 export const LOGO_ASSETS = {

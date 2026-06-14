@@ -7,6 +7,20 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import type { ScheduleEvent } from "@/types/schedule"
 
+/** Shared predicate so the grid and the match count agree on what "matches". */
+export function eventMatchesSearch(e: ScheduleEvent, term: string): boolean {
+  const t = term.trim().toLowerCase()
+  if (!t) return true
+  return (
+    e.title.toLowerCase().includes(t) ||
+    ("location" in e && !!e.location && e.location.toLowerCase().includes(t)) ||
+    ("notes" in e && !!e.notes && e.notes.toLowerCase().includes(t)) ||
+    ("courseCode" in e && !!e.courseCode && e.courseCode.toLowerCase().includes(t)) ||
+    ("section" in e && !!e.section && e.section.toLowerCase().includes(t)) ||
+    ("instructor" in e && !!e.instructor && e.instructor.toLowerCase().includes(t))
+  )
+}
+
 interface SearchFilterProps {
     events: ScheduleEvent[]
     onFilteredEvents?: (events: ScheduleEvent[]) => void
@@ -25,12 +39,7 @@ export function SearchFilter({
 
     const matchCount = useMemo(() => {
         if (!searchTerm.trim()) return events.length
-        const term = searchTerm.toLowerCase()
-        return events.filter(e =>
-            e.title.toLowerCase().includes(term) ||
-            ("location" in e && e.location?.toLowerCase().includes(term)) ||
-            ("notes" in e && e.notes?.toLowerCase().includes(term))
-        ).length
+        return events.filter((e) => eventMatchesSearch(e, searchTerm)).length
     }, [events, searchTerm])
 
     return (

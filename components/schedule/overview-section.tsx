@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import type { ImportantDate } from "@/types/schedule"
 import { AddDateDialog } from "./add-date-dialog"
+import { dateChipStyle, dateIconStyle } from "@/lib/event-theme"
 
 interface OverviewSectionProps {
   dates: ImportantDate[]
@@ -31,21 +32,6 @@ export function OverviewSection({ dates, onAddDate, onDeleteDate, className }: O
         return <BookOpen className="w-4 h-4" />
       default:
         return <Calendar className="w-4 h-4" />
-    }
-  }
-
-  const getDateColor = (type: ImportantDate["type"]) => {
-    switch (type) {
-      case "deadline":
-        return "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30"
-      case "break":
-        return "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30"
-      case "exam":
-        return "bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/30"
-      case "finals":
-        return "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/30"
-      default:
-        return "bg-secondary/30 text-muted-foreground border-border/40"
     }
   }
 
@@ -165,25 +151,25 @@ export function OverviewSection({ dates, onAddDate, onDeleteDate, className }: O
           {dates.length > 0 && (
             <div className="flex flex-wrap gap-2 pb-2 border-b border-border/30 mb-3">
               {finalsCount > 0 && (
-                <Badge variant="outline" className="text-[10px] gap-1 bg-purple-500/5 border-purple-500/30">
+                <Badge variant="outline" className="text-[10px] gap-1" style={dateChipStyle("finals")}>
                   <BookOpen className="w-3 h-3" />
                   {finalsCount} finals
                 </Badge>
               )}
               {examCount > 0 && (
-                <Badge variant="outline" className="text-[10px] gap-1 bg-red-500/5 border-red-500/30">
+                <Badge variant="outline" className="text-[10px] gap-1" style={dateChipStyle("exam")}>
                   <GraduationCap className="w-3 h-3" />
                   {examCount} exam{examCount > 1 ? "s" : ""}
                 </Badge>
               )}
               {deadlineCount > 0 && (
-                <Badge variant="outline" className="text-[10px] gap-1 bg-amber-500/5 border-amber-500/30">
+                <Badge variant="outline" className="text-[10px] gap-1" style={dateChipStyle("deadline")}>
                   <Clock className="w-3 h-3" />
                   {deadlineCount} deadline{deadlineCount > 1 ? "s" : ""}
                 </Badge>
               )}
               {breakCount > 0 && (
-                <Badge variant="outline" className="text-[10px] gap-1 bg-emerald-500/5 border-emerald-500/30">
+                <Badge variant="outline" className="text-[10px] gap-1" style={dateChipStyle("break")}>
                   <Coffee className="w-3 h-3" />
                   {breakCount} break{breakCount > 1 ? "s" : ""}
                 </Badge>
@@ -211,7 +197,10 @@ export function OverviewSection({ dates, onAddDate, onDeleteDate, className }: O
                 className="flex items-start gap-3 rounded-lg border border-border/40 bg-card/40 p-2.5 transition-all duration-300 group hover:bg-card/55 hover:-translate-y-0.5"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <div className={`p-1.5 rounded-lg border ${getDateColor(date.type)} group-hover:scale-110 transition-transform`}>
+                <div
+                  className="p-1.5 rounded-lg border group-hover:scale-110 transition-transform"
+                  style={dateIconStyle(date.type)}
+                >
                   {getDateIcon(date.type)}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -223,11 +212,18 @@ export function OverviewSection({ dates, onAddDate, onDeleteDate, className }: O
                         {isMultiDay && (
                           <span className="ml-1 opacity-70">({daysCount} days)</span>
                         )}
+                        {date.startTime && (
+                          <span className="ml-1 opacity-80">
+                            · {date.startTime}
+                            {date.endTime ? `–${date.endTime}` : ""}
+                          </span>
+                        )}
                       </p>
+                      {date.location && <p className="text-muted-foreground text-[11px] mt-0.5">📍 {date.location}</p>}
                       {date.description && <p className="text-muted-foreground text-[11px] mt-0.5">{date.description}</p>}
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <Badge variant="outline" className={`text-[10px] capitalize px-2 py-0.5 ${getDateColor(date.type)}`}>
+                      <Badge variant="outline" className="text-[10px] capitalize px-2 py-0.5" style={dateChipStyle(date.type)}>
                         {date.type === "finals" ? "finals" : date.type}
                       </Badge>
                       <Button

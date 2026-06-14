@@ -15,18 +15,18 @@ interface OnboardingBannerProps {
 export const ONBOARDING_STEPS = [
   {
     icon: <ListTodo className="w-4 h-4 text-primary" />,
-    title: "Add your classes",
-    description: "Capture lectures, labs, and recitations with the Add Event button.",
+    title: "1. Add your classes",
+    description: "Add Event for one class, or Manage Data → Smart Paste to drop in your whole schedule at once.",
   },
   {
-    icon: <Upload className="w-4 h-4 text-primary" />,
-    title: "Paste a schedule",
-    description: "Use Manage Data → Bulk Input to paste text or upload CSV/ICS files.",
+    icon: <Calendar className="w-4 h-4 text-primary" />,
+    title: "2. Set your semester dates",
+    description: "So classes land on the right weeks and stop at finals — set them from the header.",
   },
   {
     icon: <Download className="w-4 h-4 text-primary" />,
-    title: "Export your plan",
-    description: "Export to PNG, ICS, or CSV once everything looks right.",
+    title: "3. Send it to your calendar",
+    description: "Export → Add to Calendar (.ics) imports straight into Google, Apple, or Outlook.",
   },
 ]
 

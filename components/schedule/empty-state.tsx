@@ -2,6 +2,7 @@
 
 import { Plus, Calendar, Clock, BookOpen } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { eventVisual } from "@/lib/event-theme"
 
 // Example ghost events to show in empty state
 const GHOST_EVENTS = [
@@ -20,18 +21,12 @@ interface EmptyStateProps {
 }
 
 function GhostEvent({ title, time, type }: { title: string; time: string; type: "inperson" | "online" | "study" }) {
-    const getColor = () => {
-        switch (type) {
-            case "inperson": return "bg-primary/5 border-primary/20"
-            case "online": return "bg-blue-500/5 border-blue-500/20"
-            case "study": return "bg-emerald-500/5 border-emerald-500/20"
-        }
-    }
+    const v = eventVisual(type)
 
     return (
-        <div className={`p-2 rounded-lg border ${getColor()} opacity-60`}>
+        <div className="p-2 rounded-lg border opacity-60" style={{ background: v.bg, borderColor: v.border }}>
             <div className="text-xs font-medium text-muted-foreground truncate">{title}</div>
-            <div className="text-[10px] text-muted-foreground/60">{time}</div>
+            <div className="text-[11px] text-muted-foreground/60">{time}</div>
         </div>
     )
 }
@@ -71,7 +66,8 @@ export function EmptyState({ onAddEvent, onLoadExample }: EmptyStateProps) {
                     </h2>
 
                     <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
-                        Add your classes, study blocks, and important dates to create a visual semester plan.
+                        Add your classes, study blocks, and important dates — then send it straight to Google,
+                        Apple, or Outlook Calendar.
                     </p>
 
                     <div className="flex flex-col sm:flex-row gap-3 justify-center">

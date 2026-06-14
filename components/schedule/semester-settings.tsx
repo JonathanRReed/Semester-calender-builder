@@ -19,38 +19,10 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover"
 
-interface SemesterDates {
-    startDate: string  // YYYY-MM-DD
-    endDate: string    // YYYY-MM-DD
-}
-
-const STORAGE_KEY = "schedule-semester-dates"
-
-// Load semester dates from localStorage
-export function loadSemesterDates(): SemesterDates | null {
-    if (typeof window === "undefined") return null
-
-    try {
-        const stored = localStorage.getItem(STORAGE_KEY)
-        if (stored) {
-            return JSON.parse(stored)
-        }
-    } catch {
-        // Ignore errors
-    }
-    return null
-}
-
-// Save semester dates to localStorage
-export function saveSemesterDates(dates: SemesterDates): void {
-    if (typeof window === "undefined") return
-
-    try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(dates))
-    } catch {
-        // Ignore errors
-    }
-}
+import type { SemesterDates } from "@/types/schedule"
+// Semester dates now live in the unified, versioned schedule store.
+import { loadSemesterDates, saveSemesterDates } from "@/lib/schedule-utils"
+export { loadSemesterDates, saveSemesterDates }
 
 // Calculate current week of semester
 export function getCurrentSemesterWeek(dates: SemesterDates | null): number | null {

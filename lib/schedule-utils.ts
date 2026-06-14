@@ -1,17 +1,99 @@
-import type { CourseEvent, StudyBlock, ScheduleEvent, TimeZone, ImportantDate, DayOfWeek, ScheduleMetadata } from "@/types/schedule"
-import { TIMEZONES } from "./constants"
+import type { CourseEvent, StudyBlock, ScheduleEvent, ImportantDate, DayOfWeek, ScheduleMetadata, SemesterDates } from "@/types/schedule"
+import { validateSchedule } from "./schedule-schema"
 
 const MINUTES_PER_HOUR = 60
 const BACKUP_REMINDER_DAYS = 7
-const STORAGE_KEYS = {
-  courses: "schedule-courses",
-  studyBlocks: "schedule-study-blocks",
-  importantDates: "schedule-important-dates",
-  snapshot: "schedule-json",
-  metadata: "schedule-metadata",
-} as const
+
+// Bump when the stored shape changes; the loader migrates older data forward.
+export const SCHEDULE_VERSION = 1
+
+// Everything the planner owns lives in ONE versioned key, written atomically.
+const STORAGE_KEY = "schedule-data"
+const HISTORY_KEY = "schedule-history"
+const METADATA_KEY = "schedule-metadata"
+const HISTORY_LIMIT = 5
+const LEGACY_KEYS = [
+  "schedule-courses",
+  "schedule-study-blocks",
+  "schedule-important-dates",
+  "schedule-semester-dates",
+  "schedule-json",
+  "schedule-version",
+]
 
 const isBrowser = () => typeof window !== "undefined"
+
+export interface StoredSchedule {
+  courses: CourseEvent[]
+  studyBlocks: StudyBlock[]
+  importantDates: ImportantDate[]
+  semesterDates: SemesterDates | null
+}
+
+export interface SaveResult {
+  ok: boolean
+  quotaExceeded?: boolean
+}
+
+const emptyStore = (): StoredSchedule => ({ courses: [], studyBlocks: [], importantDates: [], semesterDates: null })
+
+// One-time fold of the old per-key storage into the unified document.
+function migrateLegacy(): StoredSchedule | null {
+  if (!isBrowser()) return null
+  try {
+    const c = localStorage.getItem("schedule-courses")
+    const s = localStorage.getItem("schedule-study-blocks")
+    const d = localStorage.getItem("schedule-important-dates")
+    const sem = localStorage.getItem("schedule-semester-dates")
+    if (!c && !s && !d && !sem) return null
+    const v = validateSchedule({
+      courses: c ? JSON.parse(c) : [],
+      studyBlocks: s ? JSON.parse(s) : [],
+      importantDates: d ? JSON.parse(d) : [],
+      semesterDates: sem ? JSON.parse(sem) : null,
+    })
+    return { courses: v.courses, studyBlocks: v.studyBlocks, importantDates: v.importantDates, semesterDates: v.semesterDates }
+  } catch {
+    return null
+  }
+}
+
+function writeDoc(doc: StoredSchedule): SaveResult {
+  if (!isBrowser()) return { ok: false }
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: SCHEDULE_VERSION, ...doc }))
+    return { ok: true }
+  } catch (error) {
+    const quotaExceeded =
+      error instanceof DOMException &&
+      (error.name === "QuotaExceededError" ||
+        error.name === "NS_ERROR_DOM_QUOTA_REACHED" ||
+        error.name === "SecurityError")
+    console.warn("Failed to save schedule data:", error)
+    return { ok: false, quotaExceeded }
+  }
+}
+
+// Read + validate the unified doc, migrating legacy keys on first run.
+function readDoc(): StoredSchedule {
+  if (!isBrowser()) return emptyStore()
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (raw) {
+      const v = validateSchedule(JSON.parse(raw))
+      return { courses: v.courses, studyBlocks: v.studyBlocks, importantDates: v.importantDates, semesterDates: v.semesterDates }
+    }
+    const migrated = migrateLegacy()
+    if (migrated) {
+      writeDoc(migrated)
+      for (const k of LEGACY_KEYS) localStorage.removeItem(k)
+      return migrated
+    }
+    return emptyStore()
+  } catch {
+    return emptyStore()
+  }
+}
 
 export function parseTime(timeStr: string): { hour: number; minute: number } {
   const parts = timeStr.split(":").map(Number)
@@ -20,11 +102,9 @@ export function parseTime(timeStr: string): { hour: number; minute: number } {
   return { hour, minute }
 }
 
-export function formatTime(hour: number, minute: number, timeZone: TimeZone = "CT"): string {
-  const offset = TIMEZONES[timeZone].offset
-  const adjustedHour = Math.max(0, Math.min(23, hour + offset))
-  const period = adjustedHour >= 12 ? "PM" : "AM"
-  const displayHour = adjustedHour === 0 ? 12 : adjustedHour > 12 ? adjustedHour - 12 : adjustedHour
+export function formatTime(hour: number, minute: number): string {
+  const period = hour >= 12 ? "PM" : "AM"
+  const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour
   return `${displayHour}:${minute.toString().padStart(2, "0")} ${period}`
 }
 
@@ -68,84 +148,86 @@ export function saveScheduleData(
   courses: CourseEvent[],
   studyBlocks: StudyBlock[],
   importantDates: ImportantDate[] = [],
-) {
-  if (!isBrowser()) return
-
-  try {
-    const snapshot = { courses, studyBlocks, importantDates }
-    localStorage.setItem(STORAGE_KEYS.courses, JSON.stringify(courses))
-    localStorage.setItem(STORAGE_KEYS.studyBlocks, JSON.stringify(studyBlocks))
-    localStorage.setItem(STORAGE_KEYS.importantDates, JSON.stringify(importantDates))
-    localStorage.setItem(STORAGE_KEYS.snapshot, JSON.stringify(snapshot, null, 2))
-  } catch (error) {
-    console.warn("Failed to save schedule data to localStorage:", error)
-  }
+  semesterDates?: SemesterDates | null,
+): SaveResult {
+  // Preserve stored semester dates unless explicitly overridden.
+  const semester = semesterDates !== undefined ? semesterDates : readDoc().semesterDates
+  return writeDoc({ courses, studyBlocks, importantDates, semesterDates: semester })
 }
 
 export function clearScheduleData() {
   if (!isBrowser()) return
-
   try {
-    localStorage.removeItem(STORAGE_KEYS.courses)
-    localStorage.removeItem(STORAGE_KEYS.studyBlocks)
-    localStorage.removeItem(STORAGE_KEYS.importantDates)
-    localStorage.removeItem(STORAGE_KEYS.snapshot)
+    localStorage.removeItem(STORAGE_KEY)
+    for (const k of LEGACY_KEYS) localStorage.removeItem(k)
   } catch (error) {
-    console.warn("Failed to clear schedule data from localStorage:", error)
+    console.warn("Failed to clear schedule data:", error)
   }
 }
 
 export function ensureScheduleInitialized() {
   if (!isBrowser()) return
-
   try {
-    const hasCourses = localStorage.getItem(STORAGE_KEYS.courses)
-    const hasStudyBlocks = localStorage.getItem(STORAGE_KEYS.studyBlocks)
-    const hasImportantDates = localStorage.getItem(STORAGE_KEYS.importantDates)
-
-    if (!hasCourses && !hasStudyBlocks && !hasImportantDates) {
-      const blank = getBlankSchedule()
-      saveScheduleData(blank.courses, blank.studyBlocks, blank.importantDates)
+    if (!localStorage.getItem(STORAGE_KEY)) {
+      const migrated = migrateLegacy()
+      writeDoc(migrated ?? emptyStore())
+      if (migrated) for (const k of LEGACY_KEYS) localStorage.removeItem(k)
     }
   } catch (error) {
     console.warn("Failed to initialize schedule storage:", error)
   }
 }
 
-export function resetScheduleData(): {
-  courses: CourseEvent[]
-  studyBlocks: StudyBlock[]
-  importantDates: ImportantDate[]
-} {
-  const blank = getBlankSchedule()
-  clearScheduleData()
-  saveScheduleData(blank.courses, blank.studyBlocks, blank.importantDates)
+export function resetScheduleData(): StoredSchedule {
+  const blank = emptyStore()
+  writeDoc(blank)
+  if (isBrowser()) {
+    for (const k of LEGACY_KEYS) localStorage.removeItem(k)
+    localStorage.removeItem(HISTORY_KEY)
+  }
   return blank
 }
 
-export function loadScheduleData(): {
-  courses: CourseEvent[]
-  studyBlocks: StudyBlock[]
-  importantDates: ImportantDate[]
-} {
-  if (!isBrowser()) {
-    return { courses: [], studyBlocks: [], importantDates: [] }
-  }
+export function loadScheduleData(): StoredSchedule {
+  return readDoc()
+}
 
+export function loadSemesterDates(): SemesterDates | null {
+  return readDoc().semesterDates
+}
+
+export function saveSemesterDates(dates: SemesterDates | null): SaveResult {
+  const current = readDoc()
+  return writeDoc({ ...current, semesterDates: dates })
+}
+
+// ==========================================
+// Undo history — a small ring buffer of recent snapshots
+// ==========================================
+
+export function pushHistorySnapshot(snapshot: StoredSchedule): void {
+  if (!isBrowser()) return
   try {
-    ensureScheduleInitialized()
+    const raw = localStorage.getItem(HISTORY_KEY)
+    const stack: StoredSchedule[] = raw ? JSON.parse(raw) : []
+    stack.push(snapshot)
+    while (stack.length > HISTORY_LIMIT) stack.shift()
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(stack))
+  } catch (error) {
+    console.warn("Failed to push history snapshot:", error)
+  }
+}
 
-    const savedCourses = localStorage.getItem(STORAGE_KEYS.courses)
-    const savedStudyBlocks = localStorage.getItem(STORAGE_KEYS.studyBlocks)
-    const savedImportantDates = localStorage.getItem(STORAGE_KEYS.importantDates)
-
-    return {
-      courses: savedCourses ? JSON.parse(savedCourses) : [],
-      studyBlocks: savedStudyBlocks ? JSON.parse(savedStudyBlocks) : [],
-      importantDates: savedImportantDates ? JSON.parse(savedImportantDates) : [],
-    }
+export function popHistorySnapshot(): StoredSchedule | null {
+  if (!isBrowser()) return null
+  try {
+    const raw = localStorage.getItem(HISTORY_KEY)
+    const stack: StoredSchedule[] = raw ? JSON.parse(raw) : []
+    const prev = stack.pop() ?? null
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(stack))
+    return prev
   } catch {
-    return { courses: [], studyBlocks: [], importantDates: [] }
+    return null
   }
 }
 
@@ -210,7 +292,7 @@ export function saveLastExportTimestamp(): void {
   try {
     const metadata = loadScheduleMetadata()
     metadata.lastExportedAt = new Date().toISOString()
-    localStorage.setItem(STORAGE_KEYS.metadata, JSON.stringify(metadata))
+    localStorage.setItem(METADATA_KEY, JSON.stringify(metadata))
   } catch (error) {
     console.warn("Failed to save export timestamp:", error)
   }
@@ -225,7 +307,7 @@ export function loadScheduleMetadata(): ScheduleMetadata {
   }
 
   try {
-    const stored = localStorage.getItem(STORAGE_KEYS.metadata)
+    const stored = localStorage.getItem(METADATA_KEY)
     if (stored) {
       return JSON.parse(stored)
     }
@@ -233,7 +315,7 @@ export function loadScheduleMetadata(): ScheduleMetadata {
     const newMetadata: ScheduleMetadata = {
       createdAt: new Date().toISOString(),
     }
-    localStorage.setItem(STORAGE_KEYS.metadata, JSON.stringify(newMetadata))
+    localStorage.setItem(METADATA_KEY, JSON.stringify(newMetadata))
     return newMetadata
   } catch {
     return { createdAt: new Date().toISOString() }

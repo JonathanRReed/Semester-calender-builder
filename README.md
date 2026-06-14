@@ -4,13 +4,15 @@ A portfolio-ready calendar builder for managing semester schedules with support 
 
 ## Features
 
-- **Visual Weekly Calendar** - Drag-and-drop interface with time blocks
+- **Visual Weekly Calendar** - Time-blocked weekly grid with current-week dates and conflict highlighting
 - **Multiple Event Types** - In-person classes, online classes, study blocks, and exams
-- **Bulk Import/Export** - CSV, ICS (iCalendar), and text formats
-- **Important Dates** - Track deadlines, exams, and breaks
+- **Smart Paste Import** - Paste a registrar/Banner/Workday/syllabus block and review detected courses before importing
+- **Calendar Export (.ics)** - One recurring event per class, bounded by your semester dates, with breaks excluded — imports cleanly into Google, Apple, or Outlook Calendar
+- **Bulk Import/Export** - CSV (lossless round-trip), ICS, plain text, and full JSON backup/restore
+- **Important Dates** - Track deadlines, exams (with optional times), breaks, and finals
 - **PNG Export** - Generate shareable schedule images
 - **Dark Mode** - Rose Pine night theme
-- **Mobile Responsive** - Works on all devices
+- **Mobile Responsive** - Works on all devices (including conflict warnings)
 - **Local Storage** - Your data never leaves your device
 - **Onboarding** - Load a sample semester and follow quick tips right in the app
 
@@ -62,22 +64,39 @@ bun run start
 3. Fill in details (time, location, etc.)
 4. Save to calendar
 
-### Bulk Import
+### Adding many classes at once
 
-1. Click "Manage Data" → "Bulk Input"
-2. Paste schedule in supported format:
-   `
-   CS101 | Intro to Programming | Mon,Wed | 09:00-10:30 | Room 101
-   MATH201 | Calculus II | Tue,Thu | 13:00-14:30 | Online
-   `
-3. Events automatically populate
+Open **Manage Data → Add Semester Info**. Three ways:
+
+1. **Smart Paste** – paste a messy schedule copied from your registrar / Banner / Workday / a
+   syllabus. Detected courses appear in an editable preview (with a confidence badge) so you can
+   fix anything before importing — nothing is added silently.
+2. **Bulk Format** – one course per line:
+   ```
+   CS 101 | Intro to Programming | MWF | 09:30-10:45 | Hall 201 | Dr. Smith
+   MATH 151 | Calculus I | Mon,Wed,Fri | 11:00-11:50 | SCI 120
+   Study | Library focus | Tue,Thu | 18:00-20:00
+   ```
+   Day shorthands like `MWF`, `TR`, `TTh`, or `Mon,Wed` all work. Lines that can't be parsed are
+   reported back to you instead of failing silently. Multi-day classes are linked as one recurring
+   course automatically.
+3. **Quick Add** – a structured form for a single course.
+
+### Set your semester dates
+
+Use **Set Semester Dates** in the header. This is what makes the calendar export land on the right
+weeks and stop at the end of the term.
 
 ### Exporting
 
-- **ICS**: Import into Google Calendar, Outlook, Apple Calendar
-- **CSV**: Open in Excel/Sheets for further editing
-- **PNG**: Share schedule as an image
-- **Text**: Copy formatted text summary
+- **Add to Calendar (.ics)** – a review step summarizes exactly what's going out (recurring classes
+  bounded by your semester, exams/deadlines, class days skipped for breaks, async courses noted),
+  then imports into Google Calendar, Outlook, or Apple Calendar. Times are floating local time, so
+  they never drift across daylight-saving changes.
+- **CSV** – open in Excel/Sheets; re-importable without losing recurrence info.
+- **Download Backup (.json)** – a complete, restore-able snapshot (re-import from Manage Data).
+- **PNG** – share the schedule as an image.
+- **Text** – copy a formatted text summary.
 
 ## Contributing
 

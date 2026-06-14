@@ -12,6 +12,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import type { ScheduleEvent, CourseEvent, ImportantDate } from "@/types/schedule"
+import { dateChipStyle } from "@/lib/event-theme"
 
 interface StatsDashboardProps {
     events: ScheduleEvent[]
@@ -170,8 +171,14 @@ export function StatsDashboard({ events, importantDates, className }: StatsDashb
                     </div>
 
                     {/* Credits */}
-                    <div className="p-3 rounded-lg bg-gradient-to-br from-blue-500/10 to-blue-500/5 border border-blue-500/20">
-                        <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400 mb-1">
+                    <div
+                        className="p-3 rounded-lg border"
+                        style={{
+                            background: "color-mix(in srgb, var(--rp-iris) 10%, transparent)",
+                            borderColor: "color-mix(in srgb, var(--rp-iris) 25%, transparent)",
+                        }}
+                    >
+                        <div className="flex items-center gap-2 mb-1" style={{ color: "var(--rp-iris)" }}>
                             <GraduationCap className="w-4 h-4" />
                             <span className="text-xs font-medium uppercase tracking-wide">Credits</span>
                         </div>
@@ -188,17 +195,17 @@ export function StatsDashboard({ events, importantDates, className }: StatsDashb
                 {/* Event type breakdown */}
                 <div className="flex gap-2">
                     <div className="flex-1 p-2 rounded-lg bg-secondary/30 text-center">
-                        <MapPin className="w-4 h-4 mx-auto mb-1 text-rose-500" />
+                        <MapPin className="w-4 h-4 mx-auto mb-1" style={{ color: "var(--event-inperson)" }} />
                         <div className="text-sm font-semibold">{stats.inPersonCount}</div>
                         <div className="text-[10px] text-muted-foreground">In-Person</div>
                     </div>
                     <div className="flex-1 p-2 rounded-lg bg-secondary/30 text-center">
-                        <Laptop className="w-4 h-4 mx-auto mb-1 text-blue-500" />
+                        <Laptop className="w-4 h-4 mx-auto mb-1" style={{ color: "var(--event-online)" }} />
                         <div className="text-sm font-semibold">{stats.onlineCount}</div>
                         <div className="text-[10px] text-muted-foreground">Online</div>
                     </div>
                     <div className="flex-1 p-2 rounded-lg bg-secondary/30 text-center">
-                        <BookOpen className="w-4 h-4 mx-auto mb-1 text-emerald-500" />
+                        <BookOpen className="w-4 h-4 mx-auto mb-1" style={{ color: "var(--event-study)" }} />
                         <div className="text-sm font-semibold">{stats.studyCount}</div>
                         <div className="text-[10px] text-muted-foreground">Study</div>
                     </div>
@@ -228,15 +235,8 @@ export function StatsDashboard({ events, importantDates, className }: StatsDashb
                             {stats.upcomingDates.map((date) => (
                                 <div
                                     key={date.id}
-                                    className={`
-                    flex items-center justify-between text-xs p-2 rounded-lg
-                    ${date.type === "finals"
-                                            ? "bg-purple-500/10 border border-purple-500/20"
-                                            : date.type === "exam"
-                                                ? "bg-red-500/10 border border-red-500/20"
-                                                : "bg-amber-500/10 border border-amber-500/20"
-                                        }
-                  `}
+                                    className="flex items-center justify-between text-xs p-2 rounded-lg border"
+                                    style={dateChipStyle(date.type)}
                                 >
                                     <span className="font-medium truncate">{date.title}</span>
                                     <span className="text-muted-foreground flex-shrink-0 ml-2">

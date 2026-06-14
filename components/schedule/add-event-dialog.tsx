@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { AlertTriangle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -20,6 +20,7 @@ interface AddEventDialogProps {
   onAdd: (event: Omit<ScheduleEvent, "id">) => void
   onAddMultiple?: (events: Omit<ScheduleEvent, "id">[]) => void
   existingEvents?: ScheduleEvent[]
+  prefill?: { day: DayOfWeek; startCT: string; endCT: string } | null
 }
 
 type EventTypeOption = "study" | "course"
@@ -97,9 +98,17 @@ function DayButton({
   )
 }
 
-export function AddEventDialog({ isOpen, onClose, onAdd, onAddMultiple, existingEvents = [] }: AddEventDialogProps) {
+export function AddEventDialog({ isOpen, onClose, onAdd, onAddMultiple, existingEvents = [], prefill }: AddEventDialogProps) {
   const [eventType, setEventType] = useState<EventTypeOption>("study")
   const [formData, setFormData] = useState<FormData>(INITIAL_FORM)
+
+  // When opened from a grid slot click, pre-fill the day + time.
+  useEffect(() => {
+    if (isOpen && prefill) {
+      setFormData({ ...INITIAL_FORM, selectedDays: [prefill.day], startCT: prefill.startCT, endCT: prefill.endCT })
+      setEventType("course")
+    }
+  }, [isOpen, prefill])
 
   const trimmedTitle = formData.title.trim()
   const trimmedNotes = formData.notes.trim()

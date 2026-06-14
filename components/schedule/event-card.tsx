@@ -1,90 +1,75 @@
 import React from "react"
 import { AlertTriangle, Repeat, MapPin, Clock, BookOpen } from "lucide-react"
-import type { ScheduleEvent, TimeZone } from "@/types/schedule"
+import type { ScheduleEvent } from "@/types/schedule"
 import { formatTime, parseTime } from "@/lib/schedule-utils"
+import { eventVisual } from "@/lib/event-theme"
 import { Tooltip } from "./tooltip"
 
 interface EventCardProps {
   event: ScheduleEvent
-  timeZone: TimeZone
   onClick?: () => void
   hasConflict?: boolean
 }
 
-export const EventCard = React.memo(function EventCard({ event, timeZone, onClick, hasConflict = false }: EventCardProps) {
-  const getEventStyles = (event: ScheduleEvent) => {
-    if (event.type === "study") {
-      return {
-        bg: "linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(16, 185, 129, 0.06) 100%)",
-        border: "rgba(16, 185, 129, 0.25)",
-        accent: "#10b981",
-        glow: "rgba(16, 185, 129, 0.15)",
-      }
-    }
-    switch (event.type) {
-      case "inperson":
-        return {
-          bg: "linear-gradient(135deg, rgba(244, 63, 94, 0.12) 0%, rgba(244, 63, 94, 0.06) 100%)",
-          border: "rgba(244, 63, 94, 0.25)",
-          accent: "#f43f5e",
-          glow: "rgba(244, 63, 94, 0.15)",
-        }
-      case "online":
-        return {
-          bg: "linear-gradient(135deg, rgba(59, 130, 246, 0.12) 0%, rgba(59, 130, 246, 0.06) 100%)",
-          border: "rgba(59, 130, 246, 0.25)",
-          accent: "#3b82f6",
-          glow: "rgba(59, 130, 246, 0.15)",
-        }
-      case "exam":
-        return {
-          bg: "linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0.08) 100%)",
-          border: "rgba(239, 68, 68, 0.3)",
-          accent: "#ef4444",
-          glow: "rgba(239, 68, 68, 0.2)",
-        }
-      default:
-        return {
-          bg: "linear-gradient(135deg, rgba(244, 63, 94, 0.12) 0%, rgba(244, 63, 94, 0.06) 100%)",
-          border: "rgba(244, 63, 94, 0.25)",
-          accent: "#f43f5e",
-          glow: "rgba(244, 63, 94, 0.15)",
-        }
-    }
-  }
+function describe(event: ScheduleEvent, hasConflict: boolean): string {
+  const typeLabel =
+    event.type === "study"
+      ? "study block"
+      : event.type === "online"
+        ? "online class"
+        : event.type === "exam"
+          ? "exam"
+          : "in-person class"
+  const isAsync = event.startCT === "00:00" && event.endCT === "00:00"
+  const timeLabel = isAsync ? "asynchronous, no fixed time" : `${event.startCT} to ${event.endCT}`
+  return `${event.title}, ${typeLabel}, ${event.day} ${timeLabel}${hasConflict ? ", has a schedule conflict" : ""}`
+}
 
-  const styles = getEventStyles(event)
+export const EventCard = React.memo(function EventCard({ event, onClick, hasConflict = false }: EventCardProps) {
+  const styles = eventVisual(event.type)
   const startTime = parseTime(event.startCT)
   const endTime = parseTime(event.endCT)
   const isRecurring = !!event.recurrenceGroupId
   const hasCredits = "credits" in event && event.credits !== undefined && event.credits > 0
+  const ariaLabel = describe(event, hasConflict)
 
-  // Conflict border style
   const conflictStyle = hasConflict
-    ? "ring-2 ring-red-500 ring-offset-1 ring-offset-background shadow-red-500/20"
+    ? "ring-2 ring-destructive ring-offset-1 ring-offset-background"
     : ""
 
-  // Skip async courses with 00:00 times
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault()
+      onClick?.()
+    }
+  }
+
+  const interactive = {
+    role: "button" as const,
+    tabIndex: 0,
+    onClick,
+    onKeyDown: handleKeyDown,
+    "aria-label": ariaLabel,
+  }
+
+  // Async courses with 00:00 times — compact card, no time slot.
   if (event.startCT === "00:00" && event.endCT === "00:00") {
     return (
       <Tooltip event={event}>
         <div
-          className={`p-2 rounded-xl border backdrop-blur-sm cursor-pointer transition-all duration-200 text-xs shadow-[0_2px_6px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.08)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.1)] hover:-translate-y-0.5 ${conflictStyle}`}
-          style={{
-            background: styles.bg,
-            borderColor: styles.border,
-          }}
-          onClick={onClick}
+          {...interactive}
+          className={`relative overflow-hidden p-2 rounded-xl border backdrop-blur-sm cursor-pointer transition-all duration-200 text-xs shadow-[var(--shadow-xs)] hover:shadow-[0_4px_14px_var(--card-glow)] hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${conflictStyle}`}
+          style={{ background: styles.bg, borderColor: styles.border, ["--card-glow" as string]: styles.glow }}
         >
           <div className="flex items-center gap-1">
             <div className="font-semibold truncate leading-tight flex-1 text-foreground" title={event.title}>
               {event.title}
             </div>
-            {isRecurring && <Repeat className="w-3 h-3 opacity-50 flex-shrink-0" />}
-            {hasConflict && <AlertTriangle className="w-3 h-3 text-red-500 flex-shrink-0" />}
+            {isRecurring && <Repeat className="w-3 h-3 opacity-50 flex-shrink-0" aria-hidden />}
+            {hasConflict && <AlertTriangle className="w-3 h-3 text-destructive flex-shrink-0" aria-hidden />}
           </div>
-          <div className="opacity-75 mt-1 text-xs flex items-center gap-1">
-            <Clock className="w-3 h-3" />
+          <div className="opacity-75 mt-1 text-[11px] flex items-center gap-1">
+            <Clock className="w-3 h-3" aria-hidden />
             Async
           </div>
         </div>
@@ -95,64 +80,59 @@ export const EventCard = React.memo(function EventCard({ event, timeZone, onClic
   return (
     <Tooltip event={event}>
       <div
-        className={`p-2.5 rounded-xl border backdrop-blur-sm cursor-pointer transition-all duration-200 text-xs shadow-[0_2px_8px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.1)] hover:shadow-[0_6px_16px_rgba(0,0,0,0.12)] hover:-translate-y-0.5 group ${conflictStyle}`}
-        style={{
-          background: styles.bg,
-          borderColor: styles.border,
-        }}
-        onClick={onClick}
+        {...interactive}
+        className={`relative overflow-hidden p-2.5 rounded-xl border backdrop-blur-sm cursor-pointer transition-all duration-200 text-xs shadow-[var(--shadow-xs)] hover:shadow-[0_6px_18px_var(--card-glow)] hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring group ${conflictStyle}`}
+        style={{ background: styles.bg, borderColor: styles.border, ["--card-glow" as string]: styles.glow }}
       >
-        {/* Accent bar */}
+        {/* Accent bar (clips to the card via relative + overflow-hidden) */}
         <div
-          className="absolute left-0 top-2 bottom-2 w-1 rounded-r-full opacity-80 group-hover:opacity-100 transition-opacity"
+          className="absolute left-0 top-0 bottom-0 w-1 opacity-80 group-hover:opacity-100 transition-opacity"
           style={{ background: styles.accent }}
+          aria-hidden
         />
 
         {/* Header with title and indicators */}
         <div className="flex items-start gap-1.5 mb-1.5 pl-2">
-          <div className="font-bold truncate leading-tight flex-1 text-foreground" title={event.title}>
+          <div className="font-semibold truncate leading-tight flex-1 text-foreground" title={event.title}>
             {event.title}
           </div>
           <div className="flex items-center gap-1 flex-shrink-0">
             {hasCredits && (
-              <span
-                className="inline-flex items-center px-1.5 py-0.5 text-[9px] font-bold rounded-full"
-                style={{ background: `${styles.accent}20`, color: styles.accent }}
-              >
+              <span className="inline-flex items-center px-1.5 py-0.5 text-[11px] font-semibold rounded-full bg-secondary text-foreground">
                 {(event as { credits: number }).credits}cr
               </span>
             )}
             {isRecurring && (
-              <span title="Recurring event">
+              <span title="Recurring event" aria-hidden>
                 <Repeat className="w-3 h-3 opacity-50" />
               </span>
             )}
             {hasConflict && (
-              <span title="Schedule conflict">
-                <AlertTriangle className="w-3 h-3 text-red-500 animate-pulse" />
+              <span title="Schedule conflict" aria-hidden>
+                <AlertTriangle className="w-3 h-3 text-destructive animate-pulse" />
               </span>
             )}
           </div>
         </div>
 
-        {/* Time with icon */}
-        <div className="flex items-center gap-1 text-[10px] font-medium text-muted-foreground pl-2">
-          <Clock className="w-3 h-3" />
-          {formatTime(startTime.hour, startTime.minute, timeZone)} - {formatTime(endTime.hour, endTime.minute, timeZone)}
+        {/* Time */}
+        <div className="flex items-center gap-1 text-[11px] font-medium text-muted-foreground pl-2">
+          <Clock className="w-3 h-3" aria-hidden />
+          {formatTime(startTime.hour, startTime.minute)} - {formatTime(endTime.hour, endTime.minute)}
         </div>
 
         {/* Location */}
         {"location" in event && event.location && (
-          <div className="flex items-center gap-1 text-[10px] text-muted-foreground mt-1 pl-2 truncate" title={event.location}>
-            <MapPin className="w-3 h-3 flex-shrink-0" />
+          <div className="flex items-center gap-1 text-[11px] text-muted-foreground mt-1 pl-2 truncate" title={event.location}>
+            <MapPin className="w-3 h-3 flex-shrink-0" aria-hidden />
             <span className="truncate">{event.location}</span>
           </div>
         )}
 
         {/* Study notes */}
         {event.type === "study" && "notes" in event && event.notes && (
-          <div className="flex items-center gap-1 text-[10px] text-muted-foreground mt-1 pl-2 truncate" title={event.notes}>
-            <BookOpen className="w-3 h-3 flex-shrink-0" />
+          <div className="flex items-center gap-1 text-[11px] text-muted-foreground mt-1 pl-2 truncate" title={event.notes}>
+            <BookOpen className="w-3 h-3 flex-shrink-0" aria-hidden />
             <span className="truncate">{event.notes}</span>
           </div>
         )}

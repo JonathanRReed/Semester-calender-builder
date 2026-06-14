@@ -65,8 +65,8 @@ export function OnboardingGuideDialog({ open, onOpenChange, onLoadExample, onAdd
               }}
             />
             <GuideAction
-              label="Import from CSV/ICS"
-              description="Use Bulk Input or file upload to bring in an existing schedule."
+              label="Paste a whole schedule"
+              description="Smart Paste your registrar text, or import a CSV / ICS / backup file."
               icon={<Upload className="w-4 h-4 text-primary" />}
               onClick={() => {
                 onManageData()

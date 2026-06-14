@@ -79,6 +79,9 @@ export function AddDateDialog({ isOpen, onClose, onAdd, presetType }: AddDateDia
     date: "",
     endDate: "",
     description: "",
+    startTime: "",
+    endTime: "",
+    location: "",
     type: (presetType || "event") as ImportantDate["type"],
   })
   const [isMultiDay, setIsMultiDay] = useState(false)
@@ -114,15 +117,24 @@ export function AddDateDialog({ isOpen, onClose, onAdd, presetType }: AddDateDia
       newDate.description = formData.description
     }
 
+    // Single-day entries (like exams) can carry a time + location → exported as timed events.
+    if (!isMultiDay && formData.startTime) {
+      newDate.startTime = formData.startTime
+      if (formData.endTime) newDate.endTime = formData.endTime
+    }
+    if (formData.location) {
+      newDate.location = formData.location
+    }
+
     onAdd(newDate)
 
-    setFormData({ title: "", date: "", endDate: "", description: "", type: "event" })
+    setFormData({ title: "", date: "", endDate: "", description: "", startTime: "", endTime: "", location: "", type: "event" })
     setIsMultiDay(false)
     onClose()
   }
 
   const handleClose = () => {
-    setFormData({ title: "", date: "", endDate: "", description: "", type: "event" })
+    setFormData({ title: "", date: "", endDate: "", description: "", startTime: "", endTime: "", location: "", type: "event" })
     setIsMultiDay(false)
     onClose()
   }
@@ -267,6 +279,50 @@ export function AddDateDialog({ isOpen, onClose, onAdd, presetType }: AddDateDia
             <div className="text-xs text-muted-foreground text-center py-1">
               📅 {dayCount} day{dayCount !== 1 ? "s" : ""} total
             </div>
+          )}
+
+          {/* Optional time + location for single-day entries (e.g. a timed exam) */}
+          {!isMultiDay && (
+            <>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="start-time" className="text-foreground">
+                    Start time (optional)
+                  </Label>
+                  <Input
+                    id="start-time"
+                    type="time"
+                    value={formData.startTime}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, startTime: e.target.value }))}
+                    className="bg-background border-input text-foreground"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="end-time" className="text-foreground">
+                    End time (optional)
+                  </Label>
+                  <Input
+                    id="end-time"
+                    type="time"
+                    value={formData.endTime}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, endTime: e.target.value }))}
+                    className="bg-background border-input text-foreground"
+                  />
+                </div>
+              </div>
+              <div>
+                <Label htmlFor="date-location" className="text-foreground">
+                  Location (optional)
+                </Label>
+                <Input
+                  id="date-location"
+                  value={formData.location}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, location: e.target.value }))}
+                  className="bg-background border-input text-foreground"
+                  placeholder="e.g., Gym, Room 204"
+                />
+              </div>
+            </>
           )}
 
           <div>

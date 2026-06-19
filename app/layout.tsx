@@ -36,10 +36,11 @@ const jsonLdSchema = {
   review: {
     '@type': 'Review',
     author: {
-    '@type': 'Person',
+      '@type': 'Person',
       name: 'Jonathan R. Reed',
       alternateName: 'Jonathan Reed',
       url: 'https://jonathanrreed.com',
+      sameAs: [SOCIAL_LINKS.website, SOCIAL_LINKS.github, SOCIAL_LINKS.linkedin],
     },
     reviewRating: {
       '@type': 'Rating',
@@ -54,6 +55,7 @@ const jsonLdSchema = {
     name: 'Jonathan R. Reed',
     alternateName: 'Jonathan Reed',
     url: 'https://jonathanrreed.com',
+    sameAs: [SOCIAL_LINKS.website, SOCIAL_LINKS.github, SOCIAL_LINKS.linkedin],
   },
   description: 'Plan classes, study blocks, exams, and academic deadlines in a private browser-based semester calendar.',
   url: 'https://semesterbuild.jonathanrreed.com',

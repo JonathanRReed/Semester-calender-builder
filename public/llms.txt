@@ -6,6 +6,20 @@ Semester Calendar Builder runs entirely in the browser with local data storage, 
 
 Key features include visual weekly schedule grids, flexible event management with recurring events, import/export capabilities (JSON, CSV, bulk input), multiple export formats (PNG, PDF, printable calendars), important dates tracking, dark mode interface with responsive design, local storage persistence with automatic saving, and example semester templates.
 
+## Creator
+
+- **Name**: Jonathan R. Reed
+- **Canonical site**: https://jonathanrreed.com/
+- **Contact**: https://jonathanrreed.com/contact/
+
+## Canonical pages
+
+- Homepage: https://semesterbuild.jonathanrreed.com/
+- About: https://semesterbuild.jonathanrreed.com/about/
+- Contact: https://semesterbuild.jonathanrreed.com/contact/
+- Privacy: https://semesterbuild.jonathanrreed.com/privacy/
+- Subprocessors: https://semesterbuild.jonathanrreed.com/subprocessors/
+
 ## Documentation
 
 - [Next.js Documentation](https://nextjs.org/docs): React framework with App Router and static export

@@ -33,7 +33,7 @@ export default function AboutPage() {
         <p className="text-sm text-muted-foreground">Updated April 21, 2026</p>
         <div className="space-y-4 text-base leading-7 text-muted-foreground">
           <p>
-            Semester Calendar Builder is a free academic planning app by Jonathan Reed. It gives students a fast way to
+            Semester Calendar Builder is a free academic planning app by Jonathan R. Reed. It gives students a fast way to
             build a weekly class schedule, add study blocks, track important dates, and export the plan for later use.
           </p>
           <p>
@@ -75,6 +75,7 @@ export default function AboutPage() {
           <Link className="underline underline-offset-4" href="/">Open the planner</Link>
           <Link className="underline underline-offset-4" href="/contact/">Contact</Link>
           <Link className="underline underline-offset-4" href="/privacy/">Privacy</Link>
+          <Link className="underline underline-offset-4" href="/subprocessors/">Subprocessors</Link>
         </nav>
       </section>
       <Footer />

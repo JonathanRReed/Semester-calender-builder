@@ -5,14 +5,14 @@ import { LOGO_ASSETS } from '@/lib/assets'
 
 export const metadata: Metadata = {
   title: 'Support | Semester Calendar Builder',
-  description: 'Contact Jonathan Reed about Semester Calendar Builder, student schedule planning, academic calendar workflows, bug reports, and product feedback.',
+  description: 'Contact Jonathan R. Reed about Semester Calendar Builder, student schedule planning, academic calendar workflows, bug reports, and product feedback.',
   alternates: {
     canonical: '/contact/',
   },
   openGraph: {
     url: '/contact/',
     title: 'Support | Semester Calendar Builder',
-    description: 'Contact Jonathan Reed about Semester Calendar Builder, student schedule planning, academic calendar workflows, bug reports, and product feedback.',
+    description: 'Contact Jonathan R. Reed about Semester Calendar Builder, student schedule planning, academic calendar workflows, bug reports, and product feedback.',
     images: [
       {
         url: LOGO_ASSETS.full,
@@ -33,7 +33,7 @@ export default function ContactPage() {
         <p className="text-sm text-muted-foreground">Updated April 21, 2026</p>
         <div className="space-y-4 text-base leading-7 text-muted-foreground">
           <p>
-            Questions, bug reports, and suggestions for Semester Calendar Builder can be sent through Jonathan Reed's
+            Questions, bug reports, and suggestions for Semester Calendar Builder can be sent through Jonathan R. Reed's
             main website. Include your browser, device, and the workflow you were trying to complete if you are reporting
             an issue.
           </p>
@@ -70,9 +70,10 @@ export default function ContactPage() {
           </p>
         </div>
         <nav className="flex flex-wrap gap-4 text-sm">
-          <a className="underline underline-offset-4" href="https://jonathanrreed.com/contact/">Contact Jonathan Reed</a>
+          <a className="underline underline-offset-4" href="https://jonathanrreed.com/contact/">Contact Jonathan R. Reed</a>
           <Link className="underline underline-offset-4" href="/">Open the planner</Link>
           <Link className="underline underline-offset-4" href="/privacy/">Privacy</Link>
+          <Link className="underline underline-offset-4" href="/subprocessors/">Subprocessors</Link>
         </nav>
       </section>
       <Footer />

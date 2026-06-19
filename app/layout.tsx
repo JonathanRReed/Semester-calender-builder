@@ -36,9 +36,9 @@ const jsonLdSchema = {
   review: {
     '@type': 'Review',
     author: {
-      '@type': 'Person',
-      name: 'Jonathan Reed',
-      alternateName: 'Jonathan R Reed',
+    '@type': 'Person',
+      name: 'Jonathan R. Reed',
+      alternateName: 'Jonathan Reed',
       url: 'https://jonathanrreed.com',
     },
     reviewRating: {
@@ -51,8 +51,8 @@ const jsonLdSchema = {
   },
   author: {
     '@type': 'Person',
-    name: 'Jonathan Reed',
-    alternateName: 'Jonathan R Reed',
+    name: 'Jonathan R. Reed',
+    alternateName: 'Jonathan Reed',
     url: 'https://jonathanrreed.com',
   },
   description: 'Plan classes, study blocks, exams, and academic deadlines in a private browser-based semester calendar.',
@@ -68,12 +68,12 @@ const jsonLdSchema = {
 }
 
 export const metadata: Metadata = {
-  title: 'Semester Calendar Builder by Jonathan R Reed',
-  description: 'Semester Calendar Builder by Jonathan R Reed helps students lay out classes, time blocks and deadlines in a clean visual calendar.',
+  title: 'Semester Calendar Builder by Jonathan R. Reed',
+  description: 'Semester Calendar Builder by Jonathan R. Reed helps students lay out classes, time blocks and deadlines in a clean visual calendar.',
   keywords: ['semester calendar', 'class schedule builder', 'student planner', 'academic calendar', 'course scheduler', 'study planner', 'college schedule', 'university timetable', 'semester planner', 'course schedule builder'],
-  authors: [{ name: 'Jonathan Reed' }],
-  creator: 'Jonathan Reed',
-  publisher: 'Jonathan Reed',
+  authors: [{ name: 'Jonathan R. Reed' }],
+  creator: 'Jonathan R. Reed',
+  publisher: 'Jonathan R. Reed',
   generator: 'Next.js',
   metadataBase: new URL('https://semesterbuild.jonathanrreed.com'),
   alternates: {
@@ -94,8 +94,8 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     url: '/',
-    title: 'Semester Calendar Builder | Course planning app by Jonathan R Reed',
-    description: 'Semester Calendar Builder by Jonathan R Reed helps students lay out classes, time blocks and deadlines in a clean visual calendar.',
+    title: 'Semester Calendar Builder | Course planning app by Jonathan R. Reed',
+    description: 'Semester Calendar Builder by Jonathan R. Reed helps students lay out classes, time blocks and deadlines in a clean visual calendar.',
     siteName: 'Semester Calendar Builder',
     images: [
       {
@@ -108,8 +108,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Semester Calendar Builder | Course planning app by Jonathan R Reed',
-    description: 'Semester Calendar Builder by Jonathan R Reed helps students lay out classes, time blocks and deadlines in a clean visual calendar.',
+    title: 'Semester Calendar Builder | Course planning app by Jonathan R. Reed',
+    description: 'Semester Calendar Builder by Jonathan R. Reed helps students lay out classes, time blocks and deadlines in a clean visual calendar.',
     images: [LOGO_ASSETS.full],
     creator: '@jonathanreed',
   },

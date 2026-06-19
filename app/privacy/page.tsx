@@ -30,7 +30,7 @@ export default function PrivacyPage() {
       <section className="mx-auto max-w-3xl px-6 py-16 space-y-6">
         <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Privacy</p>
         <h1 className="text-4xl font-bold tracking-tight">Privacy Policy</h1>
-        <p className="text-sm text-muted-foreground">Updated April 21, 2026</p>
+        <p className="text-sm text-muted-foreground">Updated June 19, 2026</p>
         <div className="space-y-4 text-base leading-7 text-muted-foreground">
           <p>
             Semester Calendar Builder stores schedule details in your browser. Courses, study blocks, exams, deadlines,
@@ -46,7 +46,7 @@ export default function PrivacyPage() {
             stored carefully because they can contain class names, times, locations, and notes that you added.
           </p>
           <p>
-            This policy is maintained by Jonathan Reed for the public Semester Calendar Builder website.
+            This policy is maintained by Jonathan R. Reed for the public Semester Calendar Builder website.
           </p>
           <p>
             The planner is designed around local browser storage. That means your schedule can remain available on the
@@ -62,6 +62,8 @@ export default function PrivacyPage() {
             The hosting provider may process standard request data such as IP address, browser information, requested
             URLs, timestamps, and security events needed to deliver and protect the website. Those logs are separate from
             the schedule you create in the browser and are used for reliability, abuse prevention, and basic operations.
+            See the <Link className="underline underline-offset-4" href="/subprocessors/">subprocessor disclosure</Link>
+            for the current hosting and infrastructure context.
           </p>
           <p>
             The app does not need a login to work. It does not process payments, sell student schedule data, or provide a
@@ -73,6 +75,7 @@ export default function PrivacyPage() {
           <Link className="underline underline-offset-4" href="/">Open the planner</Link>
           <Link className="underline underline-offset-4" href="/about/">About</Link>
           <Link className="underline underline-offset-4" href="/contact/">Contact</Link>
+          <Link className="underline underline-offset-4" href="/subprocessors/">Subprocessors</Link>
         </nav>
       </section>
       <Footer />

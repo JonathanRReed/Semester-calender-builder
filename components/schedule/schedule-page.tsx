@@ -500,7 +500,7 @@ export default function SchedulePage() {
             <p>
               Semester Calendar Builder is a private browser planner for students who need to organize classes, study
               blocks, exams, deadlines, office hours, and recurring academic work in one visual schedule. The app is built
-              by Jonathan R Reed for planning a typical semester week, checking conflicts before registration, and
+              by Jonathan R. Reed for planning a typical semester week, checking conflicts before registration, and
               creating exports that can move into Google Calendar, Apple Calendar, Outlook, spreadsheets, images, or a
               backup JSON file.
             </p>
@@ -532,6 +532,7 @@ export default function SchedulePage() {
             <a className="text-primary underline-offset-4 hover:underline" href="/about/">About</a>
             <a className="text-primary underline-offset-4 hover:underline" href="/contact/">Contact</a>
             <a className="text-primary underline-offset-4 hover:underline" href="/privacy/">Privacy</a>
+            <a className="text-primary underline-offset-4 hover:underline" href="/subprocessors/">Subprocessors</a>
           </nav>
         </div>
       </main>

@@ -6,7 +6,8 @@ const FOOTER_LINKS = [
     { href: '/about/', label: 'About' },
     { href: '/contact/', label: 'Contact' },
     { href: '/privacy/', label: 'Privacy' },
-    { href: SOCIAL_LINKS.website, label: 'Jonathan Reed' },
+    { href: '/subprocessors/', label: 'Subprocessors' },
+    { href: SOCIAL_LINKS.website, label: 'Jonathan R. Reed' },
     { href: 'https://helloworldfirm.com', label: 'Hello.World Consulting' },
     { href: 'https://5whys.jonathanrreed.com', label: 'Career Studio' },
     { href: 'https://dev-tools.helloworldfirm.com', label: 'Simple Dev Tools' },
@@ -31,7 +32,7 @@ export function Footer() {
                     rel="noopener noreferrer"
                     className="hover:text-foreground transition-colors underline-offset-4 hover:underline"
                 >
-                    Jonathan Reed AI and developer portfolio
+                    Jonathan R. Reed AI and developer portfolio
                 </a>
             </p>
             <nav aria-label="Related projects">

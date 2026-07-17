@@ -7,9 +7,8 @@
 
 # Generated 2025‑05‑07 · SEO‑optimised, AI‑scraper‑aware
 # ------------------------------------------------------------------
-# Primary sitemaps (custom sitemap has priority/changefreq metadata)
+# Primary sitemap (custom sitemap has priority/changefreq metadata)
 Sitemap: https://semesterbuild.jonathanrreed.com/sitemap.xml
-Sitemap: https://semesterbuild.jonathanrreed.com/sitemap-index.xml
 
 # ███ 1. MAJOR SEARCH ENGINES (full access) ███
 User-agent: Googlebot

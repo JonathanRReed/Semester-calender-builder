@@ -24,47 +24,18 @@ export const viewport: Viewport = {
 
 const jsonLdSchema = {
   '@context': 'https://schema.org',
-  '@type': 'SoftwareApplication',
+  '@type': 'WebSite',
+  '@id': 'https://semesterbuild.jonathanrreed.com/#website',
   name: 'Semester Calendar Builder',
-  applicationCategory: 'EducationalApplication',
-  operatingSystem: 'Web',
-  offers: {
-    '@type': 'Offer',
-    price: 0,
-    priceCurrency: 'USD',
-  },
-  review: {
-    '@type': 'Review',
-    author: {
-      '@type': 'Person',
-      name: 'Jonathan Reed',
-      alternateName: 'Jonathan R Reed',
-      url: 'https://jonathanrreed.com',
-    },
-    reviewRating: {
-      '@type': 'Rating',
-      ratingValue: 5,
-      bestRating: 5,
-      worstRating: 1,
-    },
-    reviewBody: 'A free private semester planning app for arranging classes, study blocks, exams, deadlines, exports, and advisor-ready schedule reviews in a browser.',
-  },
-  author: {
+  description: 'Plan classes, study blocks, exams, and academic deadlines in a private browser-based semester calendar.',
+  url: 'https://semesterbuild.jonathanrreed.com/',
+  inLanguage: 'en-US',
+  creator: {
     '@type': 'Person',
     name: 'Jonathan Reed',
     alternateName: 'Jonathan R Reed',
     url: 'https://jonathanrreed.com',
   },
-  description: 'Plan classes, study blocks, exams, and academic deadlines in a private browser-based semester calendar.',
-  url: 'https://semesterbuild.jonathanrreed.com',
-  featureList: [
-    'Visual weekly calendar',
-    'In-person and online class support',
-    'Study block scheduling',
-    'ICS, CSV, PNG, and JSON export',
-    'Important date tracking',
-    'Dark mode support',
-  ],
 }
 
 export const metadata: Metadata = {

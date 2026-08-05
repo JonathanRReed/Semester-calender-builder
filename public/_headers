@@ -1,93 +1,114 @@
-# Security and performance headers for Netlify deployment
-# See: https://docs.netlify.com/routing/headers/
+# Security and performance headers for Cloudflare Pages
+# See: https://developers.cloudflare.com/pages/configuration/headers/
+#
+# IMPORTANT - how Cloudflare Pages merges rules:
+# every rule whose pattern matches the request is applied, and when two matching
+# rules set the SAME header the values are joined with a comma. A Cache-Control
+# on `/*` therefore leaks into every other rule. That is what was happening in
+# production: /robots.txt came back as
+#   "public, max-age=0, must-revalidate, public, max-age=86400"
+# and /_next/static/*.js as
+#   "public, max-age=0, must-revalidate, public, max-age=31536000, immutable,
+#    public, max-age=31536000, immutable"
+# (the second copy from the separate /*.js rule). Browsers take the first
+# max-age they see, so every asset on the site was effectively uncacheable.
+#
+# Two rules to keep this file correct:
+#   1. no Cache-Control in the `/*` block
+#   2. no two Cache-Control rules may match the same file
+# The buckets below are mutually exclusive against the `next build` output
+# (verified: /_next/static holds only .js and .css; fonts, icons and logos live
+# in /public). If a future Next release starts emitting /_next/static/media/,
+# re-check the font and image rules against it.
 
 /*
   # Security Headers
-  
+
   # Content Security Policy - Prevent XSS attacks
   Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; font-src 'self'; connect-src 'self' https:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests
-  
+
   # Prevent clickjacking
   X-Frame-Options: DENY
-  
+
   # Prevent MIME type sniffing
   X-Content-Type-Options: nosniff
-  
+
   # Enable browser XSS protection
   X-XSS-Protection: 1; mode=block
-  
+
   # Referrer policy
   Referrer-Policy: strict-origin-when-cross-origin
-  
+
   # Permissions policy
   Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()
-  
+
   # Cross-Origin policies (allow external fonts)
   Cross-Origin-Opener-Policy: same-origin
   Cross-Origin-Resource-Policy: same-origin
-  
+
   # HSTS - Force HTTPS (31536000 = 1 year)
   Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
-  
-  # Cache control for HTML (no cache)
-  Cache-Control: public, max-age=0, must-revalidate
 
-# Static assets with long cache (1 year)
+  # No Cache-Control here on purpose. Cloudflare Pages already serves every
+  # asset with "public, max-age=0, must-revalidate" plus an ETag by default,
+  # which is what the HTML pages want, and setting it here would corrupt every
+  # rule below.
+
+# Content-hashed build output - safe to cache forever
 /_next/static/*
   Cache-Control: public, max-age=31536000, immutable
 
-# JavaScript and CSS files
-/*.js
-  Cache-Control: public, max-age=31536000, immutable
-  
-/*.css
-  Cache-Control: public, max-age=31536000, immutable
-
-# Images
-/*.jpg
-  Cache-Control: public, max-age=31536000, immutable
-  
-/*.jpeg
-  Cache-Control: public, max-age=31536000, immutable
-  
-/*.png
-  Cache-Control: public, max-age=31536000, immutable
-  
-/*.webp
-  Cache-Control: public, max-age=31536000, immutable
-  
-/*.svg
-  Cache-Control: public, max-age=31536000, immutable
-  
-/*.gif
-  Cache-Control: public, max-age=31536000, immutable
-
-# Fonts
+# Self-hosted fonts. Filenames are stable and the files do not change.
 /*.woff2
   Cache-Control: public, max-age=31536000, immutable
   Access-Control-Allow-Origin: *
-  
+
 /*.woff
   Cache-Control: public, max-age=31536000, immutable
   Access-Control-Allow-Origin: *
 
-# SEO files - cache for 1 day
+# Images, favicons and logos. These are NOT content-hashed, so a year of
+# "immutable" would make a logo or favicon swap impossible to push out.
+# One week, revalidated by ETag after that.
+/*.png
+  Cache-Control: public, max-age=604800
+
+/*.jpg
+  Cache-Control: public, max-age=604800
+
+/*.jpeg
+  Cache-Control: public, max-age=604800
+
+/*.webp
+  Cache-Control: public, max-age=604800
+
+/*.svg
+  Cache-Control: public, max-age=604800
+
+/*.gif
+  Cache-Control: public, max-age=604800
+
+/*.ico
+  Cache-Control: public, max-age=604800
+
+/site.webmanifest
+  Cache-Control: public, max-age=604800
+
+# Crawler policy and discovery files. Short TTL so a robots.txt or sitemap edit
+# reaches crawlers within the hour instead of a day later.
 /robots.txt
-  Cache-Control: public, max-age=86400
-  
+  Cache-Control: public, max-age=3600
+
 /sitemap.xml
-  Cache-Control: public, max-age=86400
-  
+  Cache-Control: public, max-age=3600
+
 /llms.txt
-  Cache-Control: public, max-age=86400
+  Cache-Control: public, max-age=3600
 
 /.well-known/security.txt
   Cache-Control: public, max-age=86400
 
-# Favicon
-/Icon.webp
-  Cache-Control: public, max-age=604800
-
+# Keep preview deployments out of the index
 https://semester-calender-builder.pages.dev/*
   X-Robots-Tag: noindex
 

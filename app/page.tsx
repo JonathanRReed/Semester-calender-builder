@@ -1,5 +1,48 @@
 import SchedulePage from "@/components/schedule/schedule-page"
 
+const SITE_URL = "https://semesterbuild.jonathanrreed.com/"
+
+// WebApplication markup for the planner itself. Every claim below is stated in
+// visible copy on this page (the "How it works" and "What gets stored" section,
+// the view toggle, the export menu and the FAQ block).
+const webAppSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "@id": `${SITE_URL}#webapp`,
+  name: "Semester Calendar Builder",
+  url: SITE_URL,
+  applicationCategory: "EducationalApplication",
+  applicationSubCategory: "Academic schedule planner",
+  operatingSystem: "Any web browser",
+  inLanguage: "en-US",
+  isAccessibleForFree: true,
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "USD",
+  },
+  description:
+    "Browser-based semester planner for classes, study blocks, exams, and deadlines. Schedules are saved in the browser's local storage, with no account and no server copy, and can be exported as ICS, CSV, PNG, or a JSON backup.",
+  featureList: [
+    "Weekly class schedule grid",
+    "Full semester view once semester start and end dates are set",
+    "Study blocks, office hours, exams, and important dates",
+    "Automatic flagging of overlapping events",
+    "Search and filter by event type",
+    "Export to ICS for Google Calendar, Apple Calendar, and Outlook",
+    "Export to CSV, PNG, and JSON backup",
+    "Import from CSV, ICS, and JSON backup files",
+    "Local browser storage with no account required",
+  ],
+  storageRequirements: "Uses browser local storage on the current device",
+  isPartOf: { "@id": "https://semesterbuild.jonathanrreed.com/#website" },
+  creator: {
+    "@type": "Person",
+    name: "Jonathan Reed",
+    url: "https://jonathanrreed.com",
+  },
+}
+
 const fallbackSections = [
   {
     title: "What this planner is for",
@@ -18,6 +61,10 @@ const fallbackSections = [
 export default function Page() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webAppSchema).replace(/</g, "\\u003c") }}
+      />
       <noscript>
         <section className="mx-auto max-w-5xl px-6 py-10 text-foreground">
           <p className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">

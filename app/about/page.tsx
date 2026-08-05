@@ -33,42 +33,18 @@ export default function AboutPage() {
         <p className="text-sm text-muted-foreground">Updated April 21, 2026</p>
         <div className="space-y-4 text-base leading-7 text-muted-foreground">
           <p>
-            Semester Calendar Builder is a free academic planning app by Jonathan Reed. It gives students a fast way to
-            build a weekly class schedule, add study blocks, track important dates, and export the plan for later use.
+            Semester Calendar Builder is a free academic planner by Jonathan Reed. Build a weekly class schedule, add
+            study blocks and important dates, switch to a full semester view, and export the plan when it is done.
           </p>
           <p>
-            It is built for practical semester planning. Schedule data stays in the browser unless the student chooses
-            to export it as a file or calendar feed.
+            Most students hold this in a notes app or a spreadsheet, and neither one shows overlap. Put in-person
+            classes, online courses, labs, office hours, exams, and work shifts on one grid and the collisions are
+            obvious before you commit to them. You can start from a blank week or load an example semester.
           </p>
           <p>
-            The point is to help students see where their time goes before the semester gets crowded. In-person classes,
-            online courses, exams, assignments, and recurring study sessions all sit in one view.
-          </p>
-          <p>
-            A typical semester has fixed course meetings, shifting assignment deadlines, exam weeks, office hours, lab
-            sections, commute time, meals, work shifts, and recovery time.
-          </p>
-          <p>
-            Many students try to hold that plan in a notes app or spreadsheet, but those tools make it hard to see
-            overlap. Semester Calendar Builder turns that information into a visual weekly schedule so conflicts are
-            easier to spot before they become a problem.
-          </p>
-          <p>
-            A rough first pass and a careful setup both work here. Students can begin with a blank week, load an example
-            semester, add recurring events, track important dates, and switch between a weekly schedule and a broader
-            semester view. Exports are included so the plan can be saved, printed, shared with an advisor, or imported
-            into a calendar app.
-          </p>
-          <p>
-            This site is intentionally small and focused. It does not require an account, does not ask for payment, and
-            does not store course details on a remote application server. That makes it useful for early planning,
-            advising conversations, and personal schedule cleanup when students want a clear view without another
-            dashboard to manage.
-          </p>
-          <p>
-            Semester Calendar Builder is also meant to make handoffs easier. A student can sketch a realistic week,
-            export the result, and bring that file into a conversation with an advisor, parent, coach, or project group.
-            The planner keeps the workflow simple so the schedule remains the point.
+            Schedule data stays in the browser. No account, no payment, no course details on a remote server. Export as
+            ICS, CSV, PNG, or a JSON backup when the plan needs to live somewhere else, in a calendar app or printed out
+            in front of an advisor.
           </p>
         </div>
         <nav className="flex flex-wrap gap-4 text-sm">

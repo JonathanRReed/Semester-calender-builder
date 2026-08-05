@@ -37,26 +37,14 @@ export default function PrivacyPage() {
             and exported files are controlled by you and are not sent to a server by the planner.
           </p>
           <p>
-            The app may use standard hosting logs and browser storage needed to serve the site, remember interface
-            preferences, and keep your schedule available on the same device. Clearing browser storage can remove saved
-            schedule data.
-          </p>
-          <p>
-            Do not enter sensitive personal data beyond what you need for schedule planning. Exported files should be
-            stored carefully because they can contain class names, times, locations, and notes that you added.
-          </p>
-          <p>
-            This policy is maintained by Jonathan Reed for the public Semester Calendar Builder website.
-          </p>
-          <p>
-            The planner is designed around local browser storage. That means your schedule can remain available on the
-            same device and browser, but it also means the schedule is not automatically synced across devices. If you
-            need a backup, use the export tools and store the resulting file somewhere you trust.
+            Browser storage also holds interface preferences. Nothing syncs across devices, and clearing site data
+            removes the saved schedule, so use the export tools for a backup and keep the file somewhere you trust.
           </p>
           <p>
             Exported calendar, image, and JSON files may include class names, instructors, locations, notes, exam dates,
             and study plans that you typed into the app. Treat those exports like any other personal academic document.
-            Do not upload or share them publicly unless you are comfortable with the information they contain.
+            Do not upload or share them publicly unless you are comfortable with the information they contain, and do
+            not enter sensitive personal data beyond what schedule planning needs.
           </p>
           <p>
             The hosting provider may process standard request data such as IP address, browser information, requested
@@ -67,6 +55,9 @@ export default function PrivacyPage() {
             The app does not need a login to work. It does not process payments, sell student schedule data, or provide a
             backend account where course details are stored for later retrieval. If that changes, the policy should be
             updated before those features are launched.
+          </p>
+          <p>
+            This policy is maintained by Jonathan Reed for the public Semester Calendar Builder website.
           </p>
         </div>
         <nav className="flex flex-wrap gap-4 text-sm">

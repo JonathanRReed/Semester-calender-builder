@@ -7,7 +7,7 @@ A portfolio-ready calendar builder for managing semester schedules with support 
 - **Visual Weekly Calendar** - Time-blocked weekly grid with current-week dates and conflict highlighting
 - **Multiple Event Types** - In-person classes, online classes, study blocks, and exams
 - **Smart Paste Import** - Paste a registrar/Banner/Workday/syllabus block and review detected courses before importing
-- **Calendar Export (.ics)** - One recurring event per class, bounded by your semester dates, with breaks excluded — imports cleanly into Google, Apple, or Outlook Calendar
+- **Calendar Export (.ics)** - One recurring event per class, bounded by your semester dates, with breaks excluded. Imports cleanly into Google, Apple, or Outlook Calendar
 - **Bulk Import/Export** - CSV (lossless round-trip), ICS, plain text, and full JSON backup/restore
 - **Important Dates** - Track deadlines, exams (with optional times), breaks, and finals
 - **PNG Export** - Generate shareable schedule images
@@ -70,7 +70,7 @@ Open **Manage Data → Add Semester Info**. Three ways:
 
 1. **Smart Paste** – paste a messy schedule copied from your registrar / Banner / Workday / a
    syllabus. Detected courses appear in an editable preview (with a confidence badge) so you can
-   fix anything before importing — nothing is added silently.
+   fix anything before importing. Nothing is added silently.
 2. **Bulk Format** – one course per line:
    ```
    CS 101 | Intro to Programming | MWF | 09:30-10:45 | Hall 201 | Dr. Smith

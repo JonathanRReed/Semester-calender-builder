@@ -279,8 +279,8 @@ export function BulkInputDialog({ open, onOpenChange, onImport, existingEvents =
             <div>
               <Label htmlFor="smart-text">Paste your schedule from anywhere</Label>
               <p className="text-sm text-muted-foreground mb-2">
-                Copy rows from your registrar / Banner / Workday / a syllabus. We&apos;ll detect what we can — you review
-                before anything is added.
+                Copy rows from your registrar / Banner / Workday / a syllabus. We&apos;ll detect what we can, and you
+                review it before anything is added.
               </p>
               <Textarea
                 id="smart-text"

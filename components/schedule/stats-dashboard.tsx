@@ -145,7 +145,7 @@ export function StatsDashboard({ events, importantDates, className }: StatsDashb
             <CardHeader className="pb-2">
                 <CardTitle className="text-base flex items-center gap-2">
                     <TrendingUp className="w-4 h-4 text-primary" />
-                    Week at a Glance
+                    This week
                 </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">

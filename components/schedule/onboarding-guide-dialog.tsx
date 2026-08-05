@@ -24,7 +24,7 @@ export function OnboardingGuideDialog({ open, onOpenChange, onLoadExample, onAdd
             Getting started
           </DialogTitle>
           <p className="text-sm text-muted-foreground">
-            Follow these quick steps to tailor the Semester Calendar Builder to your classes. You can revisit this guide anytime.
+            Three steps to get your classes into the grid. You can reopen this guide anytime.
           </p>
         </DialogHeader>
 

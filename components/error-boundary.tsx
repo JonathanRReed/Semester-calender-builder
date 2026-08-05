@@ -36,7 +36,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
             <div className="text-6xl">⚠️</div>
             <h1 className="text-2xl font-bold text-foreground">Something went wrong</h1>
             <p className="text-muted-foreground">
-              We encountered an unexpected error. Don&apos;t worry, your schedule data is safe.
+              The app hit an unexpected error. Your schedule is still saved in this browser.
             </p>
             {this.state.error && (
               <details className="text-left">

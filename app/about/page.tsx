@@ -37,12 +37,12 @@ export default function AboutPage() {
             build a weekly class schedule, add study blocks, track important dates, and export the plan for later use.
           </p>
           <p>
-            The app is designed for practical semester planning, not account management. Schedule data stays in the
-            browser unless the student chooses to export it as a file or calendar feed.
+            It is built for practical semester planning. Schedule data stays in the browser unless the student chooses
+            to export it as a file or calendar feed.
           </p>
           <p>
-            The goal is simple: help students see where their time goes before the semester gets crowded. In-person
-            classes, online courses, exams, assignments, and recurring study sessions can be arranged in one clean view.
+            The point is to help students see where their time goes before the semester gets crowded. In-person classes,
+            online courses, exams, assignments, and recurring study sessions all sit in one view.
           </p>
           <p>
             A typical semester has fixed course meetings, shifting assignment deadlines, exam weeks, office hours, lab
@@ -54,10 +54,10 @@ export default function AboutPage() {
             easier to spot before they become a problem.
           </p>
           <p>
-            The planner supports both quick starts and careful setup. Students can begin with a blank week, load an
-            example semester, add recurring events, track important dates, and switch between a weekly schedule and a
-            broader semester view. Exports are included so the plan can be saved, printed, shared with an advisor, or
-            imported into a calendar app.
+            A rough first pass and a careful setup both work here. Students can begin with a blank week, load an example
+            semester, add recurring events, track important dates, and switch between a weekly schedule and a broader
+            semester view. Exports are included so the plan can be saved, printed, shared with an advisor, or imported
+            into a calendar app.
           </p>
           <p>
             This site is intentionally small and focused. It does not require an account, does not ask for payment, and

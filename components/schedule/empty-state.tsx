@@ -66,7 +66,7 @@ export function EmptyState({ onAddEvent, onLoadExample }: EmptyStateProps) {
                     </h2>
 
                     <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
-                        Add your classes, study blocks, and important dates — then send it straight to Google,
+                        Add your classes, study blocks, and important dates, then send the whole thing to Google,
                         Apple, or Outlook Calendar.
                     </p>
 
@@ -84,7 +84,7 @@ export function EmptyState({ onAddEvent, onLoadExample }: EmptyStateProps) {
                     <div className="mt-6 pt-6 border-t border-border/50">
                         <p className="text-xs text-muted-foreground flex items-center justify-center gap-2">
                             <Clock className="w-3.5 h-3.5" />
-                            Quick to set up
+                            Saves in this browser as you go. No account.
                         </p>
                     </div>
                 </div>

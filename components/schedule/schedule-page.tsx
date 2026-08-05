@@ -518,9 +518,9 @@ export default function SchedulePage() {
               </p>
               <p>
                 This page is intended for course planning, study time blocking, registration review, academic calendar
-                cleanup, and schedule handoff work. It is not a school database, gradebook, or account system. It is a
-                lightweight planning surface for turning a rough set of courses and deadlines into a readable semester
-                calendar that can be reviewed, printed, archived, or imported elsewhere.
+                cleanup, and schedule handoff work. It turns a rough set of courses and deadlines into a readable
+                semester calendar that can be reviewed, printed, archived, or imported elsewhere. It does not connect to
+                a school database, gradebook, or account system.
               </p>
               <p>
                 Use it before registration to compare course options, during the term to keep study blocks visible, and

@@ -1,10 +1,10 @@
 # Semester Calendar Builder
 
-> A free, privacy-first web application for students and educators to plan academic semester schedules. Built with Next.js, React, and TypeScript, it provides an intuitive interface for managing courses, study blocks, and important dates with powerful export capabilities.
+> A free browser planner for a school semester: classes, study blocks, exams, and deadlines in one weekly grid. Built with Next.js, React, and TypeScript. Schedules are saved in the browser's local storage, with no account and no server copy.
 
-Semester Calendar Builder runs entirely in the browser with local data storage, ensuring complete privacy and offline functionality. Users can create and visualize their entire semester schedule in a weekly grid format with color-coded event types, drag-and-drop editing, and support for multiple time zones (PT, MT, CT, ET).
+Semester Calendar Builder writes your schedule to local storage on the device you are using. The week grid shows a typical week with color-coded event types, drag to move or resize an event, and a flag on anything that overlaps. Set a semester start and end date and you can switch between one week and the whole term.
 
-Key features include visual weekly schedule grids, flexible event management with recurring events, import/export capabilities (JSON, CSV, bulk input), multiple export formats (PNG, PDF, printable calendars), important dates tracking, dark mode interface with responsive design, local storage persistence with automatic saving, and example semester templates.
+Features: the weekly grid, recurring classes and study blocks, important dates for exams, deadlines, breaks, and finals, Smart Paste for a pasted registrar block, import from CSV, ICS, and JSON backup, export to ICS, CSV, PNG, JSON backup, and plain text, a printable schedule, dark mode, responsive layout, automatic saving to local storage, and an example semester to start from.
 
 ## Documentation
 

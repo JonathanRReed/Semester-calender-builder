@@ -65,10 +65,10 @@ export function QuickHelp({ className }: QuickHelpProps) {
                                 Use the "Important Dates" section on the right to track <strong>specific dates</strong> like:
                             </p>
                             <ul className="text-sm text-muted-foreground list-disc list-inside pl-2 space-y-1">
-                                <li><strong>Deadlines</strong> — Assignment due dates, project submissions</li>
-                                <li><strong>Exams</strong> — Midterms, finals, quizzes</li>
-                                <li><strong>Breaks</strong> — Spring break, holidays, no-class days</li>
-                                <li><strong>Events</strong> — Office hours, study groups, special events</li>
+                                <li><strong>Deadlines</strong>: assignment due dates, project submissions</li>
+                                <li><strong>Exams</strong>: midterms, finals, quizzes</li>
+                                <li><strong>Breaks</strong>: spring break, holidays, no-class days</li>
+                                <li><strong>Events</strong>: office hours, study groups, special events</li>
                             </ul>
                         </div>
 
@@ -121,7 +121,7 @@ export function QuickHelp({ className }: QuickHelpProps) {
                             </h3>
                             <p className="text-sm text-muted-foreground">
                                 When adding a class that meets Mon/Wed/Fri, select <strong>all three days</strong> in the Add Event dialog.
-                                This creates linked events that you can edit or delete together!
+                                This creates linked events that you can edit or delete together.
                             </p>
                         </div>
                     </div>

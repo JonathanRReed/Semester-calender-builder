@@ -21,7 +21,7 @@ export const ONBOARDING_STEPS = [
   {
     icon: <Calendar className="w-4 h-4 text-primary" />,
     title: "2. Set your semester dates",
-    description: "So classes land on the right weeks and stop at finals — set them from the header.",
+    description: "Set them from the header so classes land on the right weeks and stop at finals.",
   },
   {
     icon: <Download className="w-4 h-4 text-primary" />,
@@ -43,10 +43,10 @@ export function OnboardingBanner({ hasEvents, onAddEvent, onManageData, onLoadEx
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <Calendar className="w-5 h-5 text-primary" />
-                <h2 className="font-semibold text-foreground">Welcome! Let&apos;s build your first semester plan.</h2>
+                <h2 className="font-semibold text-foreground">Build your first semester plan.</h2>
               </div>
               <p className="text-muted-foreground text-sm">
-                Start with the example semester or jump right in. Your data is stored locally in your browser so you can experiment safely.
+                Load the example semester or start from a blank week. Everything stays in this browser, so nothing you try here leaves the device.
               </p>
             </div>
             <Button

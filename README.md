@@ -100,7 +100,7 @@ weeks and stop at the end of the term.
 
 ## Contributing
 
-This is a personal project, but suggestions are welcome! Please open an issue to discuss changes.
+This is a personal project, but suggestions are welcome. Open an issue to discuss changes.
 
 ## License
 

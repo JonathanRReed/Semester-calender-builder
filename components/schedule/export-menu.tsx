@@ -119,7 +119,7 @@ export const ExportMenu = React.forwardRef<HTMLButtonElement, ExportMenuProps>(f
             <ImageIcon className="w-4 h-4 mr-2" />
             <div className="flex-1">
               <div>Export PNG Image</div>
-              <div className="text-[10px] text-muted-foreground">Great for sharing or printing</div>
+              <div className="text-[10px] text-muted-foreground">A picture of the week grid</div>
             </div>
           </DropdownMenuItem>
 

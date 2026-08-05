@@ -29,6 +29,7 @@ import { useKeyboardShortcuts } from "@/components/schedule/keyboard-shortcuts"
 import { EmptyState } from "@/components/schedule/empty-state"
 import { SemesterWeekIndicator, SemesterSettingsDialog, loadSemesterDates, saveSemesterDates } from "@/components/schedule/semester-settings"
 import { QuickHelp } from "@/components/schedule/quick-help"
+import { HowItWorks } from "@/components/schedule/how-it-works"
 import { ViewToggle, type ViewMode } from "@/components/schedule/view-toggle"
 import { SearchFilter } from "@/components/schedule/search-filter"
 import { SemesterView } from "@/components/schedule/semester-view"
@@ -489,52 +490,59 @@ export default function SchedulePage() {
     "gap-3 sm:gap-4 transition-all duration-300 lg:grid-cols-2",
   ].join(" ")
 
+  // NOTE: this branch is what `next build` writes into out/index.html, because
+  // isLoaded only flips inside an effect. Anything that has to survive without
+  // JavaScript (the how-it-works copy, the footer link graph) belongs here too.
   if (!isLoaded) {
     return (
-      <main id="main-content" className="min-h-screen bg-background flex items-center justify-center px-6">
-        <div className="max-w-2xl text-center">
-          <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-3">Semester Calendar Builder</h1>
-          <div className="w-8 h-8 border-2 border-ring border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <div className="text-muted-foreground">Loading your schedule...</div>
-          <section className="sr-only" aria-label="Semester Calendar Builder overview">
-            <p>
-              Semester Calendar Builder is a private browser planner for students who need to organize classes, study
-              blocks, exams, deadlines, office hours, and recurring academic work in one visual schedule. The app is built
-              by Jonathan R Reed for planning a typical semester week, checking conflicts before registration, and
-              creating exports that can move into Google Calendar, Apple Calendar, Outlook, spreadsheets, images, or a
-              backup JSON file.
-            </p>
-            <p>
-              The planner stores schedule data locally in the browser instead of requiring an account. Students can add
-              in-person classes, online classes, personal study sessions, important dates, and notes, then switch between
-              weekly and semester views. The interface supports dark mode, keyboard shortcuts, onboarding help, schedule
-              reset tools, backup reminders, conflict review, and export options for sharing a clean plan with advisors,
-              classmates, family, or personal planning systems.
-            </p>
-            <p>
-              This page is intended for course planning, study time blocking, registration review, academic calendar
-              cleanup, and schedule handoff work. It is not a school database, gradebook, or account system. It is a
-              lightweight planning surface for turning a rough set of courses and deadlines into a readable semester
-              calendar that can be reviewed, printed, archived, or imported elsewhere.
-            </p>
-            <p>
-              Use it before registration to compare course options, during the term to keep study blocks visible, and
-              near deadline-heavy weeks to check whether exams, papers, labs, and personal commitments are colliding.
-              The planner is most useful when the schedule can be exported, shared, and revised without creating another
-              account or handing private academic details to a hosted database.
-            </p>
-            <p>
-              Learn more on the about page, send feedback through contact, or review privacy details before saving a
-              long-term browser schedule.
-            </p>
-          </section>
-          <nav aria-label="Semester Calendar Builder links" className="mt-5 flex justify-center gap-4 text-sm">
-            <a className="text-primary underline-offset-4 hover:underline" href="/about/">About</a>
-            <a className="text-primary underline-offset-4 hover:underline" href="/contact/">Contact</a>
-            <a className="text-primary underline-offset-4 hover:underline" href="/privacy/">Privacy</a>
-          </nav>
-        </div>
-      </main>
+      <div className="min-h-screen bg-background">
+        <main id="main-content" className="flex min-h-[70vh] items-center justify-center px-6 py-12">
+          <div className="max-w-2xl text-center">
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-3">Semester Calendar Builder</h1>
+            <div className="w-8 h-8 border-2 border-ring border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <div className="text-muted-foreground">Loading your schedule...</div>
+            <section className="sr-only" aria-label="Semester Calendar Builder overview">
+              <p>
+                Semester Calendar Builder is a private browser planner for students who need to organize classes, study
+                blocks, exams, deadlines, office hours, and recurring academic work in one visual schedule. The app is built
+                by Jonathan R Reed for planning a typical semester week, checking conflicts before registration, and
+                creating exports that can move into Google Calendar, Apple Calendar, Outlook, spreadsheets, images, or a
+                backup JSON file.
+              </p>
+              <p>
+                The planner stores schedule data locally in the browser instead of requiring an account. Students can add
+                in-person classes, online classes, personal study sessions, important dates, and notes, then switch between
+                weekly and semester views. The interface supports dark mode, keyboard shortcuts, onboarding help, schedule
+                reset tools, backup reminders, conflict review, and export options for sharing a clean plan with advisors,
+                classmates, family, or personal planning systems.
+              </p>
+              <p>
+                This page is intended for course planning, study time blocking, registration review, academic calendar
+                cleanup, and schedule handoff work. It is not a school database, gradebook, or account system. It is a
+                lightweight planning surface for turning a rough set of courses and deadlines into a readable semester
+                calendar that can be reviewed, printed, archived, or imported elsewhere.
+              </p>
+              <p>
+                Use it before registration to compare course options, during the term to keep study blocks visible, and
+                near deadline-heavy weeks to check whether exams, papers, labs, and personal commitments are colliding.
+                The planner is most useful when the schedule can be exported, shared, and revised without creating another
+                account or handing private academic details to a hosted database.
+              </p>
+              <p>
+                Learn more on the about page, send feedback through contact, or review privacy details before saving a
+                long-term browser schedule.
+              </p>
+            </section>
+            <nav aria-label="Semester Calendar Builder links" className="mt-5 flex justify-center gap-4 text-sm">
+              <a className="text-primary underline-offset-4 hover:underline" href="/about/">About</a>
+              <a className="text-primary underline-offset-4 hover:underline" href="/contact/">Contact</a>
+              <a className="text-primary underline-offset-4 hover:underline" href="/privacy/">Privacy</a>
+            </nav>
+          </div>
+        </main>
+        <HowItWorks />
+        <Footer />
+      </div>
     )
   }
   return (
@@ -910,6 +918,8 @@ export default function SchedulePage() {
         onSave={setSemesterDates}
         currentDates={semesterDates}
       />
+
+      <HowItWorks />
 
       {/* SEO: FAQ Schema (visually hidden) */}
       <script

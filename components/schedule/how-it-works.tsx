@@ -25,6 +25,21 @@ export function HowItWorks() {
           <h2 id="how-it-works-heading" className="text-lg sm:text-xl font-bold text-foreground">
             How it works
           </h2>
+          <p className="text-sm leading-6 text-muted-foreground max-w-3xl">
+            Semester Calendar Builder is a browser planner for laying out one semester of
+            classes, study blocks, exams, and deadlines on a single grid.
+          </p>
+          <ul className="grid gap-1.5 text-sm leading-6 text-muted-foreground max-w-3xl list-disc pl-5">
+            <li>The week grid covers all 7 days and 15 hourly slots, 8 AM through 10 PM.</li>
+            <li>
+              Four things sit on the grid: in-person classes, online classes, exams, and study
+              blocks. Important Dates holds five more: events, deadlines, breaks, exams, and
+              finals.
+            </li>
+            <li>Two views: one typical week, or the whole semester once you set start and end dates.</li>
+            <li>Export to ICS, CSV, PNG, JSON backup, or a plain-text summary. Import reads CSV, ICS, and JSON backups.</li>
+            <li>Everything lives in this browser&apos;s local storage. No account, no server copy, nothing to pay.</li>
+          </ul>
           <div className="grid gap-5 sm:grid-cols-3">
             {STEPS.map(({ title, body }) => (
               <article key={title} className="space-y-1.5">
@@ -36,7 +51,7 @@ export function HowItWorks() {
         </div>
 
         <div className="space-y-3 border-t border-border pt-5">
-          <h2 className="text-lg sm:text-xl font-bold text-foreground">What gets stored</h2>
+          <h2 className="text-lg sm:text-xl font-bold text-foreground">What gets stored, and where?</h2>
           <div className="space-y-3 text-sm leading-6 text-muted-foreground max-w-3xl">
             <p>
               Everything stays in this browser. The planner writes your schedule to local storage on the device you are

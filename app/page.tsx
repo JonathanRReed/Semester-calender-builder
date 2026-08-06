@@ -15,6 +15,10 @@ const webAppSchema = {
   applicationSubCategory: "Academic schedule planner",
   operatingSystem: "Any web browser",
   inLanguage: "en-US",
+  // A committed literal, not the build clock, so a rebuild of an unchanged
+  // commit emits the same date. Keep it equal to <lastmod> for this URL in
+  // public/sitemap.xml, and move both when this page's content changes.
+  dateModified: "2026-08-06",
   isAccessibleForFree: true,
   offers: {
     "@type": "Offer",

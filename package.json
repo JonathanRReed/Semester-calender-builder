@@ -8,7 +8,7 @@
     "build": "next build && node scripts/optimize-static-info-pages.mjs",
     "dev": "next dev",
     "lint": "eslint .",
-    "test": "bun scripts/verify-export.ts && bun scripts/verify-parse.ts && bun test scripts/structured-data.test.ts",
+    "test": "bun scripts/verify-export.ts && bun scripts/verify-parse.ts && bun test scripts/structured-data.test.ts scripts/security-headers.test.ts",
     "start": "bunx serve@latest out",
     "analyze": "ANALYZE=true next build",
     "serve": "bunx serve@latest out -p 3000"

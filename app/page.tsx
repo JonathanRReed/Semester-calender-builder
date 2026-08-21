@@ -2,43 +2,23 @@ import SchedulePage from "@/components/schedule/schedule-page"
 
 const SITE_URL = "https://semesterbuild.jonathanrreed.com/"
 
-// WebApplication markup for the planner itself. Every claim below is stated in
-// visible copy on this page (the "How it works" and "What gets stored" section,
-// the view toggle, the export menu and the FAQ block).
-const webAppSchema = {
+// Project markup for the planner itself. The tool has no independent ratings or
+// reviews, so it deliberately avoids the SoftwareApplication rich-result type.
+const plannerSchema = {
   "@context": "https://schema.org",
-  "@type": "WebApplication",
-  "@id": `${SITE_URL}#webapp`,
+  "@type": "CreativeWork",
+  "@id": `${SITE_URL}#planner`,
   name: "Semester Calendar Builder",
   url: SITE_URL,
-  applicationCategory: "EducationalApplication",
-  applicationSubCategory: "Academic schedule planner",
-  operatingSystem: "Any web browser",
   inLanguage: "en-US",
   // A committed literal, not the build clock, so a rebuild of an unchanged
   // commit emits the same date. Keep it equal to <lastmod> for this URL in
   // public/sitemap.xml, and move both when this page's content changes.
-  dateModified: "2026-08-06",
+  dateModified: "2026-08-21",
   isAccessibleForFree: true,
-  offers: {
-    "@type": "Offer",
-    price: "0",
-    priceCurrency: "USD",
-  },
   description:
     "Browser-based semester planner for classes, study blocks, exams, and deadlines. Schedules are saved in the browser's local storage, with no account and no server copy, and can be exported as ICS, CSV, PNG, or a JSON backup.",
-  featureList: [
-    "Weekly class schedule grid",
-    "Full semester view once semester start and end dates are set",
-    "Study blocks, office hours, exams, and important dates",
-    "Automatic flagging of overlapping events",
-    "Search and filter by event type",
-    "Export to ICS for Google Calendar, Apple Calendar, and Outlook",
-    "Export to CSV, PNG, and JSON backup",
-    "Import from CSV, ICS, and JSON backup files",
-    "Local browser storage with no account required",
-  ],
-  storageRequirements: "Uses browser local storage on the current device",
+  keywords: "semester planner, class schedule, study planner, academic calendar",
   isPartOf: { "@id": "https://semesterbuild.jonathanrreed.com/#website" },
   creator: {
     "@type": "Person",
@@ -67,7 +47,7 @@ export default function Page() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(webAppSchema).replace(/</g, "\\u003c") }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(plannerSchema).replace(/</g, "\\u003c") }}
       />
       <noscript>
         <section className="mx-auto max-w-5xl px-6 py-10 text-foreground">

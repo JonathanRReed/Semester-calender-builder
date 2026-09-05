@@ -1,25 +1,25 @@
 "use client"
 
-import { Toaster as Sonner } from "sonner"
+import { useTheme } from "next-themes"
+import { Toaster as Sonner, type ToasterProps } from "sonner"
 
-type ToasterProps = React.ComponentProps<typeof Sonner>
-
+// Sonner's stylesheet is unlayered, so it beats Tailwind v4 utilities no matter
+// their specificity. Feed it the theme tokens through its own CSS variables
+// instead, and follow next-themes so toasts flip with the rest of the UI.
 const Toaster = ({ ...props }: ToasterProps) => {
+  const { resolvedTheme } = useTheme()
+
   return (
     <Sonner
-      theme="dark"
+      theme={(resolvedTheme as ToasterProps["theme"]) ?? "system"}
       className="toaster group"
-      toastOptions={{
-        classNames: {
-          toast:
-            "group toast group-[.toaster]:bg-card group-[.toaster]:text-card-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg",
-          description: "group-[.toast]:text-muted-foreground",
-          actionButton:
-            "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground",
-          cancelButton:
-            "group-[.toast]:bg-muted group-[.toast]:text-muted-foreground",
-        },
-      }}
+      style={
+        {
+          "--normal-bg": "var(--card)",
+          "--normal-text": "var(--card-foreground)",
+          "--normal-border": "var(--border)",
+        } as React.CSSProperties
+      }
       {...props}
     />
   )

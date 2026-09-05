@@ -33,8 +33,10 @@
   # Prevent MIME type sniffing
   X-Content-Type-Options: nosniff
 
-  # Enable browser XSS protection
-  X-XSS-Protection: 1; mode=block
+  # Legacy XSS auditor, explicitly off. Modern browsers dropped it and the
+  # auditor itself leaked data in older ones; the CSP above is the real
+  # control. "0" is the OWASP Secure Headers Project recommendation.
+  X-XSS-Protection: 0
 
   # Referrer policy
   Referrer-Policy: strict-origin-when-cross-origin

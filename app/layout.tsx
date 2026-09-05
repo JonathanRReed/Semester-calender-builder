@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next'
+import { preload } from 'react-dom'
 import './globals.css'
 import { FONT_ASSETS, LOGO_ASSETS, SOCIAL_LINKS } from '@/lib/assets'
 
@@ -102,12 +103,16 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  // Declared through react-dom's preload() rather than as <link> elements in
+  // <head>: React 19 hoists preload links as resources, so a literal <link>
+  // here was emitted twice per font and Chrome warned about the unused copy.
+  for (const href of FONT_PRELOADS) {
+    preload(href, { as: 'font', type: 'font/woff2', crossOrigin: 'anonymous', fetchPriority: 'high' })
+  }
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {FONT_PRELOADS.map((href) => (
-          <link key={href} rel="preload" href={href} as="font" type="font/woff2" crossOrigin="anonymous" fetchPriority="high" />
-        ))}
         <link rel="me" href={SOCIAL_LINKS.bluesky} />
         <link rel="me" href={SOCIAL_LINKS.linkedin} />
         <link rel="me" href={SOCIAL_LINKS.github} />

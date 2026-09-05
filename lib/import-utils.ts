@@ -376,7 +376,7 @@ export function parseICSToSchedule(icsContent: string): ImportResult {
 
     for (const day of orderedDays) {
       if (isStudy) {
-        const block: StudyBlock = {
+        const studyBlock: StudyBlock = {
           id: `ics-${i}-${day}-${crypto.randomUUID().slice(0, 6)}`,
           title: summary,
           type: "study",
@@ -385,8 +385,8 @@ export function parseICSToSchedule(icsContent: string): ImportResult {
           endCT,
           notes: description,
         }
-        if (groupId) block.recurrenceGroupId = groupId
-        result.studyBlocks.push(block)
+        if (groupId) studyBlock.recurrenceGroupId = groupId
+        result.studyBlocks.push(studyBlock)
       } else {
         const courseType: CourseEvent["type"] =
           scbType === "online" || scbType === "exam" || scbType === "inperson"

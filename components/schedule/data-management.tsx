@@ -47,7 +47,7 @@ export const DataManagement = React.forwardRef<DataManagementHandle, DataManagem
     if (!file) return
 
     const reader = new FileReader()
-    reader.onload = (e) => {
+    reader.addEventListener("load", (e) => {
       const content = e.target?.result as string
       const name = file.name.toLowerCase()
 
@@ -96,7 +96,7 @@ export const DataManagement = React.forwardRef<DataManagementHandle, DataManagem
       } else {
         toast.success(`Imported ${total} item${total === 1 ? "" : "s"} from ${file.name}`)
       }
-    }
+    })
     reader.readAsText(file)
 
     // Reset input

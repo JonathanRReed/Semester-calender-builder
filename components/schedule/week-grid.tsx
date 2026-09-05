@@ -65,10 +65,15 @@ function getWeekInfo(semester: SemesterDates | null | undefined, weekOffset: num
 
 export const WeekGrid = React.memo(function WeekGrid({ events, activeFilter, searchTerm = "", onEventClick, onCreateAt, onUpdateTime, semester }: WeekGridProps) {
   const [weekOffset, setWeekOffset] = React.useState(0)
-  // Reset to the current week whenever the semester changes.
-  React.useEffect(() => {
+  // Reset to the current week whenever the semester changes. Adjusting state
+  // during render (rather than in an effect) avoids painting the stale week
+  // for one frame first.
+  const semesterKey = `${semester?.startDate ?? ""}|${semester?.endDate ?? ""}`
+  const [prevSemesterKey, setPrevSemesterKey] = React.useState(semesterKey)
+  if (semesterKey !== prevSemesterKey) {
+    setPrevSemesterKey(semesterKey)
     setWeekOffset(0)
-  }, [semester?.startDate, semester?.endDate])
+  }
 
   const weekInfo = React.useMemo(() => getWeekInfo(semester, weekOffset), [semester, weekOffset])
   const weekDates = weekInfo?.dates ?? null

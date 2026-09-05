@@ -19,12 +19,13 @@ function generateWeeks(start: string, end: string): { weekNumber: number; startD
     const endDate = new Date(end + "T00:00:00")
 
     // Find the first Monday
-    const current = new Date(startDate)
-    while (current.getDay() !== 1) {
-        current.setDate(current.getDate() + 1)
+    const firstMonday = new Date(startDate)
+    while (firstMonday.getDay() !== 1) {
+        firstMonday.setDate(firstMonday.getDate() + 1)
     }
 
     let weekNumber = 1
+    let current = firstMonday
     while (current <= endDate) {
         const weekStart = new Date(current)
         const weekEnd = new Date(current)
@@ -36,7 +37,9 @@ function generateWeeks(start: string, end: string): { weekNumber: number; startD
             endDate: weekEnd > endDate ? endDate : weekEnd,
         })
 
-        current.setDate(current.getDate() + 7)
+        const nextMonday = new Date(current)
+        nextMonday.setDate(nextMonday.getDate() + 7)
+        current = nextMonday
         weekNumber++
     }
 

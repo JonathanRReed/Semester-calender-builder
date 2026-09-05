@@ -194,7 +194,7 @@ export function OverviewSection({ dates, onAddDate, onDeleteDate, className }: O
             return (
               <div
                 key={date.id}
-                className="flex items-start gap-3 rounded-lg border border-border/40 bg-card/40 p-2.5 transition-all duration-300 group hover:bg-card/55 hover:-translate-y-0.5"
+                className="flex items-start gap-3 rounded-lg border border-border/40 bg-card/40 p-2.5 transition-[background-color,transform] duration-300 group hover:bg-card/55 hover:-translate-y-0.5"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <div

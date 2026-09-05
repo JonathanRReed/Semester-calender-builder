@@ -5,30 +5,24 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  
-  // Production optimizations
+
   reactStrictMode: true,
-  
-  // Optimize production bundle
+
+  // React Compiler: automatic memoization, no manual useMemo/useCallback needed.
+  reactCompiler: true,
+
+  // Strip console.log from production bundles, keep error/warn.
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production' ? {
       exclude: ['error', 'warn'],
     } : false,
   },
-  
-  // Disable source maps in production to reduce bundle size
+
   productionBrowserSourceMaps: false,
-  
-  // Optimize fonts and external resources
+
   experimental: {
-    optimizePackageImports: ['lucide-react', '@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-select', '@radix-ui/react-tabs', 'date-fns'],
+    optimizePackageImports: ['lucide-react', '@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-select', '@radix-ui/react-tabs'],
   },
-  
-  // Compress output
-  compress: true,
-  
-  // Modern JavaScript output (reduce polyfills)
-  transpilePackages: [],
 }
 
 export default nextConfig

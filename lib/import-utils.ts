@@ -364,7 +364,8 @@ export function parseICSToSchedule(icsContent: string): ImportResult {
       const day = JS_DAY[wd]
       if (day) days.push(day)
     }
-    const orderedDays = DAY_ORDER.filter((d) => days.includes(d))
+    const daySet = new Set(days)
+    const orderedDays = DAY_ORDER.filter((d) => daySet.has(d))
 
     const startCT = start.time ?? "09:00"
     const endCT = end?.time ?? "10:00"

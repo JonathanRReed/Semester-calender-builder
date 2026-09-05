@@ -20,13 +20,14 @@ A portfolio-ready calendar builder for managing semester schedules with support 
 
 ### Prerequisites
 
-- [Bun](https://bun.sh/) 1.0+ (recommended) or Node.js 18+
+- [Bun](https://bun.sh/) 1.4+ (the pinned package manager and runtime)
+- Node.js 20.9+ (Next.js 16 minimum; only needed for the post-build script)
 
 ### Installation
 
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/JonathanRReed/Semester-calender-builder.git
 cd Semester-calender-builder
 
 # Install dependencies
@@ -47,6 +48,27 @@ bun run build
 # Start static export server
 bun run start
 ```
+
+### Checks
+
+```bash
+# Everything CI runs, in order: oxlint, eslint, tsc, unit tests
+bun run check
+
+# Or individually
+bun run lint:oxc
+bun run lint
+bun run typecheck
+bun run test
+```
+
+## Stack
+
+- Next.js 16 (App Router, static export) with the React Compiler enabled
+- React 19, TypeScript, Tailwind CSS v4 with `tw-animate-css`
+- Radix UI primitives, `cn` for class merging, `sonner` for toasts, `zod` for import validation
+- Linting with oxlint and ESLint (`eslint-config-next`), tests run with Bun
+- Deployed as static files to Cloudflare Pages (`public/_headers` carries the security headers)
 
 ## Usage
 

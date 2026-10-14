@@ -11,7 +11,7 @@
     "serve": "bunx serve@latest out -p 3000",
     "lint": "eslint .",
     "lint:oxc": "oxlint",
-    "typecheck": "bun --check",
+    "typecheck": "node scripts/bun-check.mjs",
     "typecheck:tsc": "tsc --noEmit",
     "test": "bun scripts/verify-export.ts && bun scripts/verify-parse.ts && bun test scripts/structured-data.test.ts scripts/security-headers.test.ts",
     "check": "bun run lint:oxc && bun run lint && bun run typecheck && bun run test",

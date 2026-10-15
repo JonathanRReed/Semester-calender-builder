@@ -26,6 +26,9 @@ jobs:
       - name: Lint (eslint)
         run: bun run lint
 
+      - name: Bun checker regression tests
+        run: bun run test:bun-check
+
       - name: Typecheck
         run: bun run typecheck
 

@@ -12,9 +12,10 @@
     "lint": "eslint .",
     "lint:oxc": "oxlint",
     "typecheck": "node scripts/bun-check.mjs",
+    "test:bun-check": "node --test scripts/bun-check-regression.mjs",
     "typecheck:tsc": "tsc --noEmit",
     "test": "bun scripts/verify-export.ts && bun scripts/verify-parse.ts && bun test scripts/structured-data.test.ts scripts/security-headers.test.ts",
-    "check": "bun run lint:oxc && bun run lint && bun run typecheck && bun run test",
+    "check": "bun run lint:oxc && bun run lint && bun run test:bun-check && bun run typecheck && bun run test",
     "analyze": "ANALYZE=true next build"
   },
   "dependencies": {

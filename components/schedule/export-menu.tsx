@@ -49,11 +49,13 @@ export const ExportMenu = React.forwardRef<HTMLButtonElement, ExportMenuProps>(f
     try {
       await exportToPNG("schedule-grid")
       trackExport()
-      toast.success("Schedule exported as PNG", {
-        description: "Image saved to your downloads",
+      toast.success("PNG download started", {
+        description: "Check your browser downloads.",
       })
     } catch {
-      toast.error("Failed to export PNG")
+      toast.error("PNG export failed", {
+        description: "Your schedule is still saved. Try Print or download a JSON backup instead.",
+      })
     } finally {
       setIsExporting(false)
     }

@@ -1,6 +1,7 @@
 import type { ScheduleEvent, CourseEvent, StudyBlock, ImportantDate, SemesterDates, DayOfWeek, ScheduleBackup } from "@/types/schedule"
 import { parseTime, SCHEDULE_VERSION } from "./schedule-utils"
 import { toast } from "sonner"
+import { canvasToPngBlob, PNG_RENDER_OPTIONS } from "./png-export"
 
 // ==========================================
 // iCalendar (RFC 5545) export
@@ -414,47 +415,26 @@ export function downloadJSONBackup(
 // ==========================================
 // PNG export
 // ==========================================
-export async function exportToPNG(elementId: string) {
+export async function exportToPNG(elementId: string): Promise<void> {
+  const element = document.getElementById(elementId)
+  if (!element) throw new Error("The schedule is not available. Refresh the page and try again.")
+  const html2canvas = (await import("html2canvas-pro")).default
+  const canvas = await html2canvas(element, {
+    ...PNG_RENDER_OPTIONS,
+    width: element.scrollWidth,
+    height: element.scrollHeight,
+  })
+  const blob = await canvasToPngBlob(canvas)
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement("a")
   try {
-    const html2canvas = (await import("html2canvas")).default
-
-    const element = document.getElementById(elementId)
-    if (!element) {
-      throw new Error("Element not found")
-    }
-
-    const canvas = await html2canvas(element, {
-      backgroundColor: "#ffffff",
-      scale: 2,
-      useCORS: true,
-      allowTaint: true,
-      logging: false,
-      width: element.scrollWidth,
-      height: element.scrollHeight,
-    })
-
-    canvas.toBlob(
-      (blob) => {
-        if (blob) {
-          const url = URL.createObjectURL(blob)
-          const link = document.createElement("a")
-          link.href = url
-          link.download = "course-schedule.png"
-          document.body.appendChild(link)
-          link.click()
-          document.body.removeChild(link)
-          URL.revokeObjectURL(url)
-          toast.success("Schedule exported as PNG!")
-        }
-      },
-      "image/png",
-      1.0,
-    )
-  } catch (error) {
-    if (process.env.NODE_ENV === "development") {
-      console.error("Failed to export PNG:", error)
-    }
-    toast.error("Failed to export PNG. Please try again.")
+    link.href = url
+    link.download = "course-schedule.png"
+    document.body.appendChild(link)
+    link.click()
+  } finally {
+    link.remove()
+    URL.revokeObjectURL(url)
   }
 }
 

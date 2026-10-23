@@ -1,7 +1,7 @@
 import type { ScheduleEvent, CourseEvent, StudyBlock, ImportantDate, SemesterDates, DayOfWeek, ScheduleBackup } from "@/types/schedule"
 import { parseTime, SCHEDULE_VERSION } from "./schedule-utils"
 import { toast } from "sonner"
-import { canvasToPngBlob, PNG_RENDER_OPTIONS } from "./png-export"
+import { canvasToPngBlob, PNG_RENDER_OPTIONS, pngCaptureWidth } from "./png-export"
 
 // ==========================================
 // iCalendar (RFC 5545) export
@@ -419,10 +419,23 @@ export async function exportToPNG(elementId: string): Promise<void> {
   const element = document.getElementById(elementId)
   if (!element) throw new Error("The schedule is not available. Refresh the page and try again.")
   const html2canvas = (await import("html2canvas-pro")).default
+  const width = pngCaptureWidth(element.scrollWidth, [...element.querySelectorAll<HTMLElement>("[data-png-scroll-region]")])
   const canvas = await html2canvas(element, {
     ...PNG_RENDER_OPTIONS,
-    width: element.scrollWidth,
+    width,
     height: element.scrollHeight,
+    onclone: (document) => {
+      const clone = document.getElementById(elementId)
+      if (!clone) return
+      clone.style.width = `${width}px`
+      clone.style.maxWidth = "none"
+      clone.style.animation = "none"
+      clone.style.transform = "none"
+      clone.querySelectorAll<HTMLElement>("[data-png-scroll-region]").forEach(region => {
+        region.style.overflowX = "visible"
+        region.scrollLeft = 0
+      })
+    },
   })
   const blob = await canvasToPngBlob(canvas)
   const url = URL.createObjectURL(blob)

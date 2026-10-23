@@ -11,3 +11,7 @@ export function canvasToPngBlob(canvas: Pick<HTMLCanvasElement, "toBlob">): Prom
     }, "image/png", 1)
   })
 }
+
+export function pngCaptureWidth(width: number, scrollRegions: readonly { clientWidth: number; scrollWidth: number }[]): number {
+  return Math.ceil(width + Math.max(0, ...scrollRegions.map(region => region.scrollWidth - region.clientWidth)))
+}

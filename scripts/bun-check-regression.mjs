@@ -12,7 +12,7 @@ import { after, test } from "node:test";
 import { URL, fileURLToPath } from "node:url";
 
 const GUARD = fileURLToPath(new URL("./bun-check.mjs", import.meta.url));
-const PIN = "1.4.3";
+const PIN = "1.4.4";
 const HELP = "Bun is a fast JavaScript runtime, package manager, bundler, and test runner.";
 const tempDirs = [];
 
@@ -64,7 +64,7 @@ test("runs under Node so PATH decides which bun is checked", () => {
 test("old Bun that prints help and exits 0 fails", { skip: !unix }, () => {
   const result = runGuard({ cwd: project(), pathDir: fakeBun({ version: "1.2.14", checkOutput: HELP, checkExit: 0 }) });
   assert.equal(result.status, 1);
-  assert.match(result.stderr, /Bun 1\.2\.14; this project pins bun@1\.4\.3/);
+  assert.match(result.stderr, /Bun 1\.2\.14; this project pins bun@1\.4\.4/);
 });
 
 test("matching version that prints help and exits 0 fails without a checked-file summary", { skip: !unix }, () => {

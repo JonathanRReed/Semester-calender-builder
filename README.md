@@ -28,7 +28,7 @@ CSV preserves recurrence information for re-import. JSON stores a complete backu
 
 ## Develop
 
-Requires Bun 1.4.3+ (`packageManager` pins `bun@1.4.3`) and Node 20.9+ for the post-build script.
+Requires Bun 1.4.4+ (`packageManager` pins `bun@1.4.4`) and Node 20.9+ for the post-build script.
 
 ```bash
 git clone https://github.com/JonathanRReed/Semester-calender-builder.git

@@ -1,6 +1,8 @@
 "use client"
 
 import { useMemo } from "react"
+import { useCurrentTime } from "@/hooks/use-current-time"
+import { generateSemesterWeeks, isDateInWeek, isWeekdayInWeek } from "@/lib/calendar-utils"
 import { Calendar, Coffee, GraduationCap, Clock, BookOpen } from "lucide-react"
 import type { ScheduleEvent, ImportantDate } from "@/types/schedule"
 
@@ -10,40 +12,6 @@ interface SemesterViewProps {
     semesterStart: string  // YYYY-MM-DD
     semesterEnd: string    // YYYY-MM-DD
     onEventClick?: (event: ScheduleEvent) => void
-}
-
-// Generate all weeks between start and end
-function generateWeeks(start: string, end: string): { weekNumber: number; startDate: Date; endDate: Date }[] {
-    const weeks: { weekNumber: number; startDate: Date; endDate: Date }[] = []
-    const startDate = new Date(start + "T00:00:00")
-    const endDate = new Date(end + "T00:00:00")
-
-    // Find the first Monday
-    const firstMonday = new Date(startDate)
-    while (firstMonday.getDay() !== 1) {
-        firstMonday.setDate(firstMonday.getDate() + 1)
-    }
-
-    let weekNumber = 1
-    let current = firstMonday
-    while (current <= endDate) {
-        const weekStart = new Date(current)
-        const weekEnd = new Date(current)
-        weekEnd.setDate(weekEnd.getDate() + 6)
-
-        weeks.push({
-            weekNumber,
-            startDate: weekStart,
-            endDate: weekEnd > endDate ? endDate : weekEnd,
-        })
-
-        const nextMonday = new Date(current)
-        nextMonday.setDate(nextMonday.getDate() + 7)
-        current = nextMonday
-        weekNumber++
-    }
-
-    return weeks
 }
 
 // Format date as "Jan 15"
@@ -71,7 +39,8 @@ export function SemesterView({
     semesterStart,
     semesterEnd,
 }: SemesterViewProps) {
-    const weeks = useMemo(() => generateWeeks(semesterStart, semesterEnd), [semesterStart, semesterEnd])
+    const now = useCurrentTime()
+    const weeks = useMemo(() => generateSemesterWeeks(semesterStart, semesterEnd), [semesterStart, semesterEnd])
 
     // Group events by day
     const eventsByDay = useMemo(() => {
@@ -91,9 +60,9 @@ export function SemesterView({
 
     // Get current week
     const currentWeekIndex = useMemo(() => {
-        const now = new Date()
-        return weeks.findIndex((w) => now >= w.startDate && now <= w.endDate)
-    }, [weeks])
+        if (!now) return -1
+        return weeks.findIndex((w) => isDateInWeek(now, w))
+    }, [weeks, now])
 
     const getDateIcon = (type: ImportantDate["type"]) => {
         switch (type) {
@@ -208,7 +177,8 @@ export function SemesterView({
                                     {/* Daily class summary */}
                                     <div className="flex gap-1">
                                         {["Mon", "Tue", "Wed", "Thu", "Fri"].map((day) => {
-                                            const dayEvents = eventsByDay.get(day) || []
+                                            const inTerm = isWeekdayInWeek(day, week)
+                                            const dayEvents = inTerm ? eventsByDay.get(day) || [] : []
                                             const courseCount = dayEvents.filter((e) => e.type !== "study").length
 
                                             return (
@@ -216,7 +186,9 @@ export function SemesterView({
                                                     key={day}
                                                     className={`
                             flex-1 text-center py-1.5 rounded text-[10px]
-                            ${hasBreak || hasFinals
+                            ${!inTerm
+                                                            ? "bg-secondary/20 text-muted-foreground/30"
+                                                            : hasBreak || hasFinals
                                                             ? hasFinals
                                                                 ? "bg-purple-500/10 text-purple-600/50 dark:text-purple-400/50"
                                                                 : "bg-emerald-500/10 text-emerald-600/50 dark:text-emerald-400/50"
@@ -225,10 +197,12 @@ export function SemesterView({
                                                                 : "bg-secondary/30 text-muted-foreground/50"
                                                         }
                           `}
-                                                    title={`${day}: ${courseCount} class${courseCount !== 1 ? "es" : ""}`}
+                                                    title={inTerm ? `${day}: ${courseCount} class${courseCount !== 1 ? "es" : ""}` : `${day}: outside semester dates`}
                                                 >
                                                     <div className="font-medium">{day.slice(0, 1)}</div>
-                                                    {hasBreak ? (
+                                                    {!inTerm ? (
+                                                        <div className="opacity-40">-</div>
+                                                    ) : hasBreak ? (
                                                         <Coffee className="w-2.5 h-2.5 mx-auto mt-0.5" />
                                                     ) : hasFinals ? (
                                                         <BookOpen className="w-2.5 h-2.5 mx-auto mt-0.5" />

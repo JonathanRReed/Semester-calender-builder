@@ -133,7 +133,7 @@ export const WeekGrid = React.memo(function WeekGrid({ events, activeFilter, sea
         )}
 
         <div className="glass-card rounded-lg overflow-hidden scale-in">
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto" data-png-scroll-region>
             <div className="grid grid-cols-8 min-h-[600px] min-w-[800px]">
               {/* Time axis */}
               <div className="border-r border-border/50 bg-secondary/40 min-w-[80px]">

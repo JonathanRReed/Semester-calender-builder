@@ -85,8 +85,10 @@ function readDoc(): StoredSchedule {
     }
     const migrated = migrateLegacy()
     if (migrated) {
-      writeDoc(migrated)
-      for (const k of LEGACY_KEYS) localStorage.removeItem(k)
+      // Keep the source copy if quota/security restrictions block the new key.
+      if (writeDoc(migrated).ok) {
+        for (const k of LEGACY_KEYS) localStorage.removeItem(k)
+      }
       return migrated
     }
     return emptyStore()
@@ -170,8 +172,8 @@ export function ensureScheduleInitialized() {
   try {
     if (!localStorage.getItem(STORAGE_KEY)) {
       const migrated = migrateLegacy()
-      writeDoc(migrated ?? emptyStore())
-      if (migrated) for (const k of LEGACY_KEYS) localStorage.removeItem(k)
+      const saved = writeDoc(migrated ?? emptyStore())
+      if (migrated && saved.ok) for (const k of LEGACY_KEYS) localStorage.removeItem(k)
     }
   } catch (error) {
     console.warn("Failed to initialize schedule storage:", error)

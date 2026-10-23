@@ -1,6 +1,7 @@
 import type { ScheduleEvent, CourseEvent, StudyBlock, ImportantDate, SemesterDates, DayOfWeek, ScheduleBackup } from "@/types/schedule"
 import { parseTime, SCHEDULE_VERSION } from "./schedule-utils"
 import { toast } from "sonner"
+import { canvasToPngBlob, PNG_RENDER_OPTIONS, pngCaptureWidth } from "./png-export"
 
 // ==========================================
 // iCalendar (RFC 5545) export
@@ -185,6 +186,15 @@ function buildIcs(
     groups.set(key, arr)
   }
 
+  // Prepare only series that will actually be emitted before choosing identities.
+  const series: {
+    rep: ScheduleEvent
+    days: Set<DayOfWeek>
+    sortedDays: DayOfWeek[]
+    start: Date
+    anchorId: string
+    fallbackUid: string
+  }[] = []
   for (const [key, members] of groups) {
     const rep = members[0] as ScheduleEvent
     const days = new Set<DayOfWeek>()
@@ -203,7 +213,54 @@ function buildIcs(
 
     const sortedDays = Array.from(days).sort((a, b) => DAY_RANK[a] - DAY_RANK[b])
     const start = firstOccurrence(semStart, days)
-    const uid = (rep.recurrenceGroupId ?? `evt-${key.replace(/[^a-zA-Z0-9]/g, "").slice(0, 40)}`) + "@semester-calendar-builder"
+    // A short term may not contain any of this group's weekdays. RFC 5545 still
+    // includes DTSTART even when it falls after UNTIL, so omit that empty series.
+    if (semEnd && start > semEnd) continue
+
+    series.push({
+      rep, days, sortedDays, start,
+      anchorId: members.map((member) => member.id).sort()[0] as string,
+      fallbackUid: `evt-${key.replace(/[^a-zA-Z0-9]/g, "").slice(0, 40)}`,
+    })
+  }
+
+  const canonicalAnchors = new Map<string, string>()
+  for (const { rep, anchorId } of series) {
+    const groupId = rep.recurrenceGroupId
+    if (!groupId) continue
+    const current = canonicalAnchors.get(groupId)
+    if (current === undefined || anchorId < current) canonicalAnchors.set(groupId, anchorId)
+  }
+
+  // Reserve historical identities before allocating suffixes. Imported group IDs
+  // are arbitrary strings and may already equal another series' proposed suffix.
+  const reservedUids = new Set([
+    ...series.map(({ rep, fallbackUid }) => rep.recurrenceGroupId ?? fallbackUid),
+    ...importantDates.map((date) => date.id),
+  ])
+  const splitUids = new Map<(typeof series)[number], string>()
+  const orderedSeries = [...series].sort((a, b) => {
+    const left = JSON.stringify([a.rep.recurrenceGroupId, a.anchorId])
+    const right = JSON.stringify([b.rep.recurrenceGroupId, b.anchorId])
+    return left < right ? -1 : left > right ? 1 : 0
+  })
+  for (const item of orderedSeries) {
+    const groupId = item.rep.recurrenceGroupId
+    if (!groupId || canonicalAnchors.get(groupId) === item.anchorId) continue
+    const candidate = `${groupId}-${encodeURIComponent(item.anchorId)}`
+    let uid = candidate
+    let suffix = 0
+    while (reservedUids.has(uid)) uid = `${candidate}-split-${++suffix}`
+    reservedUids.add(uid)
+    splitUids.set(item, uid)
+  }
+
+  for (const item of series) {
+    const { rep, days, sortedDays, start, fallbackUid } = item
+    // One canonical subgroup keeps the historical identity; only splits get new
+    // collision-safe identities. Allocation order is independent of input order.
+    const uidBase = splitUids.get(item) ?? rep.recurrenceGroupId ?? fallbackUid
+    const uid = `${uidBase}@semester-calendar-builder`
 
     lines.push("BEGIN:VEVENT")
     lines.push(`UID:${uid}`)
@@ -358,47 +415,39 @@ export function downloadJSONBackup(
 // ==========================================
 // PNG export
 // ==========================================
-export async function exportToPNG(elementId: string) {
+export async function exportToPNG(elementId: string): Promise<void> {
+  const element = document.getElementById(elementId)
+  if (!element) throw new Error("The schedule is not available. Refresh the page and try again.")
+  const html2canvas = (await import("html2canvas-pro")).default
+  const width = pngCaptureWidth(element.scrollWidth, [...element.querySelectorAll<HTMLElement>("[data-png-scroll-region]")])
+  const canvas = await html2canvas(element, {
+    ...PNG_RENDER_OPTIONS,
+    width,
+    height: element.scrollHeight,
+    onclone: (document) => {
+      const clone = document.getElementById(elementId)
+      if (!clone) return
+      clone.style.width = `${width}px`
+      clone.style.maxWidth = "none"
+      clone.style.animation = "none"
+      clone.style.transform = "none"
+      clone.querySelectorAll<HTMLElement>("[data-png-scroll-region]").forEach(region => {
+        region.style.overflowX = "visible"
+        region.scrollLeft = 0
+      })
+    },
+  })
+  const blob = await canvasToPngBlob(canvas)
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement("a")
   try {
-    const html2canvas = (await import("html2canvas")).default
-
-    const element = document.getElementById(elementId)
-    if (!element) {
-      throw new Error("Element not found")
-    }
-
-    const canvas = await html2canvas(element, {
-      backgroundColor: "#ffffff",
-      scale: 2,
-      useCORS: true,
-      allowTaint: true,
-      logging: false,
-      width: element.scrollWidth,
-      height: element.scrollHeight,
-    })
-
-    canvas.toBlob(
-      (blob) => {
-        if (blob) {
-          const url = URL.createObjectURL(blob)
-          const link = document.createElement("a")
-          link.href = url
-          link.download = "course-schedule.png"
-          document.body.appendChild(link)
-          link.click()
-          document.body.removeChild(link)
-          URL.revokeObjectURL(url)
-          toast.success("Schedule exported as PNG!")
-        }
-      },
-      "image/png",
-      1.0,
-    )
-  } catch (error) {
-    if (process.env.NODE_ENV === "development") {
-      console.error("Failed to export PNG:", error)
-    }
-    toast.error("Failed to export PNG. Please try again.")
+    link.href = url
+    link.download = "course-schedule.png"
+    document.body.appendChild(link)
+    link.click()
+  } finally {
+    link.remove()
+    URL.revokeObjectURL(url)
   }
 }
 

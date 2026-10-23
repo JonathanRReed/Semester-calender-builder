@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "license": "MIT",
   "private": true,
-  "packageManager": "bun@1.4.3",
+  "packageManager": "bun@1.4.4",
   "scripts": {
     "dev": "next dev",
     "build": "next build && node scripts/optimize-static-info-pages.mjs",
@@ -14,42 +14,42 @@
     "typecheck": "node scripts/bun-check.mjs",
     "test:bun-check": "node --test scripts/bun-check-regression.mjs",
     "typecheck:tsc": "tsc --noEmit",
-    "test": "bun scripts/verify-export.ts && bun scripts/verify-parse.ts && bun test scripts/structured-data.test.ts scripts/security-headers.test.ts",
+    "test": "bun scripts/verify-export.ts && bun scripts/verify-parse.ts && bun test scripts/structured-data.test.ts scripts/security-headers.test.ts scripts/schedule-regression.test.ts scripts/current-time.test.tsx scripts/storage-regression.test.ts scripts/calendar-boundaries.test.ts scripts/png-export.test.ts",
     "check": "bun run lint:oxc && bun run lint && bun run test:bun-check && bun run typecheck && bun run test",
     "analyze": "ANALYZE=true next build"
   },
   "dependencies": {
-    "@radix-ui/react-dialog": "^1.1.23",
-    "@radix-ui/react-dropdown-menu": "^2.1.24",
-    "@radix-ui/react-label": "^2.1.15",
-    "@radix-ui/react-popover": "^1.1.23",
-    "@radix-ui/react-progress": "^1.1.16",
-    "@radix-ui/react-select": "^2.3.7",
-    "@radix-ui/react-slot": "^1.3.3",
-    "@radix-ui/react-switch": "^1.3.7",
-    "@radix-ui/react-tabs": "^1.1.21",
+    "@radix-ui/react-dialog": "^1.3.1",
+    "@radix-ui/react-dropdown-menu": "^2.2.1",
+    "@radix-ui/react-label": "^2.1.17",
+    "@radix-ui/react-popover": "^1.3.1",
+    "@radix-ui/react-progress": "^1.2.1",
+    "@radix-ui/react-select": "^2.4.1",
+    "@radix-ui/react-slot": "^1.5.0",
+    "@radix-ui/react-switch": "^1.4.1",
+    "@radix-ui/react-tabs": "^1.2.1",
     "class-variance-authority": "^0.7.1",
-    "cn": "^0.2.5",
-    "html2canvas": "^1.4.1",
-    "lucide-react": "^1.41.0",
-    "next": "^16.3.4",
+    "cn": "^0.2.6",
+    "lucide-react": "^1.61.0",
+    "next": "^16.4.3",
     "next-themes": "^0.4.6",
-    "react": "^19.2.8",
-    "react-dom": "^19.2.8",
+    "react": "~19.2.9",
+    "react-dom": "~19.2.9",
     "sonner": "^2.0.8",
     "tw-animate-css": "^1.4.0",
-    "zod": "^4.5.4"
+    "zod": "^4.6.7",
+    "html2canvas-pro": "2.5.2"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.3",
-    "@types/node": "^26.4.1",
-    "@types/react": "^19.2.18",
-    "@types/react-dom": "^19.2.7",
+    "@types/node": "^26.6.5",
+    "@types/react": "~19.2.18",
+    "@types/react-dom": "~19.2.7",
     "babel-plugin-react-compiler": "^1.0.0",
     "eslint": "^9.39.5",
-    "eslint-config-next": "^16.3.4",
-    "oxlint": "^1.81.0",
-    "postcss": "^8.5.28",
+    "eslint-config-next": "^16.4.3",
+    "oxlint": "^1.89.0",
+    "postcss": "^8.5.31",
     "tailwindcss": "^4.3.3",
     "typescript": "^5.9.3"
   },
@@ -59,5 +59,9 @@
   },
   "trustedDependencies": [
     "unrs-resolver"
-  ]
+  ],
+  "engines": {
+    "node": ">=24.22.1 <25",
+    "bun": ">=1.4.4"
+  }
 }

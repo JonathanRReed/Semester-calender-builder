@@ -1,6 +1,8 @@
 "use client"
 
 import { useMemo } from "react"
+import { useCurrentTime } from "@/hooks/use-current-time"
+import { getUpcomingImportantDates } from "@/lib/calendar-utils"
 import {
     Clock,
     BookOpen,
@@ -78,6 +80,7 @@ function formatTime(time: string): string {
 }
 
 export function StatsDashboard({ events, importantDates, className }: StatsDashboardProps) {
+    const now = useCurrentTime()
     const stats = useMemo(() => {
         const courses = events.filter(e => e.type !== "study") as CourseEvent[]
         const studyBlocks = events.filter(e => e.type === "study")
@@ -113,11 +116,7 @@ export function StatsDashboard({ events, importantDates, className }: StatsDashb
         const earliest = getEarliestStart(courses)
 
         // Upcoming deadlines and exams
-        const now = new Date()
-        const upcomingDates = importantDates
-            .filter(d => new Date(d.date) >= now && (d.type === "deadline" || d.type === "exam" || d.type === "finals"))
-            .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-            .slice(0, 3)
+        const upcomingDates = getUpcomingImportantDates(importantDates, now)
 
         return {
             totalEvents: events.length,
@@ -133,7 +132,7 @@ export function StatsDashboard({ events, importantDates, className }: StatsDashb
             earliest,
             upcomingDates,
         }
-    }, [events, importantDates])
+    }, [events, importantDates, now])
 
     // Calculate class ratio for progress bar
     const classRatio = stats.totalHours > 0
